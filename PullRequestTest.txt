@@ -1,2 +1,0 @@
-This is a test txt file for Pull Request.
-// Fixed based on review 20231109
