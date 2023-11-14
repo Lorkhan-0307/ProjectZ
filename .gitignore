@@ -23,6 +23,8 @@
 **/.idea/**/contentModel.xml
 **/.idea/**/modules.xml
 
+*.idea
+
 Binaries
 DerivedDataCache
 Intermediate
