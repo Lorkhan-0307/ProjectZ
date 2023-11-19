@@ -27,6 +27,7 @@ void AZPlayerController::SetupInputComponent()
 
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AZPlayerController::Move);
 	EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AZPlayerController::Look);
+	//EnhancedInputComponent->BindAction(TestAction, ETriggerEvent::Triggered, this, &AZPlayerController::Look);
 }
 
 void AZPlayerController::Move(const FInputActionValue& Value)
