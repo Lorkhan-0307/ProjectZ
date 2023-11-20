@@ -7,7 +7,8 @@
 #include "Data/Card.h"
 #include "CardComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDrawAndAddCardDelegate,FCard,NewCard);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDrawAndAddCardDelegate, FCard, NewCard);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateHandCardDelegate, int32, NewHandCount);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROJECTZ_API UCardComponent : public UActorComponent
@@ -18,12 +19,18 @@ public:
 	UCardComponent();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UFUNCTION(BlueprintCallable)
 	FCard DrawCard();
 
 	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable)
 	FDrawAndAddCardDelegate DrawAndAddCardDelegate;
+	
+	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable)
+	FUpdateHandCardDelegate UpdateHandCardDelegate;
 
-	FORCEINLINE int32 GetDeckSize() const {return CardDeck.Num();}
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE int32 GetDeckSize() const { return DeckSize; }
+	FORCEINLINE int32 GetHandSize() const { return HandSize; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -42,4 +49,7 @@ protected:
 
 private:
 	void ShuffleDeck();
+
+	int32 DeckSize;
+	int32 HandSize = 0;
 };

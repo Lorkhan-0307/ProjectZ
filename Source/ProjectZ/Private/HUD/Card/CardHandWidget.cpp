@@ -21,12 +21,10 @@ void UCardHandWidget::NativeConstruct()
 
 void UCardHandWidget::AddCardToHand(FCard NewCard)
 {
-	UE_LOG(LogTemp,Warning,TEXT("AAAA"));
 	UCardWidget* CardWidget = CreateWidget<UCardWidget>(GetOwningPlayer(), CardWidgetClass);
 	CardWidget->InitCardStatus(NewCard,HandCard.Num());
-	CardWidget->SetDesiredSizeInViewport(GetDesiredSize()*2);
-	CardWidget->AddToViewport();
 	CardOverlay->AddChild(CardWidget);
+	CardWidget->AddToViewport();
 	HandCard.Add(CardWidget);
 }
 

@@ -21,22 +21,25 @@ void UCardComponent::BeginPlay()
 
 	AddCard(FName("Axe"));
 	AddCard(FName("KitchenKnife"));
-	AddCard(FName("KitchenKnife"));
+	AddCard(FName("Sword"));
 	AddCard(FName("Axe"));
 	AddCard(FName("KitchenKnife"));
 	AddCard(FName("Axe"));
+	AddCard(FName("Sword"));
+	AddCard(FName("KitchenKnife"));
 	// ...
 
-	for (int i=0;i<FirstCardCount;i++)
+	for (int i = 0; i < FirstCardCount; i++)
 	{
-		DrawAndAddCardDelegate.Broadcast(DrawCard());
+		DrawCard();
 	}
 }
 
 void UCardComponent::AddCard(FName NewCardName)
 {
-	FCard NewCard = *CardDataTable->FindRow<FCard>(NewCardName,FString(""));
+	const FCard NewCard = *CardDataTable->FindRow<FCard>(NewCardName, FString(""));
 	CardDeck.Push(NewCard);
+	DeckSize++;
 }
 
 
@@ -52,6 +55,10 @@ FCard UCardComponent::DrawCard()
 {
 	FCard TopCard = CardDeck.Top();
 	CardDeck.Pop();
+	HandSize++;
+	DeckSize--;
+	UpdateHandCardDelegate.Broadcast(HandSize);
+	DrawAndAddCardDelegate.Broadcast(TopCard);
 	return TopCard;
 }
 

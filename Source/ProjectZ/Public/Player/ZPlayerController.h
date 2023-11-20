@@ -9,7 +9,7 @@
 
 class UInputMappingContext;
 class UInputAction;
-struct FInputActionValue;
+class UCardComponent;
 
 UCLASS()
 class PROJECTZ_API AZPlayerController : public APlayerController
@@ -40,7 +40,10 @@ private:
 
 	void Look(const FInputActionValue& InputActionValue);
 
-	//void 
-	
-	
+	void Test(); 
+
+	UPROPERTY()
+	UCardComponent* CardComponent;
 };
+
+

@@ -21,7 +21,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UOverlay* CardOverlay;
-
+	
 	UPROPERTY(EditAnywhere, Category = "Card")
 	TSubclassOf<UCardWidget> CardWidgetClass;
 	
@@ -35,7 +35,7 @@ protected:
 	FCard RightHandCard;
 
 	
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void AddCardToHand(FCard NewCard);
 
 private:

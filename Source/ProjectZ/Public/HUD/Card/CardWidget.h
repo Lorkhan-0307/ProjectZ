@@ -15,6 +15,7 @@
 class UTextBlock;
 class UImage;
 class UDataTable;
+class UCardComponent;
 
 UCLASS()
 class PROJECTZ_API UCardWidget : public UUserWidget
@@ -55,17 +56,35 @@ protected:
 	UDataTable* CardDataTable;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 InterpSpeed;
+	int32 InterpSpeed = 5;
+
+	UPROPERTY(EditAnywhere)
+	int32 CardDistance = 110;
+
+	UPROPERTY(BlueprintReadWrite)
+	FWidgetTransform DestinationTransform;
 
 	void SetPosition(float DeltaTime);
+	
 
 private:
 	bool bIsInPosition = false;
 
 	int32 CardIndex = 0;
 
-	FWidgetTransform DestinationTransform;
+	UPROPERTY()
+	UCardComponent* CardComponent;
+	
+	FVector2D ViewportSize;
+	
+	FVector2D CardSize;
+
+	void UpdateCardDestination(int32 NewDistance);
+
+	void GetCardPositionCenterX(FVector2D& Pos);
 	
 };
+
+
 
 

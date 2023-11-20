@@ -20,6 +20,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	UCardComponent* CardComponent;
 
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE UCardComponent* GetCardComponent() const { return CardComponent; }
 
 private:
