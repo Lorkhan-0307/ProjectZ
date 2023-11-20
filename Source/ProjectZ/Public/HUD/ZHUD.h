@@ -19,9 +19,15 @@ public:
 
 	UPROPERTY()
 	UCardHandWidget* CardHandHUDWidget;
+
+	FORCEINLINE FVector2D GetViewPortSize() const {return FVector2D(ViewportSizeX,ViewportSizeY);}
 	
 protected:
 	virtual void BeginPlay() override;
 	
 	void AddCardHandHUDOverlay();
+
+private:
+	int32 ViewportSizeX;
+	int32 ViewportSizeY;
 };

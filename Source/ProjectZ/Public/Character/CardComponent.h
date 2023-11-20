@@ -8,6 +8,7 @@
 #include "CardComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDrawAndAddCardDelegate, FCard, NewCard);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateHandCardDelegate, int32, NewHandCount);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -24,12 +25,13 @@ public:
 
 	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable)
 	FDrawAndAddCardDelegate DrawAndAddCardDelegate;
-	
+
 	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable)
 	FUpdateHandCardDelegate UpdateHandCardDelegate;
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE int32 GetDeckSize() const { return DeckSize; }
+
 	FORCEINLINE int32 GetHandSize() const { return HandSize; }
 
 protected:

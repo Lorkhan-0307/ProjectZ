@@ -4,7 +4,15 @@
 #include "Engine/DataTable.h"
 #include "Card.generated.h"
 
-class UImage;
+
+UENUM(BlueprintType)
+enum class ECardType : uint8
+{
+	ECT_Passive,
+	ECT_Usable,
+	ECT_Equipment
+};
+
 
 USTRUCT(BlueprintType)
 struct FCard : public FTableRowBase
@@ -31,4 +39,8 @@ struct FCard : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText CardDescription;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECardType CardType;
 };
+

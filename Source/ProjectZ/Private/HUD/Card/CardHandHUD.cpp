@@ -2,4 +2,10 @@
 
 
 #include "HUD/Card/CardHandHUD.h"
+#include "HUD/Card/CardHandWidget.h"
 
+void UCardHandHUD::NativeConstruct()
+{
+	Super::NativeConstruct();
+	CardHandWidget->SetViewportSize(ViewportSize);
+}

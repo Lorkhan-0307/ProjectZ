@@ -57,10 +57,11 @@ FCard UCardComponent::DrawCard()
 	CardDeck.Pop();
 	HandSize++;
 	DeckSize--;
-	UpdateHandCardDelegate.Broadcast(HandSize);
+	//UpdateHandCardDelegate.Broadcast(HandSize);
 	DrawAndAddCardDelegate.Broadcast(TopCard);
 	return TopCard;
 }
+
 
 void UCardComponent::ShuffleDeck()
 {

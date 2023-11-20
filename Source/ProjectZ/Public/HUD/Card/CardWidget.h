@@ -25,6 +25,8 @@ class PROJECTZ_API UCardWidget : public UUserWidget
 public:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn))
 	//void InitialCard(FCard CardStatus);
@@ -47,9 +49,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* DefText;
 
-	void InitCardStatus(FCard CardStatus, int32 Index);
+	UPROPERTY(BlueprintReadWrite)
+	FWidgetTransform DestinationTransform;
+
+	void InitCardStatus(FCard CardStatus, int32 Index, FWidgetTransform WidgetTransform);
 
 	void SetCardIndex(int32 Index) { CardIndex = Index; }
+
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -61,15 +67,14 @@ protected:
 	UPROPERTY(EditAnywhere)
 	int32 CardDistance = 110;
 
-	UPROPERTY(BlueprintReadWrite)
-	FWidgetTransform DestinationTransform;
+	
 
 	void SetPosition(float DeltaTime);
 	
 
 private:
 	bool bIsInPosition = false;
-
+	
 	int32 CardIndex = 0;
 
 	UPROPERTY()
@@ -78,10 +83,7 @@ private:
 	FVector2D ViewportSize;
 	
 	FVector2D CardSize;
-
-	void UpdateCardDestination(int32 NewDistance);
-
-	void GetCardPositionCenterX(FVector2D& Pos);
+	
 	
 };
 
