@@ -15,21 +15,24 @@ void UCardHandWidget::NativeConstruct()
 	Super::NativeConstruct();
 	CardComponent = Cast<AZCharacter>(GetOwningPlayer()->GetCharacter())->GetCardComponent();
 	CardComponent->DrawAndAddCardDelegate.AddDynamic(this, &UCardHandWidget::AddCardToHand);
-	CardSpawnPosition.Translation = FVector2D(1800, ViewportSize.Y);
-	
+	CardSpawnPosition.Translation = FVector2D(GetCachedGeometry().GetLocalSize());
+	CenterPosition = GetCachedGeometry().GetLocalSize() / 2;
+	UE_LOG(LogTemp, Warning, TEXT("Center %f"), CenterPosition.X);
 }
 
 
 void UCardHandWidget::AddCardToHand(FCard NewCard)
 {
-	UE_LOG(LogTemp, Warning, TEXT("%f"), GetCenterPosition().X);
 	UCardWidget* CardWidget = CreateWidget<UCardWidget>(GetOwningPlayer(), CardWidgetClass);
-	CardWidget->InitCardStatus(NewCard, HandCard.Num(), CardSpawnPosition);
+	CardSpawnPosition.Translation = FVector2D(GetCachedGeometry().GetLocalSize());
+
+	CardWidget->InitCardStatus(NewCard, HandCard.Num());
+	CardWidget->SetRenderTransform(CardSpawnPosition);
 	//CardWidget->RemoveFromParent();
 	CardOverlay->AddChild(CardWidget);
 	HandCard.Add(CardWidget);
-	UpdateCardPosition();
 	CardWidget->AddToViewport();
+	UpdateCardPosition();
 }
 
 void UCardHandWidget::UpdateCardPosition()
@@ -48,12 +51,14 @@ FVector2D UCardHandWidget::GetCenterPosition()
 float UCardHandWidget::GetCardXPosition(int32 Index)
 {
 	//return GetCenterPosition().X + GetCardIndexPositionFromCenter(Index) * CardDistance;
-	return 960 + GetCardIndexPositionFromCenter(Index) * CardDistance;
+	//return 960 + GetCardIndexPositionFromCenter(Index) * CardDistance;
+	return GetCachedGeometry().GetLocalSize().X / 2 + GetCardIndexPositionFromCenter(Index) * CardDistance - HandCard[Index]->GetCachedGeometry().GetLocalSize().X/2;
 }
 
 float UCardHandWidget::GetCardYPosition(int32 Index)
 {
-	return ViewportSize.Y;
+	//return ViewportSize.Y;
+	return GetCachedGeometry().GetLocalSize().Y / 2;
 }
 
 float UCardHandWidget::GetCardIndexPositionFromCenter(int32 Index) const
@@ -80,6 +85,7 @@ FWidgetTransform UCardHandWidget::CalculateCardPosition(int32 Index)
 {
 	FWidgetTransform CardDestination;
 	CardDestination.Translation.X = GetCardXPosition(Index);
-	CardDestination.Translation.Y = GetCardYPosition(Index);
+	//CardDestination.Translation.Y = GetCardYPosition(Index);
+	CardDestination.Translation.Y = 0;
 	return CardDestination;
 }

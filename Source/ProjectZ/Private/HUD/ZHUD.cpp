@@ -9,7 +9,7 @@
 void AZHUD::BeginPlay()
 {
 	Super::BeginPlay();
-	AddCardHandHUDOverlay();
+	//AddCardHandHUDOverlay();
 	//GetOwningPlayerController()->GetViewportSize(ViewportSizeX,ViewportSizeY);
 }
 

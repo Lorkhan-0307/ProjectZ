@@ -4,8 +4,10 @@
 #include "Player/ZPlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Blueprint/UserWidget.h"
 #include "Character/CardComponent.h"
 #include "Character/ZCharacter.h"
+#include "HUD/Card/CardHandHUD.h"
 
 void AZPlayerController::BeginPlay()
 {
@@ -20,6 +22,9 @@ void AZPlayerController::BeginPlay()
 	}
 
 	CardComponent = Cast<AZCharacter>(GetCharacter())->GetCardComponent();
+
+	UCardHandHUD* CardHandHUD = CreateWidget<UCardHandHUD>(this,CardHandHUDClass);
+	CardHandHUD->AddToViewport();
 }
 
 void AZPlayerController::SetupInputComponent()

@@ -40,10 +40,10 @@ void UCardWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointer
 void UCardWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseLeave(InMouseEvent);
-	DestinationTransform.Translation.Y -=100;
+	DestinationTransform.Translation.Y +=100;
 }
 
-void UCardWidget::InitCardStatus(FCard CardStatus, int32 Index, FWidgetTransform WidgetTransform)
+void UCardWidget::InitCardStatus(FCard CardStatus, int32 Index)
 {
 	CardName->SetText(CardStatus.CardName);
 	CardImage->SetBrushFromTexture(CardStatus.CardImage);
@@ -52,8 +52,8 @@ void UCardWidget::InitCardStatus(FCard CardStatus, int32 Index, FWidgetTransform
 	AtkText->SetText(FText::FromString(FString::FromInt(CardStatus.CardAtk)));
 	DefText->SetText(FText::FromString(FString::FromInt(CardStatus.CardCost)));
 	CardIndex = Index;
-	SetRenderTranslation(WidgetTransform.Translation);
-	DestinationTransform = WidgetTransform;
+	//SetRenderTranslation(WidgetTransform.Translation);
+	//DestinationTransform = WidgetTransform;
 	//UpdateCardDestination(CardIndex);
 }
 

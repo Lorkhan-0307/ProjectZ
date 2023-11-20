@@ -62,4 +62,7 @@ private:
 
 	float GetCardXPosition(int32 Index);
 	float GetCardYPosition(int32 Index);
+
+	FVector2D CardSize;
+	FVector2D CenterPosition;
 };

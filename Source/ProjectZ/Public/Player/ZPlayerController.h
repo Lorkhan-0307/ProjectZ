@@ -7,6 +7,7 @@
 #include "InputActionValue.h"
 #include "ZPlayerController.generated.h"
 
+class UCardHandHUD;
 class UInputMappingContext;
 class UInputAction;
 class UCardComponent;
@@ -35,6 +36,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputAction> TestAction;
+
+	UPROPERTY(EditAnywhere, Category = Card)
+	TSubclassOf<UCardHandHUD> CardHandHUDClass;
 	
 	void Move(const FInputActionValue& InputActionValue);
 

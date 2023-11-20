@@ -26,7 +26,7 @@ public:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
-	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn))
 	//void InitialCard(FCard CardStatus);
@@ -52,7 +52,7 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	FWidgetTransform DestinationTransform;
 
-	void InitCardStatus(FCard CardStatus, int32 Index, FWidgetTransform WidgetTransform);
+	void InitCardStatus(FCard CardStatus, int32 Index);
 
 	void SetCardIndex(int32 Index) { CardIndex = Index; }
 
