@@ -17,20 +17,20 @@ void UCardHandWidget::NativeConstruct()
 	CardComponent->DrawAndAddCardDelegate.AddDynamic(this, &UCardHandWidget::AddCardToHand);
 	CardSpawnPosition.Translation = FVector2D(GetCachedGeometry().GetLocalSize());
 	CenterPosition = GetCachedGeometry().GetLocalSize() / 2;
-	UE_LOG(LogTemp, Warning, TEXT("Center %f"), CenterPosition.X);
+	//UE_LOG(LogTemp, Warning, TEXT("Center %f"), CenterPosition.X);
 }
 
 
 void UCardHandWidget::AddCardToHand(FCard NewCard)
 {
 	UCardWidget* CardWidget = CreateWidget<UCardWidget>(GetOwningPlayer(), CardWidgetClass);
-	CardSpawnPosition.Translation = FVector2D(GetCachedGeometry().GetLocalSize());
-
+	HandCard.Add(CardWidget);
+	CardSpawnPosition.Translation = FVector2D(0,0);
 	CardWidget->InitCardStatus(NewCard, HandCard.Num());
 	CardWidget->SetRenderTransform(CardSpawnPosition);
+	UpdateCardPosition();
 	//CardWidget->RemoveFromParent();
 	CardOverlay->AddChild(CardWidget);
-	HandCard.Add(CardWidget);
 	CardWidget->AddToViewport();
 	UpdateCardPosition();
 }
@@ -40,6 +40,7 @@ void UCardHandWidget::UpdateCardPosition()
 	for (int i = 0; i < HandCard.Num(); i++)
 	{
 		HandCard[i]->DestinationTransform = CalculateCardPosition(i);
+		UE_LOG(LogTemp,Warning,TEXT("i:%d X:%f"),i,CalculateCardPosition(i).Translation.X);
 	}
 }
 
@@ -52,7 +53,7 @@ float UCardHandWidget::GetCardXPosition(int32 Index)
 {
 	//return GetCenterPosition().X + GetCardIndexPositionFromCenter(Index) * CardDistance;
 	//return 960 + GetCardIndexPositionFromCenter(Index) * CardDistance;
-	return GetCachedGeometry().GetLocalSize().X / 2 + GetCardIndexPositionFromCenter(Index) * CardDistance - HandCard[Index]->GetCachedGeometry().GetLocalSize().X/2;
+	return GetCachedGeometry().GetLocalSize().X / 2 + GetCardIndexPositionFromCenter(Index) * CardDistance - 100;
 }
 
 float UCardHandWidget::GetCardYPosition(int32 Index)
@@ -77,7 +78,7 @@ float UCardHandWidget::GetCardIndexPositionFromCenter(int32 Index) const
 			NewIndex -= 0.5f;
 		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT("%f"), NewIndex);
+	//UE_LOG(LogTemp, Warning, TEXT("%f"), NewIndex);
 	return NewIndex;
 }
 
