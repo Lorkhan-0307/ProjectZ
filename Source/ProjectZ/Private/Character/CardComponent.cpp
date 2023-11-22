@@ -29,6 +29,7 @@ void UCardComponent::BeginPlay()
 	AddCard(FName("KitchenKnife"));
 	// ...
 
+
 	for (int i = 0; i < FirstCardCount; i++)
 	{
 		DrawCard();
@@ -51,15 +52,15 @@ void UCardComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	// ...
 }
 
-FCard UCardComponent::DrawCard()
+void UCardComponent::DrawCard()
 {
-	FCard TopCard = CardDeck.Top();
+	if (CardDeck.Num() == 0) return;
+	const FCard TopCard = CardDeck.Top();
 	CardDeck.Pop();
 	HandSize++;
 	DeckSize--;
-	//UpdateHandCardDelegate.Broadcast(HandSize);
+	CardHand.Add(TopCard);
 	DrawAndAddCardDelegate.Broadcast(TopCard);
-	return TopCard;
 }
 
 

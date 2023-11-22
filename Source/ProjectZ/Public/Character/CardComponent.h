@@ -21,7 +21,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable)
-	FCard DrawCard();
+	void DrawCard();
 
 	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable)
 	FDrawAndAddCardDelegate DrawAndAddCardDelegate;
@@ -43,6 +43,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = Card)
 	TArray<FCard> CardDeck;
 
+	UPROPERTY(VisibleAnywhere, Category = Card)
+	TArray<FCard> CardHand;
+	
 	UPROPERTY(EditAnywhere, Category = Card)
 	int32 FirstCardCount;
 

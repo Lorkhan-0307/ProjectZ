@@ -62,6 +62,6 @@ void AZPlayerController::Look(const FInputActionValue& InputActionValue)
 
 void AZPlayerController::Test()
 {
-	if (CardComponent->GetDeckSize()>0)
-		CardComponent->DrawAndAddCardDelegate.Broadcast(CardComponent->DrawCard());
+	//if (CardComponent->GetDeckSize()>0)
+		//CardComponent->DrawAndAddCardDelegate.Broadcast(CardComponent->DrawCard());
 }

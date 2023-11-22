@@ -19,8 +19,12 @@ class PROJECTZ_API UCardHandWidget : public UUserWidget
 public:
 	FORCEINLINE void SetViewportSize(const FVector2D& Size) { ViewportSize = Size; }
 
+	void DragStarted(UCardWidget* CardDragged);
+	void DragEnded(UCardWidget* CardDragged, bool bIsUsed);
+
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UOverlay* CardOverlay;
@@ -28,17 +32,20 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Card")
 	TSubclassOf<UCardWidget> CardWidgetClass;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Card")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Card")
 	TArray<UCardWidget*> HandCard;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Card")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Card")
 	FCard LeftHandCard;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Card")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Card")
 	FCard RightHandCard;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Card")
 	float CardDistance = 150.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Card")
+	float MouseHoveredHeight = 50.f;
 
 	float GetCardIndexPositionFromCenter(int32 Index) const;
 
@@ -60,8 +67,15 @@ private:
 
 	FVector2D GetCenterPosition();
 
+	UPROPERTY()
+	UCardWidget* NowDragCard;
+
+	bool bIsInitPosition = false;
+
 	float GetCardXPosition(int32 Index);
 	float GetCardYPosition(int32 Index);
+
+	
 
 	FVector2D CardSize;
 	FVector2D CenterPosition;
