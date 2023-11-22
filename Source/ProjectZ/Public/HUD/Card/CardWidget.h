@@ -19,8 +19,10 @@ class UCardComponent;
 class UCardHandWidget;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMouseHoveredDelegate);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCardDragStartDelegate,UCardWidget*,DragCard);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCardDragEndDelegate,UCardWidget*,DragCard,bool,bIsUsed);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCardDragStartDelegate, UCardWidget*, DragCard);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCardDragEndDelegate, UCardWidget*, DragCard, bool, bIsUsed);
 
 UCLASS()
 class PROJECTZ_API UCardWidget : public UUserWidget
@@ -35,11 +37,6 @@ public:
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
 	virtual void NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
-	virtual void NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
-	virtual void NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn))
-	//void InitialCard(FCard CardStatus);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* CardName;
@@ -62,39 +59,32 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	FWidgetTransform DestinationTransform;
 
-	FMouseHoveredDelegate MouseHoveredDelegate;
-	FCardDragStartDelegate CardDragStartDelegate;
-	FCardDragEndDelegate CardDragEndDelegate;
-
 	UPROPERTY()
 	UCardHandWidget* CardHandWidget;
 
 	void InitCardStatus(FCard CardStatus, int32 Index);
 
-	void SetCardIndex(int32 Index) { CardIndex = Index; }
+	FORCEINLINE void SetCardIndex(int32 Index) { CardIndex = Index; }
 
 	FORCEINLINE bool GetMouseHovered() const { return bMouseHovered; }
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
 	UDataTable* CardDataTable;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
 	int32 InterpSpeed = 5;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
 	int32 CardDistance = 110;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
 	float UseCardHeight = 300;
-
-	//UDragD
 
 	void SetPosition(float DeltaTime);
 
 	UPROPERTY(EditAnywhere, Category = Card)
 	TSubclassOf<UCardWidget> CardWidgetClass;
-
 
 private:
 	bool bIsInPosition = false;
@@ -106,7 +96,6 @@ private:
 
 	FVector2D ViewportSize;
 
-	FVector2D CardSize;
 
 	bool bMouseHovered = false;
 

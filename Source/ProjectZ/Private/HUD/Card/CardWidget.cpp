@@ -19,14 +19,8 @@
 void UCardWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	//InitCardStatus();
-
-	//if (GEngine) GEngine->GameViewport->GetViewportSize(ViewportSize);
-	CardSize = GetCachedGeometry().GetLocalSize();
 
 	CardComponent = Cast<AZCharacter>(GetOwningPlayer()->GetCharacter())->GetCardComponent();
-
-	//CardComponent->UpdateHandCardDelegate.AddDynamic(this, &UCardWidget::UpdateCardDestination);
 }
 
 void UCardWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -39,7 +33,6 @@ void UCardWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointer
 {
 	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
 	bMouseHovered = true;
-	//MouseHoveredDelegate.Broadcast();
 }
 
 
@@ -47,20 +40,18 @@ void UCardWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseLeave(InMouseEvent);
 	bMouseHovered = false;
-	//MouseHoveredDelegate.Broadcast();
 }
 
 FReply UCardWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
-	CardDragStartDelegate.Broadcast(this);
 	return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
 }
 
 void UCardWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
 {
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
-	
+
 	UCardDragDropOperation* CardDragDropOperation = NewObject<UCardDragDropOperation>();
 
 	CardDragDropOperation->Payload = this;
@@ -70,44 +61,28 @@ void UCardWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPoint
 	CardDragDropOperation->Pivot = EDragPivot::CenterCenter;
 	SetVisibility(ESlateVisibility::Hidden);
 
-
 	OutOperation = CardDragDropOperation;
-	CardDragStartDelegate.Broadcast(this);
 	CardHandWidget->DragStarted(this);
 }
 
 void UCardWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	Super::NativeOnDragCancelled(InDragDropEvent, InOperation);
-	if (InOperation->DefaultDragVisual->GetCachedGeometry().GetAbsolutePosition().Y < 300)
+	if (InOperation->DefaultDragVisual->GetCachedGeometry().GetAbsolutePosition().Y < CardHandWidget->GetPlayCardHeight())
 	{
 		// TO DO : Active Card Effect
-		CardDragEndDelegate.Broadcast(this, true);
-		CardHandWidget->DragEnded(this,true);
+
+		CardHandWidget->DragEnded(this, true);
 		RemoveFromParent();
 		CollectGarbage(EObjectFlags::RF_BeginDestroyed);
 	}
 	else
 	{
-		CardDragEndDelegate.Broadcast(this, false);
-		CardHandWidget->DragEnded(this,false);
+		CardHandWidget->DragEnded(this, false);
 		SetVisibility(ESlateVisibility::Visible);
 		bMouseHovered = false;
 	}
 }
-
-void UCardWidget::NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
-{
-	Super::NativeOnDragEnter(InGeometry, InDragDropEvent, InOperation);
-	CardDragStartDelegate.Broadcast(this);
-}
-
-void UCardWidget::NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
-{
-	Super::NativeOnDragLeave(InDragDropEvent, InOperation);
-	CardDragEndDelegate.Broadcast(this, false);
-}
-
 
 void UCardWidget::InitCardStatus(FCard CardStatus, int32 Index)
 {
@@ -119,14 +94,11 @@ void UCardWidget::InitCardStatus(FCard CardStatus, int32 Index)
 	AtkText->SetText(FText::FromString(FString::FromInt(CardStatus.CardAtk)));
 	DefText->SetText(FText::FromString(FString::FromInt(CardStatus.CardCost)));
 	CardIndex = Index;
-	//SetRenderTranslation(WidgetTransform.Translation);
-	//DestinationTransform = WidgetTransform;
-	//UpdateCardDestination(CardIndex);
 }
 
 void UCardWidget::SetPosition(float DeltaTime)
 {
 	if (GetRenderTransform() == DestinationTransform) return;
 	SetRenderTranslation(FMath::Vector2DInterpTo(GetRenderTransform().Translation, DestinationTransform.Translation, DeltaTime, InterpSpeed));
-	SetRenderTransformAngle(FMath::FInterpTo(GetRenderTransform().Angle,DestinationTransform.Angle,DeltaTime,InterpSpeed));
+	SetRenderTransformAngle(FMath::FInterpTo(GetRenderTransform().Angle, DestinationTransform.Angle, DeltaTime, InterpSpeed));
 }
