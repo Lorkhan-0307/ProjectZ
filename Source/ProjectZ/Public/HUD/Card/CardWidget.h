@@ -66,6 +66,7 @@ public:
 	FCardDragStartDelegate CardDragStartDelegate;
 	FCardDragEndDelegate CardDragEndDelegate;
 
+	UPROPERTY()
 	UCardHandWidget* CardHandWidget;
 
 	void InitCardStatus(FCard CardStatus, int32 Index);

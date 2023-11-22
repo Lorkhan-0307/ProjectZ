@@ -16,18 +16,12 @@ void UCardHandWidget::NativeConstruct()
 	CardComponent->DrawAndAddCardDelegate.AddDynamic(this, &UCardHandWidget::AddCardToHand);
 
 	CardSpawnPosition.Translation = FVector2D(1800, 0);
-	CenterPosition = GetCachedGeometry().GetLocalSize() / 2;
 	//UE_LOG(LogTemp, Warning, TEXT("Center %f"), CenterPosition.X);
 }
 
 void UCardHandWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
-	if (GetCachedGeometry().GetLocalSize().X > 0 && !bIsInitPosition)
-	{
-		UpdateCardPosition();
-		bIsInitPosition = true;
-	}
 	UpdateCardPosition();
 }
 
@@ -37,8 +31,7 @@ void UCardHandWidget::AddCardToHand(FCard NewCard)
 	UCardWidget* CardWidget = CreateWidget<UCardWidget>(GetOwningPlayer(), CardWidgetClass);
 	HandCard.Add(CardWidget);
 	CardWidget->InitCardStatus(NewCard, HandCard.Num());
-	CardWidget->CardHandWidget=this;
-	
+	CardWidget->CardHandWidget = this;
 
 
 	CardWidget->SetRenderTransform(CardSpawnPosition);
@@ -69,39 +62,46 @@ FVector2D UCardHandWidget::GetCenterPosition()
 
 float UCardHandWidget::GetCardXPosition(int32 Index)
 {
-	//return GetCenterPosition().X + GetCardIndexPositionFromCenter(Index) * CardDistance;
-	//return 960 + GetCardIndexPositionFromCenter(Index) * CardDistance;
-	float CenterX = GetCachedGeometry().GetLocalSize().X / 2;
-	if (CenterX == 0) CenterX = 960;
-	//return GetCachedGeometry().GetLocalSize().X / 2 + GetCardIndexPositionFromCenter(Index) * CardDistance - 100;
-	return CenterX + GetCardIndexPositionFromCenter(Index) * CardDistance - 100.f;
+	float XPos = GetCachedGeometry().GetLocalSize().X / 2 + GetCardIndexPositionFromCenter(Index) * CardDistance - 100.f;
+	if (HandCard[Index]->GetMouseHovered()) XPos += MouseHoveredHeight * FMath::Sin(FMath::DegreesToRadians(GetCardAngle(Index)));
+	return XPos;
 }
 
 float UCardHandWidget::GetCardYPosition(int32 Index)
 {
-	float YPos = 0;
-	if (HandCard[Index]->GetMouseHovered()) YPos -= MouseHoveredHeight;
+	float YPos = FMath::Abs(GetCardIndexPositionFromCenter(Index)) * ArcHeight;
+	if (HandCard[Index]->GetMouseHovered())
+	{
+		//if (GetCardIndexPositionFromCenter(Index) > 0) YPos += MouseHoveredHeight * FMath::Cos(GetCardAngle(Index));
+		YPos -= MouseHoveredHeight * FMath::Cos(FMath::DegreesToRadians(GetCardAngle(Index)));
+	}
+
 	return YPos;
+}
+
+float UCardHandWidget::GetCardAngle(int32 Index)
+{
+	return GetCardIndexPositionFromCenter(Index) * CardAngle;
 }
 
 void UCardHandWidget::DragStarted(UCardWidget* CardDragged)
 {
-	UE_LOG(LogTemp,Warning,TEXT("DragStart"));
+	UE_LOG(LogTemp, Warning, TEXT("DragStart"));
 	NowDragCard = CardDragged;
 }
 
 void UCardHandWidget::DragEnded(UCardWidget* CardDragged, bool bIsUsed)
 {
-	UE_LOG(LogTemp,Warning,TEXT("DragEnd"));
+	UE_LOG(LogTemp, Warning, TEXT("DragEnd"));
 	NowDragCard = nullptr;
 	if (bIsUsed)
 	{
 		HandCard.Remove(CardDragged);
 		UpdateCardPosition();
 	}
-	for (auto i:HandCard)
+	for (auto i : HandCard)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("%p"),i->CardName);
+		UE_LOG(LogTemp, Warning, TEXT("%p"), i->CardName);
 	}
 }
 
@@ -121,7 +121,6 @@ float UCardHandWidget::GetCardIndexPositionFromCenter(int32 Index) const
 			NewIndex -= 0.5f;
 		}
 	}
-	//UE_LOG(LogTemp, Warning, TEXT("%f"), NewIndex);
 	return NewIndex;
 }
 
@@ -130,5 +129,6 @@ FWidgetTransform UCardHandWidget::CalculateCardPosition(int32 Index)
 	FWidgetTransform CardDestination;
 	CardDestination.Translation.X = GetCardXPosition(Index);
 	CardDestination.Translation.Y = GetCardYPosition(Index);
+	CardDestination.Angle = GetCardAngle(Index);
 	return CardDestination;
 }

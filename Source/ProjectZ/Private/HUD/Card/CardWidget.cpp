@@ -128,5 +128,5 @@ void UCardWidget::SetPosition(float DeltaTime)
 {
 	if (GetRenderTransform() == DestinationTransform) return;
 	SetRenderTranslation(FMath::Vector2DInterpTo(GetRenderTransform().Translation, DestinationTransform.Translation, DeltaTime, InterpSpeed));
-	//FMath::RInterpTo(GetRenderTransform().Angle,)
+	SetRenderTransformAngle(FMath::FInterpTo(GetRenderTransform().Angle,DestinationTransform.Angle,DeltaTime,InterpSpeed));
 }

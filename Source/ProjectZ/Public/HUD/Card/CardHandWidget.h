@@ -47,6 +47,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Card")
 	float MouseHoveredHeight = 50.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Card")
+	float CardAngle = 10.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Card")
+	float ArcHeight = 10.f;
+
 	float GetCardIndexPositionFromCenter(int32 Index) const;
 
 	FWidgetTransform CalculateCardPosition(int32 Index);
@@ -70,13 +76,8 @@ private:
 	UPROPERTY()
 	UCardWidget* NowDragCard;
 
-	bool bIsInitPosition = false;
-
 	float GetCardXPosition(int32 Index);
 	float GetCardYPosition(int32 Index);
-
+	float GetCardAngle(int32 Index);
 	
-
-	FVector2D CardSize;
-	FVector2D CenterPosition;
 };
