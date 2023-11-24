@@ -15,7 +15,7 @@ ProjectZ
 #### Card System 사용법
 - BP_ZCharacter - CardComponent
 	- CardInventory (TArray)
- 		-소지 중인 카드를 저장 
+		-소지 중인 카드를 저장 
 	- CardDeck (TArray)
 		-전투에 돌입 시, 인벤토리에서 패시브 카드 등을 제외한 실제로 낼 수 있는 카드들을 저장 
 	- CardHand (TArray)
