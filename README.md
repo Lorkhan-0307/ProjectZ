@@ -29,7 +29,7 @@ ProjectZ
 	- DeleteCard(FName DeleteCard) 
 		- 덱에서 DelteCard 카드를 제거함
 	- ShuffleDeck()
-		-덱을 무작위로 셔플함
+		- 덱을 무작위로 셔플함
 
 - WBP_CardHandWidget
 	- HandCard (TArray)
