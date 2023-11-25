@@ -17,8 +17,6 @@ class PROJECTZ_API UCardHandWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void DragStarted(UCardWidget* CardDragged);
-	void DragEnded(UCardWidget* CardDragged, bool bIsUsed);
 
 	FORCEINLINE void SetViewportSize(const FVector2D& Size) { ViewportSize = Size; }
 	FORCEINLINE float GetPlayCardHeight() const { return PlayCardHeight; }
@@ -36,11 +34,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Card)
 	TArray<UCardWidget*> HandCard;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Card)
-	FCard LeftHandCard;
+	UPROPERTY()
+	UCardWidget* LeftHandCardWidget;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Card)
-	FCard RightHandCard;
+	UPROPERTY()
+	UCardWidget* RightHandCardWidget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
 	float CardDistance = 150.f;
@@ -56,7 +54,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
 	float PlayCardHeight = 300.f;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
 	FVector2D CardSize = FVector2D(200, 300);
 
@@ -66,6 +64,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
 	FWidgetTransform CardSpawnPosition;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
+	FVector2D LeftHandCardPosition; // Distance from the Left
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
+	FVector2D RightHandCardPosition; // Distance from the Right
 
 	UFUNCTION(BlueprintCallable)
 	void AddCardToHand(FCard NewCard);
@@ -78,12 +82,24 @@ private:
 
 	FVector2D ViewportSize;
 
-	FVector2D GetCenterPosition();
-
 	UPROPERTY()
 	UCardWidget* NowDragCard;
+
+	UCardWidget* CreateCardWidget(FCard CardStatus);
 
 	float GetCardXPosition(int32 Index);
 	float GetCardYPosition(int32 Index);
 	float GetCardAngle(int32 Index);
+
+	UFUNCTION()
+	void UpdateLeftHandCard(FCard LeftCard);
+
+	UFUNCTION()
+	void UpdateRightHandCard(FCard RightCard);
+
+	UFUNCTION()
+	void DragStarted(UCardWidget* CardDragged);
+
+	UFUNCTION()
+	void DragEnded(UCardWidget* CardDragged, bool bIsUsed);
 };

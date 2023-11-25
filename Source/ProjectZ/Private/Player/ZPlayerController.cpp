@@ -23,8 +23,8 @@ void AZPlayerController::BeginPlay()
 
 	CardComponent = Cast<AZCharacter>(GetCharacter())->GetCardComponent();
 
-	UCardHandHUD* CardHandHUD = CreateWidget<UCardHandHUD>(this,CardHandHUDClass);
-	CardHandHUD->AddToViewport();
+	//UCardHandHUD* CardHandHUD = CreateWidget<UCardHandHUD>(this,CardHandHUDClass);
+	//CardHandHUD->AddToViewport();
 }
 
 void AZPlayerController::SetupInputComponent()

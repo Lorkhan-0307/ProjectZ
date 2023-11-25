@@ -6,7 +6,9 @@
 #include "Blueprint/UserWidget.h"
 #include "CardHandHUD.generated.h"
 
+class UCardWidget;
 class UCardHandWidget;
+class UCardComponent;
 /**
  * 
  */
@@ -24,6 +26,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UCardHandWidget* CardHandWidget;
 
+
+
 private:
+	UPROPERTY()
+	UCardComponent* CardComponent;
+	
 	FVector2D ViewportSize;
 };

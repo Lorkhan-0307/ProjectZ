@@ -56,13 +56,14 @@ void UCardWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPoint
 
 	CardDragDropOperation->Payload = this;
 	UCardWidget* DragCardWidget = Cast<UCardWidget>(CreateWidget(GetOwningPlayer(), CardWidgetClass));
-	DragCardWidget->InitCardStatus(CardStat, CardIndex);
+	DragCardWidget->InitCardStatus(CardStat);
 	CardDragDropOperation->DefaultDragVisual = DragCardWidget;
 	CardDragDropOperation->Pivot = EDragPivot::CenterCenter;
 	SetVisibility(ESlateVisibility::Hidden);
 
 	OutOperation = CardDragDropOperation;
-	CardHandWidget->DragStarted(this);
+	//CardHandWidget->DragStarted(this);
+	CardDragStartDelegate.Broadcast(this);
 }
 
 void UCardWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
@@ -72,19 +73,21 @@ void UCardWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, U
 	{
 		// TO DO : Active Card Effect
 
-		CardHandWidget->DragEnded(this, true);
+		//CardHandWidget->DragEnded(this, true);
+		CardDragEndDelegate.Broadcast(this,true);
 		RemoveFromParent();
 		CollectGarbage(EObjectFlags::RF_BeginDestroyed);
 	}
 	else
 	{
-		CardHandWidget->DragEnded(this, false);
+		//CardHandWidget->DragEnded(this, false);
+		CardDragEndDelegate.Broadcast(this,false);
 		SetVisibility(ESlateVisibility::Visible);
 		bMouseHovered = false;
 	}
 }
 
-void UCardWidget::InitCardStatus(FCard CardStatus, int32 Index)
+void UCardWidget::InitCardStatus(FCard CardStatus)
 {
 	CardStat = CardStatus;
 	CardName->SetText(CardStatus.CardName);
@@ -93,7 +96,6 @@ void UCardWidget::InitCardStatus(FCard CardStatus, int32 Index)
 	ManaText->SetText(FText::FromString(FString::FromInt(CardStatus.CardCost)));
 	AtkText->SetText(FText::FromString(FString::FromInt(CardStatus.CardAtk)));
 	DefText->SetText(FText::FromString(FString::FromInt(CardStatus.CardCost)));
-	CardIndex = Index;
 }
 
 void UCardWidget::SetPosition(float DeltaTime)
