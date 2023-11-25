@@ -4,6 +4,7 @@
 #include "Character/ZCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Character/CardComponent.h"
 #include "Components/CapsuleComponent.h"
 
 AZCharacter::AZCharacter()
@@ -26,5 +27,7 @@ AZCharacter::AZCharacter()
 	FirstPersonCamera->SetupAttachment(GetCapsuleComponent());
 	FirstPersonCamera->SetRelativeLocation(FVector(-10.f, 0.f, 60.f)); // Position the camera
 	FirstPersonCamera->bUsePawnControlRotation = true;
+
+	CardComponent = CreateDefaultSubobject<UCardComponent>(TEXT("CardComponent"));
 	
 }

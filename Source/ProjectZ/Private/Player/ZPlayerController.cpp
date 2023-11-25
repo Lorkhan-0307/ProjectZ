@@ -4,6 +4,10 @@
 #include "Player/ZPlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Blueprint/UserWidget.h"
+#include "Character/CardComponent.h"
+#include "Character/ZCharacter.h"
+#include "HUD/Card/CardHandHUD.h"
 
 void AZPlayerController::BeginPlay()
 {
@@ -14,9 +18,13 @@ void AZPlayerController::BeginPlay()
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
 	if (Subsystem)
 	{
-		Subsystem->AddMappingContext(ZContext, 0);		
+		Subsystem->AddMappingContext(ZContext, 0);
 	}
-	
+
+	CardComponent = Cast<AZCharacter>(GetCharacter())->GetCardComponent();
+
+	UCardHandHUD* CardHandHUD = CreateWidget<UCardHandHUD>(this,CardHandHUDClass);
+	CardHandHUD->AddToViewport();
 }
 
 void AZPlayerController::SetupInputComponent()
@@ -27,6 +35,7 @@ void AZPlayerController::SetupInputComponent()
 
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AZPlayerController::Move);
 	EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AZPlayerController::Look);
+	EnhancedInputComponent->BindAction(TestAction, ETriggerEvent::Triggered, this, &AZPlayerController::Test);
 }
 
 void AZPlayerController::Move(const FInputActionValue& Value)
@@ -51,4 +60,8 @@ void AZPlayerController::Look(const FInputActionValue& InputActionValue)
 	}
 }
 
-
+void AZPlayerController::Test()
+{
+	//if (CardComponent->GetDeckSize()>0)
+		//CardComponent->DrawAndAddCardDelegate.Broadcast(CardComponent->DrawCard());
+}

@@ -7,17 +7,23 @@
 #include "ZCharacter.generated.h"
 
 class UCameraComponent;
+class UCardComponent;
 
 UCLASS()
 class PROJECTZ_API AZCharacter : public AZCharacterBase
 {
 	GENERATED_BODY()
-	
+
 public:
 	AZCharacter();
+
+	UPROPERTY(EditAnywhere)
+	UCardComponent* CardComponent;
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE UCardComponent* GetCardComponent() const { return CardComponent; }
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	UCameraComponent* FirstPersonCamera;
-	
 };

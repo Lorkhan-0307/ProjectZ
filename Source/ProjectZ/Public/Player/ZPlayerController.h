@@ -7,9 +7,10 @@
 #include "InputActionValue.h"
 #include "ZPlayerController.generated.h"
 
+class UCardHandHUD;
 class UInputMappingContext;
 class UInputAction;
-struct FInputActionValue;
+class UCardComponent;
 
 UCLASS()
 class PROJECTZ_API AZPlayerController : public APlayerController
@@ -29,10 +30,24 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputAction> LookAction;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	TObjectPtr<UInputAction> InventoryAction;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	TObjectPtr<UInputAction> TestAction;
+
+	UPROPERTY(EditAnywhere, Category = Card)
+	TSubclassOf<UCardHandHUD> CardHandHUDClass;
 	
 	void Move(const FInputActionValue& InputActionValue);
 
 	void Look(const FInputActionValue& InputActionValue);
-	
-	
+
+	void Test(); 
+
+	UPROPERTY()
+	UCardComponent* CardComponent;
 };
+
+
