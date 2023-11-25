@@ -13,6 +13,7 @@ ProjectZ
 다들 화이팅입니다!
 ---
 #### Card System 사용법
+- Test용 기능 : 키보드 E 를 누르면 덱에서 손에 카드 한장을 추가 (나중에 전투 시스템 완성시 삭제)
 - BP_ZCharacter - CardComponent
 	- CardInventory (TArray)
 		- 소지 중인 카드를 저장 
