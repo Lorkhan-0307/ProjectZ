@@ -2,10 +2,13 @@
 
 
 #include "Character/ZCharacter.h"
+
+#include "AbilitySystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Character/CardComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Player/ZPlayerState.h"
 
 AZCharacter::AZCharacter()
 {
@@ -30,4 +33,19 @@ AZCharacter::AZCharacter()
 
 	CardComponent = CreateDefaultSubobject<UCardComponent>(TEXT("CardComponent"));
 	
+}
+
+void AZCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	InitAbilityActorInfo();
+}
+
+void AZCharacter::InitAbilityActorInfo()
+{
+	AZPlayerState* ZPlayerState = GetPlayerState<AZPlayerState>();
+	check(ZPlayerState);
+	ZPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(ZPlayerState,this);
+	AbilitySystemComponent = ZPlayerState->GetAbilitySystemComponent();
+	AttributeSet = ZPlayerState->GetAttributeSet();
 }

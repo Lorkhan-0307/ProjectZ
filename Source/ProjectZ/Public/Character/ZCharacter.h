@@ -23,7 +23,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE UCardComponent* GetCardComponent() const { return CardComponent; }
 
+	virtual void PossessedBy(AController* NewController) override;
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	UCameraComponent* FirstPersonCamera;
+
+	void InitAbilityActorInfo();
 };

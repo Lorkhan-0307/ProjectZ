@@ -32,3 +32,8 @@ void AZCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 }
 
+UAbilitySystemComponent* AZCharacterBase::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
+}
+
