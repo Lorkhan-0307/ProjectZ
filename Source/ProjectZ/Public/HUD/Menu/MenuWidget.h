@@ -17,7 +17,6 @@ class PROJECTZ_API UMenuWidget : public UUserWidget
 
 public:
 	virtual void NativeConstruct() override;
-	virtual void NativeOnInitialized() override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UButton* NewGameButton;

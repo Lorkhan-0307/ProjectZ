@@ -62,7 +62,10 @@ public:
 	UPROPERTY()
 	UCardHandWidget* CardHandWidget;
 
-	void InitCardStatus(FCard CardStatus, int32 Index);
+	FCardDragStartDelegate CardDragStartDelegate;
+	FCardDragEndDelegate CardDragEndDelegate;
+
+	void InitCardStatus(FCard CardStatus);
 
 	FORCEINLINE void SetCardIndex(int32 Index) { CardIndex = Index; }
 
