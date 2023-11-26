@@ -7,6 +7,7 @@
 #include "Data/Card.h"
 #include "CardComponent.generated.h"
 
+class AZCharacter;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDrawAndAddCardDelegate, FCard, NewCard);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateHandCardDelegate, int32, NewHandCount);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateLeftHandCardDelegate, FCard, LeftCard);
@@ -73,6 +74,9 @@ private:
 
 	int32 DeckSize;
 	int32 HandSize = 0;
+
+	UPROPERTY()
+	AZCharacter* ZCharacter;
 
 	void ShuffleDeck();
 };

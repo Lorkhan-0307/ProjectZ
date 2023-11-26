@@ -8,7 +8,7 @@
 #include "Camera/CameraComponent.h"
 #include "Character/CardComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "HUD/HUD/ZNonCombatHUD.h"
+#include "UI/HUD/ZNonCombatHUD.h"
 #include "Player/ZPlayerController.h"
 #include "Player/ZPlayerState.h"
 
@@ -27,14 +27,13 @@ AZCharacter::AZCharacter()
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 0.f, 850.f);
-	
+
 	FirstPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	FirstPersonCamera->SetupAttachment(GetCapsuleComponent());
 	FirstPersonCamera->SetRelativeLocation(FVector(-10.f, 0.f, 60.f)); // Position the camera
 	FirstPersonCamera->bUsePawnControlRotation = true;
 
 	CardComponent = CreateDefaultSubobject<UCardComponent>(TEXT("CardComponent"));
-	
 }
 
 void AZCharacter::PossessedBy(AController* NewController)
@@ -47,15 +46,15 @@ void AZCharacter::InitAbilityActorInfo()
 {
 	AZPlayerState* ZPlayerState = GetPlayerState<AZPlayerState>();
 	check(ZPlayerState);
-	ZPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(ZPlayerState,this);
+	ZPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(ZPlayerState, this);
 	AbilitySystemComponent = ZPlayerState->GetAbilitySystemComponent();
 	AttributeSet = ZPlayerState->GetAttributeSet();
 
 	if (AZPlayerController* ZPlayerController = Cast<AZPlayerController>(GetController()))
 	{
-		if (AZNonCombatHUD* ZNonCombatHUD = Cast<AZNonCombatHUD>(ZPlayerController->GetHUD()))
+		if (AZHUDBase* ZHUD = Cast<AZHUDBase>(ZPlayerController->GetHUD()))
 		{
-			//ZNonCombatHUD
+			ZHUD->InitOverlay(ZPlayerController, GetPlayerState(), GetAbilitySystemComponent(), GetAttributeSet(), this);
 		}
 	}
 }

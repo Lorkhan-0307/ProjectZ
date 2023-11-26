@@ -7,7 +7,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Character/CardComponent.h"
 #include "Character/ZCharacter.h"
-#include "HUD/Card/CardHandHUD.h"
+#include "UI/Card/CardHandHUD.h"
 
 void AZPlayerController::BeginPlay()
 {
