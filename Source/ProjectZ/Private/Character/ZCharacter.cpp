@@ -8,6 +8,8 @@
 #include "Camera/CameraComponent.h"
 #include "Character/CardComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "HUD/HUD/ZNonCombatHUD.h"
+#include "Player/ZPlayerController.h"
 #include "Player/ZPlayerState.h"
 
 AZCharacter::AZCharacter()
@@ -48,4 +50,12 @@ void AZCharacter::InitAbilityActorInfo()
 	ZPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(ZPlayerState,this);
 	AbilitySystemComponent = ZPlayerState->GetAbilitySystemComponent();
 	AttributeSet = ZPlayerState->GetAttributeSet();
+
+	if (AZPlayerController* ZPlayerController = Cast<AZPlayerController>(GetController()))
+	{
+		if (AZNonCombatHUD* ZNonCombatHUD = Cast<AZNonCombatHUD>(ZPlayerController->GetHUD()))
+		{
+			//ZNonCombatHUD
+		}
+	}
 }
