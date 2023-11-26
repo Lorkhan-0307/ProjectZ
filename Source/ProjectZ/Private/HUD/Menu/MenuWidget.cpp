@@ -15,19 +15,10 @@ void UMenuWidget::NativeConstruct()
 	QuitGameButton->OnClicked.AddDynamic(this,&UMenuWidget::QuitGame);
 }
 
-void UMenuWidget::NativeOnInitialized()
-{
-	Super::NativeOnInitialized();
-	NewGameButton->OnClicked.AddDynamic(this,&UMenuWidget::NewGame);
-	QuitGameButton->OnClicked.AddDynamic(this,&UMenuWidget::QuitGame);
-}
-
 void UMenuWidget::NewGame()
 {
-	UE_LOG(LogTemp,Warning,TEXT("DD"));
+	GetOwningPlayer()->SetShowMouseCursor(false);
 	UGameplayStatics::OpenLevel(this,NewGameMapName);
-	//SetVisibility(ESlateVisibility::Hidden);
-	//Cast<AZHUD>(GetOwningPlayer()->GetHUD())->AddCardHandHUDOverlay();;
 }
 
 void UMenuWidget::QuitGame()

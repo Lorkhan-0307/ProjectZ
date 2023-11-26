@@ -42,5 +42,8 @@ struct FCard : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ECardType CardType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool IsValid = true;
 };
 

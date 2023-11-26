@@ -34,12 +34,16 @@ void UCardComponent::BeginPlay()
 	{
 		DrawCard();
 	}
+
+	SetLeftHandCard(ConvertCardNameToFCard(FName("Axe")));
+	UpdateLeftHandCardDelegate.Broadcast(GetLeftHandCard());
+	SetRightHandCard(ConvertCardNameToFCard(FName("Sword")));
+	UpdateRightHandCardDelegate.Broadcast(GetRightHandCard());
 }
 
 void UCardComponent::AddCard(FName NewCardName)
 {
-	const FCard NewCard = *CardDataTable->FindRow<FCard>(NewCardName, FString(""));
-	CardDeck.Push(NewCard);
+	CardDeck.Push(ConvertCardNameToFCard(NewCardName));
 	DeckSize++;
 }
 
@@ -61,6 +65,12 @@ void UCardComponent::DrawCard()
 	DeckSize--;
 	CardHand.Add(TopCard);
 	DrawAndAddCardDelegate.Broadcast(TopCard);
+}
+
+FCard UCardComponent::ConvertCardNameToFCard(FName CardName)
+{
+	const FCard Card = *CardDataTable->FindRow<FCard>(CardName, FString(""));
+	return Card;
 }
 
 
