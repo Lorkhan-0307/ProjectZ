@@ -54,6 +54,7 @@ void AZCharacter::InitAbilityActorInfo()
 	{
 		if (AZHUDBase* ZHUD = Cast<AZHUDBase>(ZPlayerController->GetHUD()))
 		{
+			UE_LOG(LogTemp,Warning,TEXT("InitOverlay"));
 			ZHUD->InitOverlay(ZPlayerController, GetPlayerState(), GetAbilitySystemComponent(), GetAttributeSet(), this);
 		}
 	}

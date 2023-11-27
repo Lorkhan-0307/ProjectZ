@@ -6,6 +6,7 @@
 #include "Character/CardComponent.h"
 #include "Character/ZCharacter.h"
 #include "Components/Overlay.h"
+#include "Components/TextBlock.h"
 #include "UI/Card/CardWidget.h"
 
 void UCardHandWidget::SetCardComponent(UCardComponent* CC)
@@ -37,6 +38,10 @@ void UCardHandWidget::AddCardToHand(FCard NewCard)
 	UCardWidget* CardWidget = CreateCardWidget(NewCard);
 	HandCard.Add(CardWidget);
 	CardWidget->SetRenderTransform(CardSpawnPosition);
+	for (UCardWidget* i:HandCard)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("%d %s"),a,*i->CardName->GetText().ToString())
+	}
 }
 
 // Set Card Position

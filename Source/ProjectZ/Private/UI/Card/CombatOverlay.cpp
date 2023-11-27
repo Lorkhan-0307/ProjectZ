@@ -9,9 +9,8 @@
 void UCombatOverlay::NativeConstruct()
 {
 	Super::NativeConstruct();
-	//CardHandWidget->SetViewportSize(ViewportSize);
-	// Useless code
 	CardHandWidget->SetCardComponent(CardComponent);
+	CardHandWidget->a=100;
 
 	//CardComponent = Cast<AZCharacter>(GetOwningPlayer()->GetCharacter())->GetCardComponent();
 	// This Line has been moved to the Initoverlay function in the ZHUDbase code.

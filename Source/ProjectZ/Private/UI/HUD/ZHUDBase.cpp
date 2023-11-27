@@ -25,6 +25,7 @@ UZWidgetController* AZHUDBase::GetOverlayWidgetController(const FWidgetControlle
 // Create Overlay and Assign OverlayWidgetController to Overlay
 void AZHUDBase::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS, AZCharacter* Character)
 {
+	if (OverlayWidget != nullptr) return;
 	ZCharacter = Character;
 	OverlayWidget = CreateWidget<UZUserWidget>(GetWorld(), OverlayWidgetClass);
 	OverlayWidget->SetCardComponent(Character->CardComponent); // Code of CardHandHUD moved here
