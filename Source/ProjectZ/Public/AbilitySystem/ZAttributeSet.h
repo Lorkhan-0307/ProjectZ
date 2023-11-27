@@ -7,6 +7,8 @@
 #include "AbilitySystemComponent.h"
 #include "ZAttributeSet.generated.h"
 
+
+// Macro For Attributes Getter, Setter
 #define ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
 GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
 GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
@@ -25,7 +27,7 @@ public:
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Vital Attributes")
 	FGameplayAttributeData Health;
-	ATTRIBUTE_ACCESSORS(UZAttributeSet, Health)
+	ATTRIBUTE_ACCESSORS(UZAttributeSet, Health) // Make Getter, Setter
 
 	UPROPERTY(BlueprintReadOnly, Category = "Vital Attributes")
 	FGameplayAttributeData MaxHealth;

@@ -7,6 +7,7 @@
 #include "NonCombatOverlayWidgetController.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangeSignature, float, NewValue);
+// Not Implemented yet
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, FUIWidgetRow, Row);
 
 UCLASS()
@@ -17,6 +18,7 @@ class PROJECTZ_API UNonCombatOverlayWidgetController : public UZWidgetController
 public:
 	virtual void BroadcastInitialValues() override;
 	//virtual void BindCallbacksToDependencies() override;
+	// Not Implemented yet
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FOnAttributeChangeSignature OnHealthChanged;

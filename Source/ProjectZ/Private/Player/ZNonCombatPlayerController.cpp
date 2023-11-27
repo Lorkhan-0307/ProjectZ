@@ -1,15 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Player/ZPlayerController.h"
+#include "Player/ZNonCombatPlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Blueprint/UserWidget.h"
 #include "Character/CardComponent.h"
 #include "Character/ZCharacter.h"
-#include "UI/Card/CardHandHUD.h"
 
-void AZPlayerController::BeginPlay()
+void AZNonCombatPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -22,23 +21,20 @@ void AZPlayerController::BeginPlay()
 	}
 
 	CardComponent = Cast<AZCharacter>(GetCharacter())->GetCardComponent();
-
-	//UCardHandHUD* CardHandHUD = CreateWidget<UCardHandHUD>(this,CardHandHUDClass);
-	//CardHandHUD->AddToViewport();
 }
 
-void AZPlayerController::SetupInputComponent()
+void AZNonCombatPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
 
-	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AZPlayerController::Move);
-	EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AZPlayerController::Look);
-	EnhancedInputComponent->BindAction(TestAction, ETriggerEvent::Triggered, this, &AZPlayerController::Test);
+	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AZNonCombatPlayerController::Move);
+	EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AZNonCombatPlayerController::Look);
+	EnhancedInputComponent->BindAction(TestAction, ETriggerEvent::Triggered, this, &AZNonCombatPlayerController::Test);
 }
 
-void AZPlayerController::Move(const FInputActionValue& Value)
+void AZNonCombatPlayerController::Move(const FInputActionValue& Value)
 {
 	const FVector2D MovementVector = Value.Get<FVector2D>();
 
@@ -49,7 +45,7 @@ void AZPlayerController::Move(const FInputActionValue& Value)
 	}
 }
 
-void AZPlayerController::Look(const FInputActionValue& InputActionValue)
+void AZNonCombatPlayerController::Look(const FInputActionValue& InputActionValue)
 {
 	const FVector2D LookAxisVector = InputActionValue.Get<FVector2D>();
 
@@ -60,7 +56,7 @@ void AZPlayerController::Look(const FInputActionValue& InputActionValue)
 	}
 }
 
-void AZPlayerController::Test()
+void AZNonCombatPlayerController::Test()
 {
 	//if (CardComponent->GetDeckSize()>0)
 		//CardComponent->DrawAndAddCardDelegate.Broadcast(CardComponent->DrawCard());

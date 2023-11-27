@@ -22,7 +22,7 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UObject> WidgetController;
 
-	FORCEINLINE void SetCardComponent(UCardComponent* CC) { CardComponent = CC; }
+	virtual void SetCardComponent(UCardComponent* CC);
 
 protected:
 	UFUNCTION(BlueprintImplementableEvent)

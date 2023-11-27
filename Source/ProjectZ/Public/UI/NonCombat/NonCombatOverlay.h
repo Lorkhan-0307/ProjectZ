@@ -16,6 +16,7 @@ class PROJECTZ_API UNonCombatOverlay : public UZUserWidget
 
 public:
 	virtual void NativeConstruct() override;
+	virtual void SetCardComponent(UCardComponent* CC) override;
 	
 protected:
 	

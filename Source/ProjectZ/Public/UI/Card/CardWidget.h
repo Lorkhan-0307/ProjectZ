@@ -56,6 +56,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* DefText;
 
+	// Where the card should be
 	UPROPERTY(BlueprintReadWrite)
 	FWidgetTransform DestinationTransform;
 
@@ -70,22 +71,15 @@ public:
 
 	void InitCardStatus(FCard CardStatus);
 
-	FORCEINLINE void SetCardIndex(int32 Index) { CardIndex = Index; }
-
 	FORCEINLINE bool GetMouseHovered() const { return bMouseHovered; }
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
 	UDataTable* CardDataTable;
 
+	// Card Move Speed
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
 	int32 InterpSpeed = 5;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
-	int32 CardDistance = 110;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
-	float UseCardHeight = 300;
 
 	void SetPosition(float DeltaTime);
 
@@ -95,11 +89,8 @@ protected:
 private:
 	bool bIsInPosition = false;
 
-	int32 CardIndex = 0;
-
 	FVector2D ViewportSize;
-
-
+	
 	bool bMouseHovered = false;
 
 	FCard CardStat;

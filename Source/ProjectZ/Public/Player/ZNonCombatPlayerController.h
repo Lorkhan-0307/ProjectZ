@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "InputActionValue.h"
-#include "ZPlayerController.generated.h"
+#include "ZNonCombatPlayerController.generated.h"
 
 class UCardHandHUD;
 class UInputMappingContext;
@@ -13,7 +13,7 @@ class UInputAction;
 class UCardComponent;
 
 UCLASS()
-class PROJECTZ_API AZPlayerController : public APlayerController
+class PROJECTZ_API AZNonCombatPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
@@ -36,9 +36,6 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputAction> TestAction;
-
-	UPROPERTY(EditAnywhere, Category = Card)
-	TSubclassOf<UCardHandHUD> CardHandHUDClass;
 	
 	void Move(const FInputActionValue& InputActionValue);
 

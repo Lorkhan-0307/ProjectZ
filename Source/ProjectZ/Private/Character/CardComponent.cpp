@@ -17,12 +17,12 @@ UCardComponent::UCardComponent()
 	// ...
 }
 
-
 // Called when the game starts
 void UCardComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// For Test
 	AddCard(FName("Axe"));
 	AddCard(FName("KitchenKnife"));
 	AddCard(FName("Sword"));
@@ -32,12 +32,8 @@ void UCardComponent::BeginPlay()
 	AddCard(FName("Sword"));
 	AddCard(FName("KitchenKnife"));
 	// ...
-
-
-	for (int i = 0; i < FirstCardCount; i++)
-	{
-		DrawCard();
-	}
+	
+	FirstDrawCard();
 
 	SetLeftHandCard(ConvertCardNameToFCard(FName("Axe")));
 	UpdateLeftHandCardDelegate.Broadcast(GetLeftHandCard());
@@ -45,6 +41,7 @@ void UCardComponent::BeginPlay()
 	UpdateRightHandCardDelegate.Broadcast(GetRightHandCard());
 }
 
+// Add Card to Deck
 void UCardComponent::AddCard(FName NewCardName)
 {
 	CardDeck.Push(ConvertCardNameToFCard(NewCardName));
@@ -60,6 +57,7 @@ void UCardComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	// ...
 }
 
+// Draw Card for deck and add card to hand
 void UCardComponent::DrawCard()
 {
 	if (CardDeck.Num() == 0) return;
@@ -71,14 +69,24 @@ void UCardComponent::DrawCard()
 	DrawAndAddCardDelegate.Broadcast(TopCard);
 }
 
+// Get name and return FCard
 FCard UCardComponent::ConvertCardNameToFCard(FName CardName)
 {
 	const FCard Card = *CardDataTable->FindRow<FCard>(CardName, FString(""));
 	return Card;
 }
 
-
+// Shuffle Deck
 void UCardComponent::ShuffleDeck()
 {
 	CardDeck.Sort([this](const FCard a, const FCard b) { return FMath::FRand() < 0.5f; });
+}
+
+// When enter combat, Draw Cards
+void UCardComponent::FirstDrawCard()
+{
+	for (int i = 0; i < FirstCardCount; i++)
+	{
+		DrawCard();
+	}
 }

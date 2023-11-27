@@ -8,11 +8,11 @@
 #include "Components/Overlay.h"
 #include "UI/Card/CardWidget.h"
 #include "UI/ZHUD.h"
-#include "Player/ZPlayerController.h"
+#include "Player/ZNonCombatPlayerController.h"
 
 void UCardHandWidget::SetCardComponent(UCardComponent* CC)
 {
-	CardComponent=CC;
+	CardComponent = CC;
 	if (CardComponent)
 	{
 		CardComponent->DrawAndAddCardDelegate.AddDynamic(this, &UCardHandWidget::AddCardToHand);
@@ -24,24 +24,16 @@ void UCardHandWidget::SetCardComponent(UCardComponent* CC)
 void UCardHandWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	if (AZPlayerController* PlayerController = Cast<AZPlayerController>(GetOwningPlayer()))
-	{
-		if (AZCharacter* Character = Cast<AZCharacter>(PlayerController->GetCharacter()))
-		{
-			//CardComponent = Character->GetCardComponent();
-		}
-	}
-
-	
 }
 
 void UCardHandWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
+	// TO DO : Find a way not to use tick
 	UpdateCardPosition();
 }
 
-
+// Get Card, Create card widget
 void UCardHandWidget::AddCardToHand(FCard NewCard)
 {
 	UCardWidget* CardWidget = CreateCardWidget(NewCard);
@@ -49,6 +41,7 @@ void UCardHandWidget::AddCardToHand(FCard NewCard)
 	CardWidget->SetRenderTransform(CardSpawnPosition);
 }
 
+// Set Card Position
 void UCardHandWidget::UpdateCardPosition()
 {
 	for (int i = 0; i < HandCard.Num(); i++)
@@ -59,6 +52,7 @@ void UCardHandWidget::UpdateCardPosition()
 	if (RightHandCardWidget) RightHandCardWidget->DestinationTransform = CalculateCardPosition(-1);
 }
 
+// Create Card Widget by FCard
 UCardWidget* UCardHandWidget::CreateCardWidget(FCard CardStatus)
 {
 	UCardWidget* CardWidget = CreateWidget<UCardWidget>(GetOwningPlayer(), CardWidgetClass);
@@ -124,6 +118,7 @@ void UCardHandWidget::DragEnded(UCardWidget* CardDragged, bool bIsUsed)
 	}
 }
 
+// Convert card index 0, 1, 2, 3, 4 -> -2, -1, 0, 1, 2
 float UCardHandWidget::GetCardIndexPositionFromCenter(int32 Index) const
 {
 	float NewIndex = (float)Index - (((float)HandCard.Num() - 1.f) / 2.f);

@@ -8,3 +8,8 @@ void UZUserWidget::SetWidgetController(UObject* InWidgetController)
 	WidgetController = InWidgetController;
 	WidgetControllerSet();
 }
+
+void UZUserWidget::SetCardComponent(UCardComponent* CC)
+{
+	CardComponent = CC;
+}

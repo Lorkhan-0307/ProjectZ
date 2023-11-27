@@ -10,7 +10,8 @@
 #include "Components/TextBlock.h"
 #include "Data/Card.h"
 #include "Engine/DataTable.h"
-#include "Player/ZPlayerController.h"
+// TO DO : Replace to CombatPlayerController
+#include "Player/ZNonCombatPlayerController.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "UI/Card/CardDragDropOperation.h"
 #include "Ui/Card/CardHandWidget.h"
@@ -60,7 +61,6 @@ void UCardWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPoint
 	SetVisibility(ESlateVisibility::Hidden);
 
 	OutOperation = CardDragDropOperation;
-	//CardHandWidget->DragStarted(this);
 	CardDragStartDelegate.Broadcast(this);
 }
 
@@ -70,21 +70,20 @@ void UCardWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, U
 	if (InOperation->DefaultDragVisual->GetCachedGeometry().GetAbsolutePosition().Y < CardHandWidget->GetPlayCardHeight())
 	{
 		// TO DO : Active Card Effect
-
-		//CardHandWidget->DragEnded(this, true);
+		
 		CardDragEndDelegate.Broadcast(this, true);
 		RemoveFromParent();
 		CollectGarbage(EObjectFlags::RF_BeginDestroyed);
 	}
 	else
 	{
-		//CardHandWidget->DragEnded(this, false);
 		CardDragEndDelegate.Broadcast(this, false);
 		SetVisibility(ESlateVisibility::Visible);
 		bMouseHovered = false;
 	}
 }
 
+// Initialize Card UI by FCard
 void UCardWidget::InitCardStatus(FCard CardStatus)
 {
 	CardStat = CardStatus;
@@ -96,6 +95,7 @@ void UCardWidget::InitCardStatus(FCard CardStatus)
 	DefText->SetText(FText::FromString(FString::FromInt(CardStatus.CardCost)));
 }
 
+// Set Position by Interpolation
 void UCardWidget::SetPosition(float DeltaTime)
 {
 	if (GetRenderTransform() == DestinationTransform) return;

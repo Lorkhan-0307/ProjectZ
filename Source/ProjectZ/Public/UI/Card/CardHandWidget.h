@@ -41,21 +41,26 @@ protected:
 	UPROPERTY()
 	UCardWidget* RightHandCardWidget;
 
+	// Card Horizontal Distance
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
 	float CardDistance = 150.f;
 
+	// The height that goes up when you put the mouse on the card
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
 	float MouseHoveredHeight = 50.f;
 
+	// Angle between cards
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
 	float CardAngle = 10.f;
 
+	// Card Vertical Distance
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
 	float ArcHeight = 10.f;
 
+	// Height when use the card
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
 	float PlayCardHeight = 300.f;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
 	FVector2D CardSize = FVector2D(200, 300);
 
@@ -66,11 +71,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
 	FWidgetTransform CardSpawnPosition;
 
+	// Distance from the Left
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
-	FVector2D LeftHandCardPosition; // Distance from the Left
+	FVector2D LeftHandCardPosition; 
 
+	// Distance from the Right
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
-	FVector2D RightHandCardPosition; // Distance from the Right
+	FVector2D RightHandCardPosition; 
 
 	UFUNCTION(BlueprintCallable)
 	void AddCardToHand(FCard NewCard);

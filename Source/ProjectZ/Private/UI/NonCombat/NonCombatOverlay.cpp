@@ -6,21 +6,17 @@
 #include "Character/CardComponent.h"
 #include "Character/ZCharacter.h"
 #include "Ui/Card/CardWidget.h"
-#include "Player/ZPlayerController.h"
+#include "Player/ZNonCombatPlayerController.h"
 
 
 void UNonCombatOverlay::NativeConstruct()
 {
 	Super::NativeConstruct();
-	UE_LOG(LogTemp,Warning,TEXT("%d"),GetOwningPlayer()->GetCharacter()==nullptr?0:1);
-	if (AZPlayerController* PlayerController = Cast<AZPlayerController>(GetOwningPlayer()))
-	{
-		if (AZCharacter* Character = Cast<AZCharacter>(PlayerController->GetCharacter()))
-		{
-			CardComponent = Character->GetCardComponent();
-		}
-	}
-	
+}
+
+void UNonCombatOverlay::SetCardComponent(UCardComponent* CC)
+{
+	Super::SetCardComponent(CC);
 	if (CardComponent)
 	{
 		CardComponent->UpdateLeftHandCardDelegate.AddDynamic(this,&UNonCombatOverlay::UpdateLeftHandCard);

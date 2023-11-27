@@ -12,13 +12,14 @@ class UCardComponent;
 /**
  * 
  */
+
+// It was CardHandHUD
 UCLASS()
-class PROJECTZ_API UCardHandHUD : public UZUserWidget
+class PROJECTZ_API UCombatOverlay : public UZUserWidget
 {
 	GENERATED_BODY()
 
 public:
-	void SetViewportSize(const FVector2D& Size) { ViewportSize = Size; }
 
 protected:
 	virtual void NativeConstruct() override;
@@ -29,6 +30,4 @@ protected:
 
 
 private:
-	
-	FVector2D ViewportSize;
 };

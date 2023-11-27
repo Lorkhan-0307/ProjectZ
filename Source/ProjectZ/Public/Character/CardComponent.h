@@ -20,25 +20,28 @@ class PROJECTZ_API UCardComponent : public UActorComponent
 
 public:
 	UCardComponent();
+	void FirstDrawCard();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable)
 	void DrawCard();
 
+	// Draw Card from deck, Add Card to hand
 	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable)
 	FDrawAndAddCardDelegate DrawAndAddCardDelegate;
 
-	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable)
-	FUpdateHandCardDelegate UpdateHandCardDelegate;
-
+	// When change left hand card
 	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable)
 	FUpdateLeftHandCardDelegate UpdateLeftHandCardDelegate;
 
+	// When change right hand card
 	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable)
 	FUpdateRightHandCardDelegate UpdateRightHandCardDelegate;
-
+	
 	FCard ConvertCardNameToFCard(FName CardName);
 
+
+	//Getter, Setter
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE int32 GetDeckSize() const { return DeckSize; }
 
@@ -51,20 +54,27 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-
+	
 	void AddCard(FName NewCard);
 	void DeleteCard(FName DeleteCard);
 
 private:
+	// Card data
 	UPROPERTY(EditAnywhere, Category = Card)
 	UDataTable* CardDataTable;
 
+	// Card Inventory : For NonCombat
+	UPROPERTY(VisibleAnywhere, Category = Card)
+	TArray<FCard> CardInventory;
+	
+	// Card Deck : For Combat
 	UPROPERTY(VisibleAnywhere, Category = Card)
 	TArray<FCard> CardDeck;
-
+	// Card Hand : For Combat
 	UPROPERTY(VisibleAnywhere, Category = Card)
 	TArray<FCard> CardHand;
 
+	// Number of cards in hand when start combat
 	UPROPERTY(EditAnywhere, Category = Card)
 	int32 FirstCardCount;
 

@@ -25,13 +25,7 @@ void AZCharacterBase::Tick(float DeltaTime)
 
 }
 
-// Called to bind functionality to input
-void AZCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-}
-
+// Set AbilitySystemComponent
 UAbilitySystemComponent* AZCharacterBase::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
