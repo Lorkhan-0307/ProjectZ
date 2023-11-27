@@ -21,6 +21,8 @@ class PROJECTZ_API UZAttributeSet : public UAttributeSet
 {
 	GENERATED_BODY()
 public:
+
+	
 	UPROPERTY(BlueprintReadOnly, Category = "Vital Attributes")
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, Health)

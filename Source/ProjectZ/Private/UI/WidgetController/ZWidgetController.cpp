@@ -13,4 +13,5 @@ void UZWidgetController::SetWidgetControllerParams(const FWidgetControllerParams
 
 void UZWidgetController::BroadcastInitialValues()
 {
+	
 }

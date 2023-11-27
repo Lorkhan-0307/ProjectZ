@@ -6,8 +6,8 @@
 
 void UNonCombatOverlayWidgetController::BroadcastInitialValues()
 {
-	const UZAttributeSet* AuraAttributeSet = CastChecked<UZAttributeSet>(AttributeSet);
+	const UZAttributeSet* ZAttributeSet = CastChecked<UZAttributeSet>(AttributeSet);
 
-	OnHealthChanged.Broadcast(AuraAttributeSet->GetHealth());
-	OnMaxHealthChanged.Broadcast(AuraAttributeSet->GetMaxHealth());
+	OnHealthChanged.Broadcast(ZAttributeSet->GetHealth());
+	OnMaxHealthChanged.Broadcast(ZAttributeSet->GetMaxHealth());
 }
