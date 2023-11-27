@@ -3,6 +3,8 @@
 
 #include "UI/ZUserWidget.h"
 
+#include "UI/WidgetController/OverlayWidgetController.h"
+
 void UZUserWidget::SetWidgetController(UObject* InWidgetController)
 {
 	WidgetController = InWidgetController;
@@ -12,4 +14,16 @@ void UZUserWidget::SetWidgetController(UObject* InWidgetController)
 void UZUserWidget::SetCardComponent(UCardComponent* CC)
 {
 	CardComponent = CC;
+}
+
+void UZUserWidget::WidgetControllerSet()
+{
+}
+
+void UZUserWidget::OnHealthChanged()
+{
+}
+
+void UZUserWidget::OnMentalityChanged()
+{
 }

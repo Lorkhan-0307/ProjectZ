@@ -25,12 +25,18 @@ public:
 	virtual void SetCardComponent(UCardComponent* CC);
 
 protected:
-	// Set Widget Controller by Blueprint
-	UFUNCTION(BlueprintImplementableEvent)
-	void WidgetControllerSet();
+	//UFUNCTION(BlueprintImplementableEvent) 
+	virtual void WidgetControllerSet();
+
+	UFUNCTION()
+	virtual void OnHealthChanged();
+
+	UFUNCTION()
+	virtual void OnMentalityChanged();
 
 	UPROPERTY()
 	UCardComponent* CardComponent;
+
 
 private:
 };
