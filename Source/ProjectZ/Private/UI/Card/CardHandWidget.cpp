@@ -7,8 +7,6 @@
 #include "Character/ZCharacter.h"
 #include "Components/Overlay.h"
 #include "UI/Card/CardWidget.h"
-#include "UI/ZHUD.h"
-#include "Player/ZNonCombatPlayerController.h"
 
 void UCardHandWidget::SetCardComponent(UCardComponent* CC)
 {

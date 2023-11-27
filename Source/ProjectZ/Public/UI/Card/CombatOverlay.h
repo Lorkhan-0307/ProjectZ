@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UI/ZUserWidget.h"
-#include "CardHandHUD.generated.h"
+#include "CombatOverlay.generated.h"
 
 class UCardWidget;
 class UCardHandWidget;

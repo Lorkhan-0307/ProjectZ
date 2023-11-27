@@ -2,7 +2,8 @@
 
 
 #include "Character/CardComponent.h"
-#include "Player/ZPlayerController.h"
+// TO DO : Change ZCombatPlayerController
+#include "Player/ZNonCombatPlayerController.h"
 #include "Character/ZCharacter.h"
 #include "UI/HUD/ZHUDBase.h"
 

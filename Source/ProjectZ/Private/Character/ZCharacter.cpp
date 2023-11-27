@@ -9,7 +9,7 @@
 #include "Character/CardComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "UI/HUD/ZNonCombatHUD.h"
-#include "Player/ZPlayerController.h"
+#include "Player/ZNonCombatPlayerController.h"
 #include "Player/ZPlayerState.h"
 
 AZCharacter::AZCharacter()
@@ -50,7 +50,7 @@ void AZCharacter::InitAbilityActorInfo()
 	AbilitySystemComponent = ZPlayerState->GetAbilitySystemComponent();
 	AttributeSet = ZPlayerState->GetAttributeSet();
 
-	if (AZPlayerController* ZPlayerController = Cast<AZPlayerController>(GetController()))
+	if (AZNonCombatPlayerController* ZPlayerController = Cast<AZNonCombatPlayerController>(GetController()))
 	{
 		if (AZHUDBase* ZHUD = Cast<AZHUDBase>(ZPlayerController->GetHUD()))
 		{
