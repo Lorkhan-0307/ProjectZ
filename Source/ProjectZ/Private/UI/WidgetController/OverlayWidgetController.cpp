@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/WidgetController/NonCombatOverlayWidgetController.h"
+#include "UI/WidgetController/OverlayWidgetController.h"
 #include "AbilitySystem/ZAttributeSet.h"
 
-void UNonCombatOverlayWidgetController::BroadcastInitialValues()
+void UOverlayWidgetController::BroadcastInitialValues()
 {
 	const UZAttributeSet* ZAttributeSet = CastChecked<UZAttributeSet>(AttributeSet);
 

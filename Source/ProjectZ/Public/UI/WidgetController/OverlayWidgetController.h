@@ -4,14 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "UI/WidgetController/ZWidgetController.h"
-#include "NonCombatOverlayWidgetController.generated.h"
+#include "OverlayWidgetController.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangeSignature, float, NewValue);
 // Not Implemented yet
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, FUIWidgetRow, Row);
 
-UCLASS()
-class PROJECTZ_API UNonCombatOverlayWidgetController : public UZWidgetController
+UCLASS(BlueprintType, Blueprintable)
+class PROJECTZ_API UOverlayWidgetController : public UZWidgetController
 {
 	GENERATED_BODY()
 
