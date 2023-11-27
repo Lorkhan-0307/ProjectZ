@@ -25,6 +25,7 @@ public:
 	virtual void SetCardComponent(UCardComponent* CC);
 
 protected:
+	// Set Widget Controller by Blueprint
 	UFUNCTION(BlueprintImplementableEvent)
 	void WidgetControllerSet();
 
