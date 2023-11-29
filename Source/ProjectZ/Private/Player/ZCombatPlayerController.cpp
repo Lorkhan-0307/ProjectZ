@@ -34,8 +34,6 @@ void AZCombatPlayerController::MoveCam(const FInputActionValue& Value)
 
     if (APawn* ControlledPawn = GetPawn<APawn>())
     {
-        //ControlledPawn->AddMovementInput(ControlledPawn->GetActorForwardVector(), MovementVector.Y);
-        //ControlledPawn->AddMovementInput(ControlledPawn->GetActorRightVector(), MovementVector.X);
         ControlledPawn->AddControllerPitchInput(MovementVector.Y);
         ControlledPawn->AddControllerYawInput(MovementVector.X);
     }
