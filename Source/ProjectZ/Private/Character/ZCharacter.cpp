@@ -2,10 +2,16 @@
 
 
 #include "Character/ZCharacter.h"
+
+#include "AbilitySystemComponent.h"
+#include "AbilitySystem/ZAbilitySystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Character/CardComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "UI/HUD/ZNonCombatHUD.h"
+#include "Player/ZNonCombatPlayerController.h"
+#include "Player/ZPlayerState.h"
 
 AZCharacter::AZCharacter()
 {
@@ -22,12 +28,47 @@ AZCharacter::AZCharacter()
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 0.f, 850.f);
-	
+
 	FirstPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	FirstPersonCamera->SetupAttachment(GetCapsuleComponent());
 	FirstPersonCamera->SetRelativeLocation(FVector(-10.f, 0.f, 60.f)); // Position the camera
 	FirstPersonCamera->bUsePawnControlRotation = true;
+}
 
-	CardComponent = CreateDefaultSubobject<UCardComponent>(TEXT("CardComponent"));
-	
+// When PlayerController Possess the Character
+void AZCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	InitAbilityActorInfo();
+}
+
+// Setup Character
+void AZCharacter::InitAbilityActorInfo()
+{
+	if (AbilitySystemComponent) return;
+	AZPlayerState* ZPlayerState = GetPlayerState<AZPlayerState>();
+	check(ZPlayerState);
+	ZPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(ZPlayerState, this);
+	Cast<UZAbilitySystemComponent>(ZPlayerState->GetAbilitySystemComponent())->AbilityActorInfoSet();
+	AbilitySystemComponent = ZPlayerState->GetAbilitySystemComponent();
+	AttributeSet = ZPlayerState->GetAttributeSet();
+
+	if (AZNonCombatPlayerController* ZPlayerController = Cast<AZNonCombatPlayerController>(GetController()))
+	{
+		if (AZHUDBase* ZHUD = Cast<AZHUDBase>(ZPlayerController->GetHUD()))
+		{
+			ZHUD->InitOverlay(ZPlayerController, GetPlayerState(), GetAbilitySystemComponent(), GetAttributeSet(), this);
+		}
+	}
+	InitializeDefaultAttributes();
+
+	// TO DO : Make Difference by game mode
+	CardComponent->InitializeNonCombat(this);
+	CardComponent->InitializeCombat(this);
+}
+
+int32 AZCharacter::GetLevel()
+{
+	const AZPlayerState* ZPlayerState = GetPlayerState<AZPlayerState>();
+	return ZPlayerState->GetPlayerLevel();
 }

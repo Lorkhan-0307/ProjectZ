@@ -3,27 +3,52 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
+#include "Interaction/CombatInterface.h"
 #include "ZCharacterBase.generated.h"
 
-UCLASS()
-class PROJECTZ_API AZCharacterBase : public ACharacter
+class UGameplayEffect;
+class UAbilitySystemComponent;
+class UAttributeSet;
+
+UCLASS(Abstract)
+class PROJECTZ_API AZCharacterBase : public ACharacter, public IAbilitySystemInterface, public ICombatInterface
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	AZCharacterBase();
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	UPROPERTY(EditAnywhere)
+	UCardComponent* CardComponent;
 
+	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE UCardComponent* GetCardComponent() const { return CardComponent; }
+
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	FORCEINLINE UAttributeSet* GetAttributeSet() const { return AttributeSet; }
+
+protected:
+	virtual void BeginPlay() override;
+	virtual int32 GetLevel();
+
+	UPROPERTY()
+	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+
+	UPROPERTY()
+	TObjectPtr<UAttributeSet> AttributeSet;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
+	TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
+	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes;
+
+	virtual void InitAbilityActorInfo();
+	
+	void InitializeDefaultAttributes() const;
 };

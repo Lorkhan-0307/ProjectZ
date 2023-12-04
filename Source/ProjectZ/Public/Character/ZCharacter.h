@@ -17,13 +17,13 @@ class PROJECTZ_API AZCharacter : public AZCharacterBase
 public:
 	AZCharacter();
 
-	UPROPERTY(EditAnywhere)
-	UCardComponent* CardComponent;
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void InitAbilityActorInfo() override;
 
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE UCardComponent* GetCardComponent() const { return CardComponent; }
+	virtual int32 GetLevel() override;
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	UCameraComponent* FirstPersonCamera;
+	
 };
