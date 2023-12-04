@@ -15,3 +15,7 @@ void UZWidgetController::BroadcastInitialValues()
 {
 	
 }
+
+void UZWidgetController::BindCallbacksToDependencies()
+{
+}

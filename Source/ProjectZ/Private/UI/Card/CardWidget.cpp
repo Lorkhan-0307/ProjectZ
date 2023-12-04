@@ -70,6 +70,7 @@ void UCardWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, U
 	if (InOperation->DefaultDragVisual->GetCachedGeometry().GetAbsolutePosition().Y < CardHandWidget->GetPlayCardHeight())
 	{
 		// TO DO : Active Card Effect
+		CardComponent->ActiveCard(CardStat);
 		
 		CardDragEndDelegate.Broadcast(this, true);
 		RemoveFromParent();

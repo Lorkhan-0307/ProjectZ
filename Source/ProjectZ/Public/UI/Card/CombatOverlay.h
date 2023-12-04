@@ -9,6 +9,8 @@
 class UCardWidget;
 class UCardHandWidget;
 class UCardComponent;
+class UProgressBar;
+
 /**
  * 
  */
@@ -26,6 +28,18 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UCardHandWidget* CardHandWidget;
+
+	/*
+	virtual void OnHealthChanged(float NewValue) override;
+	
+	virtual void OnMaxHealthChanged(float NewValue) override; 
+	
+	virtual void OnMentalityChanged(float NewValue) override;
+	
+	virtual void OnMaxMentalityChanged(float NewValue) override;
+	*/
+
+	virtual void WidgetControllerSet() override;
 
 
 

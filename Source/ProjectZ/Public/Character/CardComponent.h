@@ -5,12 +5,17 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Data/Card.h"
+#include "GameplayEffectTypes.h"
 #include "CardComponent.generated.h"
 
+class AZCharacterBase;
 class AZCharacter;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDrawAndAddCardDelegate, FCard, NewCard);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateHandCardDelegate, int32, NewHandCount);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateLeftHandCardDelegate, FCard, LeftCard);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateRightHandCardDelegate, FCard, RightCard);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -37,15 +42,21 @@ public:
 	// When change right hand card
 	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable)
 	FUpdateRightHandCardDelegate UpdateRightHandCardDelegate;
-	
-	FCard ConvertCardNameToFCard(FName CardName);
 
+	void InitializeNonCombat(AZCharacterBase* Character);
+	void InitializeCombat(AZCharacterBase* Character);
+
+	FCard ConvertCardNameToFCard(FName CardName);
+	void InitializeCardInventory(FName CharacterName);
+
+	// Active Card, Apply Effect to target
+	void ActiveCard(FCard Card);
 
 	//Getter, Setter
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE int32 GetDeckSize() const { return DeckSize; }
+	FORCEINLINE int32 GetDeckSize() const { return CardDeck.Num(); }
 
-	FORCEINLINE int32 GetHandSize() const { return HandSize; }
+	FORCEINLINE int32 GetHandSize() const { return CardHand.Num(); }
 
 	FORCEINLINE FCard GetLeftHandCard() const { return LeftHandCard; }
 	FORCEINLINE FCard GetRightHandCard() const { return RightHandCard; }
@@ -54,8 +65,9 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	
-	void AddCard(FName NewCard);
+
+	// Change function name AddCard -> AddCardToDeck
+	void AddCardToDeck(FName NewCard);
 	void DeleteCard(FName DeleteCard);
 
 private:
@@ -63,10 +75,14 @@ private:
 	UPROPERTY(EditAnywhere, Category = Card)
 	UDataTable* CardDataTable;
 
+	// Character Data
+	UPROPERTY(EditAnywhere, Category = Card)
+	UDataTable* CharacterDataTable;
+
 	// Card Inventory : For NonCombat
 	UPROPERTY(VisibleAnywhere, Category = Card)
 	TArray<FCard> CardInventory;
-	
+
 	// Card Deck : For Combat
 	UPROPERTY(VisibleAnywhere, Category = Card)
 	TArray<FCard> CardDeck;
@@ -86,7 +102,10 @@ private:
 	int32 HandSize = 0;
 
 	UPROPERTY()
-	AZCharacter* ZCharacter;
+	AZCharacterBase* ZCharacter;
 
 	void ShuffleDeck();
+	void MakeCardDeck();
+
+	void ApplyEffectToTarget(TSubclassOf<UGameplayEffect> Effect, int32 CardLevel, AZCharacterBase* TargetCharacter);
 };

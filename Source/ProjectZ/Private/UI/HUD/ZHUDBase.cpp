@@ -14,8 +14,7 @@ UZWidgetController* AZHUDBase::GetOverlayWidgetController(const FWidgetControlle
 	{
 		OverlayWidgetController = NewObject<UZWidgetController>(this, OverlayWidgetControllerClass);
 		OverlayWidgetController->SetWidgetControllerParams(WidgetControllerParams);
-		//OverlayWidgetController->BindCallbacksToDependencies();
-		// Not implemented yet
+		OverlayWidgetController->BindCallbacksToDependencies();
 
 		return OverlayWidgetController;
 	}

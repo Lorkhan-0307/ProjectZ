@@ -3,12 +3,31 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
+#include "Engine/DataTable.h"
 #include "UI/WidgetController/ZWidgetController.h"
 #include "OverlayWidgetController.generated.h"
 
+struct FOnAttributeChangeData;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangeSignature, float, NewValue);
+
 // Not Implemented yet
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, FUIWidgetRow, Row);
+
+USTRUCT(BlueprintType)
+struct FUIWidetRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FGameplayTag MessageTag = FGameplayTag();;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FText Message = FText();
+
+	// TO DO : When card collecting system is finished and we need card gain UI, add card status or image, etc to this struct to send overlay
+};
 
 UCLASS(BlueprintType, Blueprintable)
 class PROJECTZ_API UOverlayWidgetController : public UZWidgetController
@@ -17,7 +36,7 @@ class PROJECTZ_API UOverlayWidgetController : public UZWidgetController
 
 public:
 	virtual void BroadcastInitialValues() override;
-	//virtual void BindCallbacksToDependencies() override;
+	virtual void BindCallbacksToDependencies() override;
 	// Not Implemented yet
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
@@ -31,4 +50,13 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FOnAttributeChangeSignature OnMaxMentalityChanged;
+
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget Data")
+	TObjectPtr<UDataTable> MessageWidgetDataTable;
+	
+	void HealthChanged(const FOnAttributeChangeData& Data) const;
+	void MaxHealthChanged(const FOnAttributeChangeData& Data) const;
+	void MentalityChanged(const FOnAttributeChangeData& Data) const;
+	void MaxMentalityChanged(const FOnAttributeChangeData& Data) const;
 };

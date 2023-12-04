@@ -20,11 +20,21 @@ public:
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
+	FORCEINLINE int32 GetPlayerLevel() const { return Level; }
+	FORCEINLINE void SetCharacterName(FName Name) { CharacterName = Name; }
+	FORCEINLINE FName GetCharacterName() const { return CharacterName; }
 
 protected:
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
+
+private:
+	// Not use for our game (maybe)
+	UPROPERTY(VisibleAnywhere)
+	int32 Level = 1.f;
+
+	FName CharacterName;
 };

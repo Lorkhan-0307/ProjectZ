@@ -20,11 +20,8 @@ public:
 	virtual void SetCardComponent(UCardComponent* CC) override;
 
 protected:
-	UPROPERTY(meta = (BindWidget))
-	UProgressBar* HealthBar;
-	
-	UPROPERTY(meta = (BindWidget))
-	UProgressBar* MentalityBar;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UCardWidget> CardWidgetClass;
 
 	UPROPERTY(meta = (BindWidget))
 	UCardWidget* LeftHandCardWidget;
@@ -32,23 +29,21 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UCardWidget* RightHandCardWidget;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UCardWidget> CardWidgetClass;
-
 	virtual void WidgetControllerSet() override;
 
+
 private:
-	float Health;
-	float MaxHealth;
+
+	/*
+	virtual void OnHealthChanged(float NewValue) override;
 	
-	UFUNCTION()
-	void UpdateHealth(float NewValue);
-
-	UFUNCTION()
-	void UpdateMaxHealth(float NewValue);
-
-	UFUNCTION()
-	void UpdateMentality(float NewValue);
+	virtual void OnMaxHealthChanged(float NewValue) override; 
+	
+	virtual void OnMentalityChanged(float NewValue) override;
+	
+	virtual void OnMaxMentalityChanged(float NewValue) override;
+	*/
+	
 	
 	UFUNCTION()
 	void UpdateLeftHandCard(FCard LeftCard);

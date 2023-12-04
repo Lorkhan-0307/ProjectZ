@@ -40,7 +40,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetControllerParams(const FWidgetControllerParams& WCParams);
 
+	// Initialize Attributes on widget
 	virtual void BroadcastInitialValues();
+	// When Attributes changes
+	virtual void BindCallbacksToDependencies();
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")

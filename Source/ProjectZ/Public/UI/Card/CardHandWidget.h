@@ -20,8 +20,6 @@ public:
 	void SetCardComponent(UCardComponent* CC);
 	FORCEINLINE void SetViewportSize(const FVector2D& Size) { ViewportSize = Size; }
 	FORCEINLINE float GetPlayCardHeight() const { return PlayCardHeight; }
-
-	int32 a=0;
 	
 
 protected:

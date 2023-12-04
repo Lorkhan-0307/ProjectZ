@@ -38,10 +38,6 @@ void UCardHandWidget::AddCardToHand(FCard NewCard)
 	UCardWidget* CardWidget = CreateCardWidget(NewCard);
 	HandCard.Add(CardWidget);
 	CardWidget->SetRenderTransform(CardSpawnPosition);
-	for (UCardWidget* i:HandCard)
-	{
-		UE_LOG(LogTemp,Warning,TEXT("%d %s"),a,*i->CardName->GetText().ToString())
-	}
 }
 
 // Set Card Position

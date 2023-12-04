@@ -5,7 +5,6 @@
 
 #include "Character/CardComponent.h"
 #include "Character/ZCharacter.h"
-#include "Components/ProgressBar.h"
 #include "Ui/Card/CardWidget.h"
 #include "Player/ZNonCombatPlayerController.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
@@ -26,27 +25,41 @@ void UNonCombatOverlay::SetCardComponent(UCardComponent* CC)
 	}
 }
 
+/*
 void UNonCombatOverlay::WidgetControllerSet()
 {
-	UOverlayWidgetController* OverlayWidgetController = Cast<UOverlayWidgetController>(WidgetController);
-	OverlayWidgetController->OnHealthChanged.AddDynamic(this, &UNonCombatOverlay::UpdateHealth);
-	OverlayWidgetController->OnMaxHealthChanged.AddDynamic(this, &UNonCombatOverlay::UpdateMaxHealth);
+	Super::WidgetControllerSet();
 }
 
-void UNonCombatOverlay::UpdateHealth(float NewValue)
+void UNonCombatOverlay::OnHealthChanged(float NewValue)
 {
 	Health = NewValue;
 	if (MaxHealth != 0) HealthBar->SetPercent(Health / MaxHealth);
 }
 
-void UNonCombatOverlay::UpdateMaxHealth(float NewValue)
+void UNonCombatOverlay::OnMaxHealthChanged(float NewValue)
 {
 	MaxHealth = NewValue;
 	if (MaxHealth != 0) HealthBar->SetPercent(Health / MaxHealth);
 }
 
-void UNonCombatOverlay::UpdateMentality(float NewValue)
+void UNonCombatOverlay::OnMentalityChanged(float NewValue)
 {
+	Mentality = NewValue;
+	if (MaxMentality != 0) MentalityBar->SetPercent(Mentality / MaxMentality);
+}
+
+void UNonCombatOverlay::OnMaxMentalityChanged(float NewValue)
+{
+	MaxMentality = NewValue;
+	if (MaxMentality != 0) MentalityBar->SetPercent(Mentality / MaxMentality);
+}
+*/
+
+
+void UNonCombatOverlay::WidgetControllerSet()
+{
+	Super::WidgetControllerSet();
 }
 
 void UNonCombatOverlay::UpdateLeftHandCard(FCard LeftCard)

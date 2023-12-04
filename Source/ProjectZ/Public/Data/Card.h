@@ -4,13 +4,16 @@
 #include "Engine/DataTable.h"
 #include "Card.generated.h"
 
+class UGameplayEffect;
 
 UENUM(BlueprintType)
 enum class ECardType : uint8
 {
 	ECT_Passive,
-	ECT_Usable,
-	ECT_Equipment
+	ECT_UsablePassive,
+	ECT_CanEquip,
+	ECT_CantEquip,
+	ECT_Skill
 };
 
 
@@ -42,6 +45,18 @@ struct FCard : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ECardType CardType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 CardLevel;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
+	TArray<TSubclassOf<UGameplayEffect>> InstantGameplayEffects;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
+	TArray<TSubclassOf<UGameplayEffect>> DurationGameplayEffects;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
+	TArray<TSubclassOf<UGameplayEffect>> InfiniteGameplayEffects;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool IsValid = true;
