@@ -4,6 +4,8 @@
 #include "Player/ZCombatPlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "GenericPlatform/GenericPlatformCrashContext.h"
 
 void AZCombatPlayerController::BeginPlay()
 {
@@ -16,6 +18,7 @@ void AZCombatPlayerController::BeginPlay()
     {
         Subsystem->AddMappingContext(ZContext, 0);
     }
+    SetControlRotation(FRotator::MakeFromEuler(FVector(0.f, 315.f, 0.f)));
 }
 
 void AZCombatPlayerController::SetupInputComponent()
@@ -25,6 +28,7 @@ void AZCombatPlayerController::SetupInputComponent()
     UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
 
     EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AZCombatPlayerController::MoveCam);
+    EnhancedInputComponent->BindAction(ZoomAction, ETriggerEvent::Triggered, this, &AZCombatPlayerController::ZoomCam);
 }
 
 void AZCombatPlayerController::MoveCam(const FInputActionValue& Value)
@@ -33,8 +37,22 @@ void AZCombatPlayerController::MoveCam(const FInputActionValue& Value)
 
     if (APawn* ControlledPawn = GetPawn<APawn>())
     {
-        ControlledPawn->AddControllerPitchInput(MovementVector.Y);
-        ControlledPawn->AddControllerYawInput(-MovementVector.X);
+        TargetRot = ControlledPawn->GetControlRotation();
+        TargetRot = FRotator::MakeFromEuler(FVector(TargetRot.Yaw - MovementVector.X, TargetRot.Pitch - MovementVector.Y, TargetRot.Roll));
+        SetControlRotation(FRotator::MakeFromEuler(FVector(TargetRot.Yaw, FMath::Clamp(TargetRot.Pitch, 270.f, 359.9f), TargetRot.Roll)));
     }
+}
 
+void AZCombatPlayerController::ZoomCam(const FInputActionValue& Value)
+{
+    const float MovementFloat = Value.Get<float>();
+    if (APawn* ControlledPawn = GetPawn<APawn>())
+    {
+        USpringArmComponent* SpringArmComponent = ControlledPawn->FindComponentByClass<USpringArmComponent>();
+        if(SpringArmComponent)
+        {
+            SpringArmComponent->TargetArmLength+=MovementFloat*100;
+            SpringArmComponent->TargetArmLength=FMath::Clamp(SpringArmComponent->TargetArmLength, 500, 1500);
+        }
+    }
 }

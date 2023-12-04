@@ -28,9 +28,11 @@ private:
     TObjectPtr<UInputAction> MoveAction;
 
     UPROPERTY(EditAnywhere, Category = Input)
-    TObjectPtr<UInputAction> LookAction;
+    TObjectPtr<UInputAction> ZoomAction;
 
     void MoveCam(const FInputActionValue& InputActionValue);
+    void ZoomCam(const FInputActionValue& InputActionValue);
+    FRotator TargetRot;
 
     // Camera movement and rotation speed
     UPROPERTY(EditAnywhere, Category = "Camera Settings")
