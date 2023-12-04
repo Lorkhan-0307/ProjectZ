@@ -6,6 +6,7 @@
 #include "Camera/CameraComponent.h"
 #include "Character/CardComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 
 AZCombatCharacter::AZCombatCharacter()
 {
@@ -23,10 +24,16 @@ AZCombatCharacter::AZCombatCharacter()
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 0.f, 850.f);
 
-	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
-	Camera->SetupAttachment(GetCapsuleComponent());
-	Camera->SetRelativeLocation(FVector(-10.f, 0.f, 60.f)); // Position the camera
-	Camera->bUsePawnControlRotation = true;
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	SpringArm->SetupAttachment(GetCapsuleComponent());
+	SpringArm->SetRelativeLocation(FVector(-10.f, 0.f, 60.f)); // Positioning StringArm
+	SpringArm->TargetArmLength = 800.f;
+	SpringArm->bDoCollisionTest = false;
+	SpringArm->bUsePawnControlRotation = true;
+
+	TCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("TCamera"));
+	TCamera->AttachToComponent(SpringArm, FAttachmentTransformRules::KeepRelativeTransform);
+	TCamera->bUsePawnControlRotation = true;
 
 	CardComponent = CreateDefaultSubobject<UCardComponent>(TEXT("CardComponent"));
 }

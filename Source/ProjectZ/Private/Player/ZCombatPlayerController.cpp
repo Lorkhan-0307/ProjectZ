@@ -25,7 +25,6 @@ void AZCombatPlayerController::SetupInputComponent()
     UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
 
     EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AZCombatPlayerController::MoveCam);
-    EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AZCombatPlayerController::RotateYaw);
 }
 
 void AZCombatPlayerController::MoveCam(const FInputActionValue& Value)
@@ -35,12 +34,7 @@ void AZCombatPlayerController::MoveCam(const FInputActionValue& Value)
     if (APawn* ControlledPawn = GetPawn<APawn>())
     {
         ControlledPawn->AddControllerPitchInput(MovementVector.Y);
-        ControlledPawn->AddControllerYawInput(MovementVector.X);
+        ControlledPawn->AddControllerYawInput(-MovementVector.X);
     }
 
-}
-
-void AZCombatPlayerController::RotateYaw(const FInputActionValue& Value)
-{
-    // Handle rotating the camera left and right
 }

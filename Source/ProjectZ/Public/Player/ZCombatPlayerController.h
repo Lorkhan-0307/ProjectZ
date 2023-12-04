@@ -10,22 +10,15 @@
 class UInputMappingContext;
 class UInputAction;
 
-/**
- * 
- */
 UCLASS()
 class PROJECTZ_API AZCombatPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
 protected:
-
-    // Called to bind functionality to input
+    
     virtual void BeginPlay() override;
     virtual void SetupInputComponent() override;
-
-    // Functions to handle input
-    
 
 private:
     UPROPERTY(EditAnywhere, Category = Input)
@@ -38,7 +31,6 @@ private:
     TObjectPtr<UInputAction> LookAction;
 
     void MoveCam(const FInputActionValue& InputActionValue);
-    void RotateYaw(const FInputActionValue& InputActionValue);
 
     // Camera movement and rotation speed
     UPROPERTY(EditAnywhere, Category = "Camera Settings")

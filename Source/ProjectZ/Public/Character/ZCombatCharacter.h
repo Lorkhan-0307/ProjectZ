@@ -8,6 +8,7 @@
 
 class UCameraComponent;
 class UCardComponent;
+class USpringArmComponent;
 
 UCLASS()
 class PROJECTZ_API AZCombatCharacter : public AZCharacterBase
@@ -16,7 +17,7 @@ class PROJECTZ_API AZCombatCharacter : public AZCharacterBase
 	
 public:
 	AZCombatCharacter();
-
+	
 	UPROPERTY(EditAnywhere)
 	UCardComponent* CardComponent;
 
@@ -24,5 +25,6 @@ public:
 	FORCEINLINE UCardComponent* GetCardComponent() const { return CardComponent; }
 
 private:
-	UPROPERTY(VisibleAnywhere, Category = Camera) UCameraComponent* Camera;
+	UPROPERTY(EditAnywhere, Category = Camera) USpringArmComponent* SpringArm;
+	UPROPERTY(VisibleAnywhere, Category = Camera) UCameraComponent* TCamera;
 };
