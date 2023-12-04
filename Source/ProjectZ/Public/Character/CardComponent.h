@@ -104,6 +104,8 @@ private:
 	UPROPERTY()
 	AZCharacterBase* ZCharacter;
 
+	TMap<FActiveGameplayEffectHandle, UAbilitySystemComponent*> ActiveEffectHandles;
+
 	void ShuffleDeck();
 	void MakeCardDeck();
 
