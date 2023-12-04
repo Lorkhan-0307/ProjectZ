@@ -5,6 +5,7 @@
 
 #include "Character/CardComponent.h"
 #include "Character/ZCharacter.h"
+#include "Character/ZCombatCharacter.h"
 #include "Components/Overlay.h"
 #include "HUD/Card/CardWidget.h"
 #include "HUD/ZHUD.h"
@@ -12,7 +13,8 @@
 void UCardHandWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	CardComponent = Cast<AZCharacter>(GetOwningPlayer()->GetCharacter())->GetCardComponent();
+	if(GetWorld()->GetName() == "L_FirstPersonMap") CardComponent = Cast<AZCharacter>(GetOwningPlayer()->GetCharacter())->GetCardComponent();
+	if(GetWorld()->GetName() == "L_CombatMap") CardComponent = Cast<AZCombatCharacter>(GetOwningPlayer()->GetCharacter())->GetCardComponent();
 
 	if (CardComponent)
 	{

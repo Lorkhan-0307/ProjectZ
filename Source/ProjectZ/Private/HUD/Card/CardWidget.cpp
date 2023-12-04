@@ -12,6 +12,7 @@
 #include "Engine/DataTable.h"
 #include "Player/ZPlayerController.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Character/ZCombatCharacter.h"
 #include "HUD/Card/CardDragDropOperation.h"
 #include "HUD/Card/CardHandWidget.h"
 
@@ -20,7 +21,8 @@ void UCardWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	CardComponent = Cast<AZCharacter>(GetOwningPlayer()->GetCharacter())->GetCardComponent();
+	if(GetWorld()->GetName() == "L_FirstPersonMap") CardComponent = Cast<AZCharacter>(GetOwningPlayer()->GetCharacter())->GetCardComponent();
+	if(GetWorld()->GetName() == "L_CombatMap") CardComponent = Cast<AZCombatCharacter>(GetOwningPlayer()->GetCharacter())->GetCardComponent();
 }
 
 void UCardWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
