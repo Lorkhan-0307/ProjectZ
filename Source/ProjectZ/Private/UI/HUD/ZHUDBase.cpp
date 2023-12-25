@@ -6,13 +6,14 @@
 #include "Character/ZCharacter.h"
 #include "Player/ZNonCombatPlayerController.h"
 #include "UI/ZUserWidget.h"
+#include "UI/WidgetController/OverlayWidgetController.h"
 #include "Ui/WidgetController/ZWidgetController.h"
 
-UZWidgetController* AZHUDBase::GetOverlayWidgetController(const FWidgetControllerParams& WidgetControllerParams)
+UOverlayWidgetController* AZHUDBase::GetOverlayWidgetController(const FWidgetControllerParams& WidgetControllerParams)
 {
 	if (OverlayWidgetController == nullptr)
 	{
-		OverlayWidgetController = NewObject<UZWidgetController>(this, OverlayWidgetControllerClass);
+		OverlayWidgetController = NewObject<UOverlayWidgetController>(this, OverlayWidgetControllerClass);
 		OverlayWidgetController->SetWidgetControllerParams(WidgetControllerParams);
 		OverlayWidgetController->BindCallbacksToDependencies();
 

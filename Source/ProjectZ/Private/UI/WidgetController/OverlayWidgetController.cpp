@@ -30,7 +30,7 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 
 	Cast<UZAbilitySystemComponent>(AbilitySystemComponent)->EffectAssetTags.AddLambda([](const FGameplayTagContainer& AssetTags)
 	{
-		// Not Implement Yet
+		// Not Implemented Yet
 	});
 }
 

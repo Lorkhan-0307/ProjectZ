@@ -5,12 +5,20 @@
 #include "GameplayEffectExtension.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "ZGameplayTag.h"
 
 UZAttributeSet::UZAttributeSet()
 {
-	// Test Value
-	//InitHealth(30.f);
-	//InitMaxHealth(100.f);
+	const FZGameplayTag& GameplayTag = FZGameplayTag::Get();
+
+	TagToAttribute.Add(GameplayTag.Attributes_Primary_Sociability,GetSociabilityAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Primary_AntiSociability,GetAntiSociabilityAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Primary_Strength,GetStrengthAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Primary_Dexterity,GetDexterityAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Primary_Engineering,GetEngineeringAttribute);
+
+	TagToAttribute.Add(GameplayTag.Attributes_Secondary_MaxHealth,GetMaxHealthAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Secondary_MaxMentality,GetMaxMentalityAttribute);
 }
 
 // Clamp Attributes

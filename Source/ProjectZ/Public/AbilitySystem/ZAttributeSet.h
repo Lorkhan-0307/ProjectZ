@@ -51,6 +51,9 @@ struct FEffectProperties
 	ACharacter* TargetCharacter = nullptr;
 };
 
+template<class T>
+using TStaticFunPtr = typename TBaseStaticDelegateInstance<T,FDefaultDelegateUserPolicy>::FFuncPtr;
+
 UCLASS()
 class PROJECTZ_API UZAttributeSet : public UAttributeSet
 {
@@ -61,6 +64,8 @@ public:
 
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
+
+	TMap<FGameplayTag,TStaticFunPtr<FGameplayAttribute()>> TagToAttribute;
 
 	// Vital Attributes
 	UPROPERTY(BlueprintReadOnly, Category = "Vital Attributes")

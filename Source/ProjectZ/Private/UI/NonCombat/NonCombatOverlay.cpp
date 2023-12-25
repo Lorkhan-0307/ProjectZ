@@ -25,38 +25,6 @@ void UNonCombatOverlay::SetCardComponent(UCardComponent* CC)
 	}
 }
 
-/*
-void UNonCombatOverlay::WidgetControllerSet()
-{
-	Super::WidgetControllerSet();
-}
-
-void UNonCombatOverlay::OnHealthChanged(float NewValue)
-{
-	Health = NewValue;
-	if (MaxHealth != 0) HealthBar->SetPercent(Health / MaxHealth);
-}
-
-void UNonCombatOverlay::OnMaxHealthChanged(float NewValue)
-{
-	MaxHealth = NewValue;
-	if (MaxHealth != 0) HealthBar->SetPercent(Health / MaxHealth);
-}
-
-void UNonCombatOverlay::OnMentalityChanged(float NewValue)
-{
-	Mentality = NewValue;
-	if (MaxMentality != 0) MentalityBar->SetPercent(Mentality / MaxMentality);
-}
-
-void UNonCombatOverlay::OnMaxMentalityChanged(float NewValue)
-{
-	MaxMentality = NewValue;
-	if (MaxMentality != 0) MentalityBar->SetPercent(Mentality / MaxMentality);
-}
-*/
-
-
 void UNonCombatOverlay::WidgetControllerSet()
 {
 	Super::WidgetControllerSet();

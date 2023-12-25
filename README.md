@@ -12,6 +12,36 @@ ProjectZ
 ---
 다들 화이팅입니다!
 ---
+#### Ability System 사용법
+- 기능이 늘어갈때마다 추가 예정
+- [공식 문서](https://docs.unrealengine.com/5.0/ko/gameplay-ability-system-for-unreal-engine/)
+- AttributeSet : 각종 능력치들을 정의하는 Class
+	- 능력치의 변수 Type : FGameplayAttributeData
+	- ATTRIBUTE_ACCESSORS(UZAttributeSet, 변수명) : 능력치들의 Getter, Setter를 만들어주는 Macro
+- GameplayTag
+	- [공식 문서](https://docs.unrealengine.com/4.27/ko/ProgrammingAndScripting/Tags/)
+	- Ex) 체력 포션을 만들 때 : Attribute.Vital.Health 태그를 넣기
+	- Ex) 스턴 능력이 있는 공격 : Debuff.Stun 태그를 넣기
+	- Ex) 독 공격을 받았지만 독 면역이 있는 경우 : 공격에 Debuff.Poison 태그가 있으면, 그 공격을 무효로 한다
+	- Ex) 현재 적용된 버프, 디버프를 UI에 나타낼 때, Tag에 따라 아이콘을 변경한다
+- GameplayEffect : 버프, 디버프, 데미지 등 캐릭터에 작용하는 여러 Effect, Only Blueprint
+	- Duration Policy
+		- Instant : 즉시 작용하는 Effect. Ex) 체력 포션
+		- Infinite : 지속되는 Effect. 따로 제거하는 코드를 만들어줘야함. Ex) 디버프, 버프
+		- Has Duration : 지속 시간이 있는 Effect. Ex) 출혈, 독
+	- Modifiers
+		- Attribute : 변경하고 싶은 Attribute
+		- Modifier Op : 더하기, 곱하기, 나누기, Override 등 Effect가 작용하는 방식
+		- Modifier Magnitude
+			- Magnitude Calculation Type
+				- Scalable Float : 실수
+				- Attribute Based : Coefficient * (PreMultiplyAdditiveValue +Attribute Value) + PostMultiplyAdditiveValue
+				- Custom Caclulation Class : 더 복잡한 계산 방식이 필요 할 경우 GameplayModMagnitudeCalculation 클래스를 만들어서 사용 (MMC_MaxHealth가 예시)
+	- Tags : Effect에 Tag 넣기. 옵션들은 읽어보시는게 빠를거같아요
+	- Stacking : Stacking Effect. Ex) 출혈 상태 이상 중첩 시키기
+- Initialize Character Attribute
+	- Jhon Doe 만 예시로 제작
+	- GE_InitializeJhonDoe
 #### Card System 사용법
 - Test용 기능 : 키보드 E 를 누르면 덱에서 손에 카드 한장을 추가 (나중에 전투 시스템 완성시 삭제)
 - BP_ZCharacter - CardComponent
