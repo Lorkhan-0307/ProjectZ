@@ -39,7 +39,10 @@ AZCharacter::AZCharacter()
 void AZCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
+	if (bOnPossessActivated) return;
+	bOnPossessActivated = true;
 	InitAbilityActorInfo();
+	AddCharacterAbility();
 }
 
 // Setup Character

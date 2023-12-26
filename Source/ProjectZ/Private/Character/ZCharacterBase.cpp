@@ -5,6 +5,7 @@
 #include "Character/CardComponent.h"
 #include "AbilitySystemComponent.h"
 #include "GameplayEffectTypes.h"
+#include "AbilitySystem/ZAbilitySystemComponent.h"
 
 // Sets default values
 AZCharacterBase::AZCharacterBase()
@@ -44,6 +45,12 @@ void AZCharacterBase::InitializeDefaultAttributes() const
 	ApplyEffectToSelf(DefaultPrimaryAttributes,1.f);
 	ApplyEffectToSelf(DefaultSecondaryAttributes,1.f);
 	ApplyEffectToSelf(DefaultVitalAttributes,1.f);
+}
+
+void AZCharacterBase::AddCharacterAbility()
+{
+	UZAbilitySystemComponent* ZASC = CastChecked<UZAbilitySystemComponent>(AbilitySystemComponent);
+	ZASC->AddCharacterAbility(StartupAbility);
 }
 
 // Called every frame

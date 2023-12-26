@@ -25,5 +25,6 @@ public:
 private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	UCameraComponent* FirstPersonCamera;
-	
+
+	bool bOnPossessActivated = false;
 };

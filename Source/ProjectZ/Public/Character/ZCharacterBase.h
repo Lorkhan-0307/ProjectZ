@@ -8,6 +8,7 @@
 #include "Interaction/CombatInterface.h"
 #include "ZCharacterBase.generated.h"
 
+class UGameplayAbility;
 class UGameplayEffect;
 class UAbilitySystemComponent;
 class UAttributeSet;
@@ -54,4 +55,10 @@ protected:
 	virtual void InitAbilityActorInfo();
 	
 	void InitializeDefaultAttributes() const;
+
+	void AddCharacterAbility();
+
+private:
+	UPROPERTY(EditAnywhere, Category = Ability)
+	TArray<TSubclassOf<UGameplayAbility>> StartupAbility;
 };

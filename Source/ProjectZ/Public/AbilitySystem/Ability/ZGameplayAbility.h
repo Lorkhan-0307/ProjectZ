@@ -13,5 +13,9 @@ UCLASS()
 class PROJECTZ_API UZGameplayAbility : public UGameplayAbility
 {
 	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditDefaultsOnly, Category = Input)
+	FGameplayTag StartupInputTag;
 	
 };

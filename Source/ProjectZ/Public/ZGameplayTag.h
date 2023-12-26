@@ -20,7 +20,9 @@ public:
 	FGameplayTag Attributes_Primary_Strength;
 	FGameplayTag Attributes_Primary_Dexterity;
 	FGameplayTag Attributes_Primary_Engineering;
-protected:
+
+	// For Test
+	FGameplayTag InputTag_T;
 private:
 	static FZGameplayTag GameplayTag;
 };

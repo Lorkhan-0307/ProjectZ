@@ -16,4 +16,7 @@ void FZGameplayTag::InitializeNativeGameplayTags()
 
 	GameplayTag.Attributes_Secondary_MaxHealth = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.MaxHealth"));
 	GameplayTag.Attributes_Secondary_MaxMentality = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.MaxMentality"));
+
+	// For Test
+	GameplayTag.InputTag_T = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.T"));
 }

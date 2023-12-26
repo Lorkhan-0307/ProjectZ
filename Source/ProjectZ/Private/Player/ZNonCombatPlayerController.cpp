@@ -2,11 +2,14 @@
 
 
 #include "Player/ZNonCombatPlayerController.h"
-#include "EnhancedInputComponent.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
 #include "EnhancedInputSubsystems.h"
+#include "AbilitySystem/ZAbilitySystemComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Character/CardComponent.h"
 #include "Character/ZCharacter.h"
+#include "Input/ZInputComponent.h"
 
 void AZNonCombatPlayerController::BeginPlay()
 {
@@ -27,11 +30,13 @@ void AZNonCombatPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
+	UZInputComponent* ZInputComponent = CastChecked<UZInputComponent>(InputComponent);
 
-	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AZNonCombatPlayerController::Move);
-	EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AZNonCombatPlayerController::Look);
-	EnhancedInputComponent->BindAction(TestAction, ETriggerEvent::Triggered, this, &AZNonCombatPlayerController::Test);
+	ZInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AZNonCombatPlayerController::Move);
+	ZInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AZNonCombatPlayerController::Look);
+
+	// Bind Input Action with tags
+	ZInputComponent->BindAbilityAction(InputConfig, this, &AZNonCombatPlayerController::AbilityInputTagPressed, &AZNonCombatPlayerController::AbilityInputTagReleased, &AZNonCombatPlayerController::AbilityInputTagHeld);
 }
 
 void AZNonCombatPlayerController::Move(const FInputActionValue& Value)
@@ -56,8 +61,28 @@ void AZNonCombatPlayerController::Look(const FInputActionValue& InputActionValue
 	}
 }
 
-void AZNonCombatPlayerController::Test()
+void AZNonCombatPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
-	//if (CardComponent->GetDeckSize()>0)
-		//CardComponent->DrawAndAddCardDelegate.Broadcast(CardComponent->DrawCard());
+	//GEngine->AddOnScreenDebugMessage(1, 3.f, FColor::Red, *InputTag.ToString());
+}
+
+void AZNonCombatPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
+{
+	if (GetASC() == nullptr) return;
+	GetASC()->AbilityInputTagReleased(InputTag);
+}
+
+void AZNonCombatPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
+{
+	if (GetASC() == nullptr) return;
+	GetASC()->AbilityInputTagHeld(InputTag);
+}
+
+UZAbilitySystemComponent* AZNonCombatPlayerController::GetASC()
+{
+	if (ZAbilitySystemComponent == nullptr)
+	{
+		ZAbilitySystemComponent = Cast<UZAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>()));
+	}
+	return ZAbilitySystemComponent;
 }

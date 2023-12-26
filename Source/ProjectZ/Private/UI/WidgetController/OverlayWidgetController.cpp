@@ -25,8 +25,8 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(ZAttributeSet->GetHealthAttribute()).AddUObject(this,&UOverlayWidgetController::HealthChanged);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(ZAttributeSet->GetMaxHealthAttribute()).AddUObject(this,&UOverlayWidgetController::MaxHealthChanged);
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(ZAttributeSet->GetMentalityAttribute()).AddUObject(this,&UOverlayWidgetController::HealthChanged);
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(ZAttributeSet->GetMaxMentalityAttribute()).AddUObject(this,&UOverlayWidgetController::HealthChanged);
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(ZAttributeSet->GetMentalityAttribute()).AddUObject(this,&UOverlayWidgetController::MentalityChanged);
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(ZAttributeSet->GetMaxMentalityAttribute()).AddUObject(this,&UOverlayWidgetController::MaxMentalityChanged);
 
 	Cast<UZAbilitySystemComponent>(AbilitySystemComponent)->EffectAssetTags.AddLambda([](const FGameplayTagContainer& AssetTags)
 	{
