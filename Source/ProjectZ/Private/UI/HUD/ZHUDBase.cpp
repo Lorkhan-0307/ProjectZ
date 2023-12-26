@@ -3,7 +3,7 @@
 
 #include "Ui/HUD/ZHUDBase.h"
 
-#include "Character/ZCharacter.h"
+#include "Character/ZNonCombatCharacter.h"
 #include "Player/ZNonCombatPlayerController.h"
 #include "UI/ZUserWidget.h"
 #include "UI/WidgetController/OverlayWidgetController.h"

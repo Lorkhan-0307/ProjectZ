@@ -8,7 +8,7 @@
 #include "AbilitySystem/ZAbilitySystemComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Character/CardComponent.h"
-#include "Character/ZCharacter.h"
+#include "Character/ZNonCombatCharacter.h"
 #include "Input/ZInputComponent.h"
 
 void AZPlayerControllerBase::SetupInputComponent()

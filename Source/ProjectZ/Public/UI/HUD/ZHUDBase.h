@@ -7,7 +7,7 @@
 #include "ZHUDBase.generated.h"
 
 class UOverlayWidgetController;
-class AZCharacter;
+class AZNonCombatCharacter;
 class UZUserWidget;
 class UZWidgetController;
 class UAttributeSet;

@@ -4,7 +4,7 @@
 #include "Character/CardComponent.h"
 // TO DO : Add ZCombatPlayerController
 #include "Player/ZNonCombatPlayerController.h"
-#include "Character/ZCharacter.h"
+#include "Character/ZNonCombatCharacter.h"
 #include "UI/HUD/ZHUDBase.h"
 #include "GameplayEffect.h"
 #include "Data/CharacterInfo.h"

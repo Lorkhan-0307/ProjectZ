@@ -9,7 +9,7 @@
 #include "CardComponent.generated.h"
 
 class AZCharacterBase;
-class AZCharacter;
+class AZNonCombatCharacter;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDrawAndAddCardDelegate, FCard, NewCard);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateLeftHandCardDelegate, FCard, LeftCard);

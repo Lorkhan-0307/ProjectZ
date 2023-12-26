@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Character/ZCharacter.h"
+#include "Character/ZNonCombatCharacter.h"
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/ZAbilitySystemComponent.h"
@@ -13,7 +13,7 @@
 #include "Player/ZNonCombatPlayerController.h"
 #include "Player/ZPlayerState.h"
 
-AZCharacter::AZCharacter()
+AZNonCombatCharacter::AZNonCombatCharacter()
 {
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = true;

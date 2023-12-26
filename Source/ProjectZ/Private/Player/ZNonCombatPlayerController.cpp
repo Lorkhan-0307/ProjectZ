@@ -8,7 +8,7 @@
 #include "AbilitySystem/ZAbilitySystemComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Character/CardComponent.h"
-#include "Character/ZCharacter.h"
+#include "Character/ZNonCombatCharacter.h"
 #include "Input/ZInputComponent.h"
 
 void AZNonCombatPlayerController::BeginPlay()
@@ -23,7 +23,7 @@ void AZNonCombatPlayerController::BeginPlay()
 		Subsystem->AddMappingContext(ZContext, 0);
 	}
 
-	CardComponent = Cast<AZCharacter>(GetCharacter())->GetCardComponent();
+	CardComponent = Cast<AZNonCombatCharacter>(GetCharacter())->GetCardComponent();
 }
 
 void AZNonCombatPlayerController::SetupInputComponent()

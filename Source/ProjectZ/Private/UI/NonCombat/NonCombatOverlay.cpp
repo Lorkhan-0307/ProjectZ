@@ -4,7 +4,7 @@
 #include "Ui/NonCombat/NonCombatOverlay.h"
 
 #include "Character/CardComponent.h"
-#include "Character/ZCharacter.h"
+#include "Character/ZNonCombatCharacter.h"
 #include "Ui/Card/CardWidget.h"
 #include "Player/ZNonCombatPlayerController.h"
 #include "UI/WidgetController/OverlayWidgetController.h"

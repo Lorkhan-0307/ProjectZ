@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "ZPlayerCharacter.h"
-#include "ZCharacter.generated.h"
+#include "ZNonCombatCharacter.generated.h"
 
 class UCameraComponent;
 class UCardComponent;
 
 UCLASS()
-class PROJECTZ_API AZCharacter : public AZPlayerCharacter
+class PROJECTZ_API AZNonCombatCharacter : public AZPlayerCharacter
 {
 	GENERATED_BODY()
 
 public:
-	AZCharacter();
+	AZNonCombatCharacter();
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)

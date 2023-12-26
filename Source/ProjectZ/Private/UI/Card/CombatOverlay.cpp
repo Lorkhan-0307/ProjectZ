@@ -3,7 +3,7 @@
 
 #include "UI/Card/CombatOverlay.h"
 #include "UI/Card/CardHandWidget.h"
-#include "Character/ZCharacter.h"
+#include "Character/ZNonCombatCharacter.h"
 #include "Character/CardComponent.h"
 #include "Components/ProgressBar.h"
 #include "UI/WidgetController/OverlayWidgetController.h"

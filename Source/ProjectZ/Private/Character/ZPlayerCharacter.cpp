@@ -8,7 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Character/CardComponent.h"
-#include "Character/ZCharacter.h"
+#include "Character/ZNonCombatCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "UI/HUD/ZNonCombatHUD.h"
 #include "Player/ZNonCombatPlayerController.h"
