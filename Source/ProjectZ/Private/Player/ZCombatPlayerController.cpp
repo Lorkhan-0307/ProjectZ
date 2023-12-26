@@ -5,6 +5,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GenericPlatform/GenericPlatformCrashContext.h"
+#include "Input/ZInputComponent.h"
 
 void AZCombatPlayerController::BeginPlay()
 {
@@ -24,10 +25,8 @@ void AZCombatPlayerController::SetupInputComponent()
 {
     Super::SetupInputComponent();
 
-    UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
-
-    EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AZCombatPlayerController::MoveCam);
-    EnhancedInputComponent->BindAction(ZoomAction, ETriggerEvent::Triggered, this, &AZCombatPlayerController::ZoomCam);
+    ZInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AZCombatPlayerController::MoveCam);
+    ZInputComponent->BindAction(ZoomAction, ETriggerEvent::Triggered, this, &AZCombatPlayerController::ZoomCam);
 }
 
 void AZCombatPlayerController::MoveCam(const FInputActionValue& Value)

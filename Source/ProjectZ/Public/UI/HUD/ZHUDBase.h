@@ -15,6 +15,7 @@ class UAbilitySystemComponent;
 struct FWidgetControllerParams;
 class APlayerState;
 class APlayerController;
+class AZPlayerCharacter;
 
 UCLASS()
 class PROJECTZ_API AZHUDBase : public AHUD
@@ -22,7 +23,7 @@ class PROJECTZ_API AZHUDBase : public AHUD
 	GENERATED_BODY()
 
 public:
-	void InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS, AZCharacter* Character);
+	void InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS, AZPlayerCharacter* Character);
 
 	virtual UOverlayWidgetController* GetOverlayWidgetController(const FWidgetControllerParams& WidgetControllerParams);
 
@@ -41,5 +42,5 @@ protected:
 
 private:
 	UPROPERTY()
-	AZCharacter* ZCharacter;
+	AZPlayerCharacter* ZCharacter;
 };

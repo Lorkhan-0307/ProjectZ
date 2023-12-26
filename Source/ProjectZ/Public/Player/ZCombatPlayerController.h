@@ -3,15 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/PlayerController.h"
 #include "InputActionValue.h"
+#include "ZPlayerControllerBase.h"
 #include "ZCombatPlayerController.generated.h"
 
 class UInputMappingContext;
 class UInputAction;
 
 UCLASS()
-class PROJECTZ_API AZCombatPlayerController : public APlayerController
+class PROJECTZ_API AZCombatPlayerController : public AZPlayerControllerBase
 {
 	GENERATED_BODY()
 

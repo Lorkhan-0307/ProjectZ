@@ -23,7 +23,7 @@ UOverlayWidgetController* AZHUDBase::GetOverlayWidgetController(const FWidgetCon
 }
 
 // Create Overlay and Assign OverlayWidgetController to Overlay
-void AZHUDBase::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS, AZCharacter* Character)
+void AZHUDBase::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS, AZPlayerCharacter* Character)
 {
 	if (OverlayWidget != nullptr) return;
 	ZCharacter = Character;

@@ -6,17 +6,12 @@
 #include "GameFramework/PlayerController.h"
 #include "InputActionValue.h"
 #include "GameplayTagContainer.h"
+#include "ZPlayerControllerBase.h"
 #include "ZNonCombatPlayerController.generated.h"
 
-class UZInputConfig;
-class UCardHandHUD;
-class UInputMappingContext;
-class UInputAction;
-class UCardComponent;
-class UZAbilitySystemComponent;
 
 UCLASS()
-class PROJECTZ_API AZNonCombatPlayerController : public APlayerController
+class PROJECTZ_API AZNonCombatPlayerController : public AZPlayerControllerBase
 {
 	GENERATED_BODY()
 
@@ -43,20 +38,6 @@ private:
 	void Move(const FInputActionValue& InputActionValue);
 	void Look(const FInputActionValue& InputActionValue);
 
-	UPROPERTY()
-	UCardComponent* CardComponent;
-
-	void AbilityInputTagPressed(FGameplayTag InputTag);
-	void AbilityInputTagReleased(FGameplayTag InputTag);
-	void AbilityInputTagHeld(FGameplayTag InputTag);
-
-	UPROPERTY(EditDefaultsOnly, Category = Input)
-	TObjectPtr<UZInputConfig> InputConfig;
-
-	UPROPERTY()
-	TObjectPtr<UZAbilitySystemComponent> ZAbilitySystemComponent;
-
-	UZAbilitySystemComponent* GetASC();
 };
 
 
