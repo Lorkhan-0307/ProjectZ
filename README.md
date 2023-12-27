@@ -74,6 +74,7 @@ ProjectZ
 		- Ability Triggers : Tag를 이용해 능력을 Activate
 			- [참고 자료](https://onecoke.tistory.com/entry/Unreal-AbilityTriggers-in-GameplayAbility)
 		- Cooldowns : Gameplay Effect로 능력의 쿨타임을 정함
+	- GA_ThrowingStone을 예시로 만들었음
 - Gameplay Task
 	- [공식 문서](https://docs.unrealengine.com/5.2/ko/gameplay-ability-tasks-in-unreal-engine/)
 - ZInputComponent : 입력에 Tag를 넣어야하는 경우 DA_InputConfig 블루프린트에서 Input Action과 Tag를 넣을 수 있음

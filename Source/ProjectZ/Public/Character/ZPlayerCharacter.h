@@ -13,10 +13,13 @@ UCLASS()
 class PROJECTZ_API AZPlayerCharacter : public AZCharacterBase
 {
 	GENERATED_BODY()
+
 public:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void InitAbilityActorInfo() override;
 
 	virtual int32 GetLevel() override;
-	
+
+private:
+	bool bIsPossessed = false;
 };

@@ -19,6 +19,8 @@
 void AZPlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
+	if (bIsPossessed) return;
+	bIsPossessed = true;
 	InitAbilityActorInfo();
 	AddCharacterAbility();
 }
@@ -38,7 +40,7 @@ void AZPlayerCharacter::InitAbilityActorInfo()
 	{
 		if (AZHUDBase* ZHUD = Cast<AZHUDBase>(ZPlayerController->GetHUD()))
 		{
-			ZHUD->InitOverlay(ZPlayerController, GetPlayerState(), GetAbilitySystemComponent(), GetAttributeSet(),this);
+			ZHUD->InitOverlay(ZPlayerController, GetPlayerState(), GetAbilitySystemComponent(), GetAttributeSet(), this);
 		}
 	}
 	InitializeDefaultAttributes();
@@ -53,5 +55,3 @@ int32 AZPlayerCharacter::GetLevel()
 	const AZPlayerState* ZPlayerState = GetPlayerState<AZPlayerState>();
 	return ZPlayerState->GetPlayerLevel();
 }
-
-

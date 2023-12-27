@@ -27,6 +27,13 @@ int32 AZCharacterBase::GetLevel()
 	return 0;
 }
 
+FVector AZCharacterBase::GetCombatSocketLocation()
+{
+	// When weapon system created, get weapon socket
+	//return Weapon->GetSocketLocation(WeaponSocketName);
+	return FVector();
+}
+
 void AZCharacterBase::InitAbilityActorInfo()
 {
 }

@@ -37,6 +37,8 @@ protected:
 	virtual void BeginPlay() override;
 	virtual int32 GetLevel();
 
+	virtual FVector GetCombatSocketLocation() override;
+
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
