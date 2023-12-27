@@ -51,6 +51,7 @@ ProjectZ
 - Gameplay Ability
 	- [공식 문서](https://docs.unrealengine.com/5.0/ko/using-gameplay-abilities-in-unreal-engine/)
 	- 공격, 스킬, 능력 등을 구현
+	- Active Ability 함수에 Play Montage 함수를 넣어서 공격 애니메이션 등을 실행
 	- Gameplay Ability 를 부모 Class로 Blueprint 제작
 		- Tags
 			- Ability Tags : 능력이 가지고 있는 태그
