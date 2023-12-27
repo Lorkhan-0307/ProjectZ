@@ -16,6 +16,7 @@ ProjectZ
 - 기능이 늘어갈때마다 추가 예정
 - [공식 문서](https://docs.unrealengine.com/5.0/ko/gameplay-ability-system-for-unreal-engine/)
 - AttributeSet : 각종 능력치들을 정의하는 Class
+	- [공식 문서](https://docs.unrealengine.com/5.2/ko/gameplay-attributes-and-attribute-sets-for-the-gameplay-ability-system-in-unreal-engine/)
 	- 능력치의 변수 Type : FGameplayAttributeData
 	- ATTRIBUTE_ACCESSORS(UZAttributeSet, 변수명) : 능력치들의 Getter, Setter를 만들어주는 Macro
 - GameplayTag
@@ -27,6 +28,7 @@ ProjectZ
 	- Ex) 독 공격을 받았지만 독 면역이 있는 경우 : 공격에 Debuff.Poison 태그가 있으면, 그 공격을 무효로 한다
 	- Ex) 현재 적용된 버프, 디버프를 UI에 나타낼 때, Tag에 따라 아이콘을 변경한다
 - GameplayEffect : 버프, 디버프, 데미지 등 캐릭터에 작용하는 여러 Effect, Only Blueprint
+	- [공식 문서](https://docs.unrealengine.com/5.2/ko/gameplay-attributes-and-gameplay-effects-for-the-gameplay-ability-system-in-unreal-engine/)
 	- Duration Policy
 		- Instant : 즉시 작용하는 Effect. Ex) 체력 포션
 		- Infinite : 지속되는 Effect. 따로 제거하는 코드를 만들어줘야함. Ex) 디버프, 버프
@@ -70,6 +72,8 @@ ProjectZ
 		- Ability Triggers : Tag를 이용해 능력을 Activate
 			- [참고 자료](https://onecoke.tistory.com/entry/Unreal-AbilityTriggers-in-GameplayAbility)
 		- Cooldowns : Gameplay Effect로 능력의 쿨타임을 정함
+- Gameplay Task
+	- [공식 문서](https://docs.unrealengine.com/5.2/ko/gameplay-ability-tasks-in-unreal-engine/)
 - ZInputComponent : 입력에 Tag를 넣어야하는 경우 DA_InputConfig 블루프린트에서 Input Action과 Tag를 넣을 수 있음
 	- Enhanced Input을 상속 받아 만들었고, Project Setting에 기본 Input Component를 ZInputComponent로 변경
 
