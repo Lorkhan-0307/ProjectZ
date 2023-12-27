@@ -45,7 +45,9 @@ ProjectZ
 	- Stacking : Stacking Effect. Ex) 출혈 상태 이상 중첩 시키기
 - Initialize Character Attribute
 	- Jhon Doe 만 예시로 제작
-	- GE_InitializeJhonDoe
+	- GE_InitializeJhonDoe : Jhon Doe 가 기본적으로 가지고 있는 스탯들 (반사회성, 엔지니어링 등)
+	- GE_SecondaryAttribute : 기본 스탯들로 계산되는 Attribute (MaxHealth, MaxMentality, 기획에 따라 크리티컬 확률 등등 추가)
+	- GE_VitalAttribute : 현재 체력, 정신력
 - Gameplay Ability
 	- [공식 문서](https://docs.unrealengine.com/5.0/ko/using-gameplay-abilities-in-unreal-engine/)
 	- 공격, 스킬, 능력 등을 구현
