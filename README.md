@@ -51,8 +51,14 @@ ProjectZ
 - Gameplay Ability
 	- [공식 문서](https://docs.unrealengine.com/5.0/ko/using-gameplay-abilities-in-unreal-engine/)
 	- 공격, 스킬, 능력 등을 구현
-	- Active Ability 함수에 Animation Montage 를 넣어서 공격 애니메이션 등을 실행
 	- Gameplay Ability 를 부모 Class로 Blueprint 제작
+	- Active Ability 함수를 Overide해서 Ability가 실행할 작업들을 수행 (Play Montage, Spawn Actor 등등)
+	- 공격을 구현할 때 공격모션을 Animation Montage로 구현시 Ability가 Active 되는 타이밍을 Anim Notify로 설정 (애니메이션에서 돌을 던지는 타이밍을 설정)
+	- GameplayAbility 에서는 ActivateAbility 이벤트에 PlayMontageAndWait 함수 뒤 WaitGameplayEvent 함수
+	- Anim Notify는 AN_MontageEvent를 선택후 Event Tag를 설정
+	- Anim Notify가 실행되면 설정한 Event Tag와 일치 할 경우 WaitGameplayEvent함수가 실행됨
+	- Event Received 노드에 Ability가 할 일을 지정
+	- GA_ThrowingStone을 예시로 만들었음 (NonCombat 모드에서 T키 를 눌러 사용)
 		- Tags
 			- Ability Tags : 능력이 가지고 있는 태그
 			- Cancel Abilities with Tag : 특정 태그를 가지고 있는 능력을 취소
@@ -75,7 +81,6 @@ ProjectZ
 		- Ability Triggers : Tag를 이용해 능력을 Activate
 			- [참고 자료](https://onecoke.tistory.com/entry/Unreal-AbilityTriggers-in-GameplayAbility)
 		- Cooldowns : Gameplay Effect로 능력의 쿨타임을 정함
-	- GA_ThrowingStone을 예시로 만들었음
 - Gameplay Task
 	- [공식 문서](https://docs.unrealengine.com/5.2/ko/gameplay-ability-tasks-in-unreal-engine/)
 - ZInputComponent : 입력에 Tag를 넣어야하는 경우 DA_InputConfig 블루프린트에서 Input Action과 Tag를 넣을 수 있음

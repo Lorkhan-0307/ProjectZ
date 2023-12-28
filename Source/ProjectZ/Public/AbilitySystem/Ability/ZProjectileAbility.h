@@ -7,6 +7,7 @@
 #include "ZProjectileAbility.generated.h"
 
 class AZProjectile;
+class UGameplayEffect;
 
 UCLASS()
 class PROJECTZ_API UZProjectileAbility : public UZGameplayAbility
@@ -16,6 +17,12 @@ class PROJECTZ_API UZProjectileAbility : public UZGameplayAbility
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
+	UFUNCTION(BlueprintCallable, Category = Projectile)
+	void SpawnProjectile();
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<AZProjectile> ProjectileClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UGameplayEffect> DamageEffectClass;
 };

@@ -6,6 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "GameplayEffectTypes.h"
 #include "AbilitySystem/ZAbilitySystemComponent.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 AZCharacterBase::AZCharacterBase()
@@ -13,6 +14,10 @@ AZCharacterBase::AZCharacterBase()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	CardComponent = CreateDefaultSubobject<UCardComponent>(TEXT("CardComponent"));
+
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera,ECR_Ignore);
+	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Camera,ECR_Ignore);
 }
 
 // Called when the game starts or when spawned

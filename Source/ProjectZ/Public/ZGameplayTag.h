@@ -23,6 +23,7 @@ public:
 
 	// For Test
 	FGameplayTag InputTag_T;
+	//FGameplayTag Event_Montage_ThrowingStone;
 private:
 	static FZGameplayTag GameplayTag;
 };
