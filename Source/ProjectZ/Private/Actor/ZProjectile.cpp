@@ -39,7 +39,7 @@ void AZProjectile::OnSphereOverlap(UPrimitiveComponent* OverlapComponent, AActor
 {
 	// TO DO : Play Sound
 	// TO DO : Spawn VPX
-	
+	UE_LOG(LogTemp,Warning,TEXT("OtherActor"));
 	if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 	{
 		TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());

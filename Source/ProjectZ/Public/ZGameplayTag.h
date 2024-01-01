@@ -24,6 +24,10 @@ public:
 	// For Test
 	FGameplayTag InputTag_T;
 	//FGameplayTag Event_Montage_ThrowingStone;
+
+	FGameplayTag Damage;
+
+	FGameplayTag Effect_HitReact;
 private:
 	static FZGameplayTag GameplayTag;
 };

@@ -19,4 +19,8 @@ void FZGameplayTag::InitializeNativeGameplayTags()
 
 	// For Test
 	GameplayTag.InputTag_T = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.T"));
+
+	GameplayTag.Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Damage"));
+
+	GameplayTag.Effect_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Effect.HitReact"),FString("Tag granted when Hit React"));
 }

@@ -73,16 +73,8 @@ public:
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, Health) // Make Getter, Setter
 
 	UPROPERTY(BlueprintReadOnly, Category = "Vital Attributes")
-	FGameplayAttributeData MaxHealth;
-	ATTRIBUTE_ACCESSORS(UZAttributeSet, MaxHealth)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Vital Attributes")
 	FGameplayAttributeData Mentality;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, Mentality)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Vital Attributes")
-	FGameplayAttributeData MaxMentality;
-	ATTRIBUTE_ACCESSORS(UZAttributeSet, MaxMentality)
 
 	UPROPERTY(BlueprintReadOnly, Category = "Vital Attributes")
 	FGameplayAttributeData Cost;
@@ -116,6 +108,18 @@ public:
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, Engineering)
 
 	// Secondary Attributes
+	UPROPERTY(BlueprintReadOnly, Category = "Secondary Attributes")
+	FGameplayAttributeData MaxHealth;
+	ATTRIBUTE_ACCESSORS(UZAttributeSet, MaxHealth)
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Secondary Attributes")
+	FGameplayAttributeData MaxMentality;
+	ATTRIBUTE_ACCESSORS(UZAttributeSet, MaxMentality)
+
+	// Meta Attributes
+	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
+	FGameplayAttributeData IncomingDamage;
+	ATTRIBUTE_ACCESSORS(UZAttributeSet, IncomingDamage)
 
 private:
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;

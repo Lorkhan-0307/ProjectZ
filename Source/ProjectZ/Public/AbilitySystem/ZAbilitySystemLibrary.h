@@ -7,6 +7,7 @@
 #include "ZAbilitySystemLibrary.generated.h"
 
 class UOverlayWidgetController;
+class UAbilitySystemComponent;
 
 // Get OverlayWidgetController in Blueprint
 UCLASS()
@@ -17,4 +18,7 @@ class PROJECTZ_API UZAbilitySystemLibrary : public UBlueprintFunctionLibrary
 public:
 	UFUNCTION(BlueprintPure, Category = "ZAbilitySystemLibrary|WidgetController")
 	static UOverlayWidgetController* GetOverlayWidgetController(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, Category="AuraAbilitySystemLibrary|CharacterClassDefaults")
+	static void InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* ASC);
 };

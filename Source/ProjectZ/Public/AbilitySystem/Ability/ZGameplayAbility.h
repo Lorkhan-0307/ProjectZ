@@ -17,5 +17,9 @@ class PROJECTZ_API UZGameplayAbility : public UGameplayAbility
 public:
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	FGameplayTag StartupInputTag;
-	
+
+	// If the ability is free of damage, do not use it
+	// Can set curve table (CSV, JSON, CurveTable in editor)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Damage)
+	FScalableFloat Damage;
 };

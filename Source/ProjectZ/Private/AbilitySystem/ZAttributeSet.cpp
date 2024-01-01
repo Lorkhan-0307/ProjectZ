@@ -11,14 +11,14 @@ UZAttributeSet::UZAttributeSet()
 {
 	const FZGameplayTag& GameplayTag = FZGameplayTag::Get();
 
-	TagToAttribute.Add(GameplayTag.Attributes_Primary_Sociability,GetSociabilityAttribute);
-	TagToAttribute.Add(GameplayTag.Attributes_Primary_AntiSociability,GetAntiSociabilityAttribute);
-	TagToAttribute.Add(GameplayTag.Attributes_Primary_Strength,GetStrengthAttribute);
-	TagToAttribute.Add(GameplayTag.Attributes_Primary_Dexterity,GetDexterityAttribute);
-	TagToAttribute.Add(GameplayTag.Attributes_Primary_Engineering,GetEngineeringAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Primary_Sociability, GetSociabilityAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Primary_AntiSociability, GetAntiSociabilityAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Primary_Strength, GetStrengthAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Primary_Dexterity, GetDexterityAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Primary_Engineering, GetEngineeringAttribute);
 
-	TagToAttribute.Add(GameplayTag.Attributes_Secondary_MaxHealth,GetMaxHealthAttribute);
-	TagToAttribute.Add(GameplayTag.Attributes_Secondary_MaxMentality,GetMaxMentalityAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Secondary_MaxHealth, GetMaxHealthAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Secondary_MaxMentality, GetMaxMentalityAttribute);
 }
 
 // Clamp Attributes
@@ -42,16 +42,28 @@ void UZAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackD
 	Super::PostGameplayEffectExecute(Data);
 
 	FEffectProperties Props;
-	SetEffectProperties(Data,Props);
+	SetEffectProperties(Data, Props);
 
 	// Clamping real Attributes
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
-		SetHealth(FMath::Clamp(GetHealth(),0.f,GetMaxHealth()));
+		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
 	}
 	if (Data.EvaluatedData.Attribute == GetMentalityAttribute())
 	{
-		SetMentality(FMath::Clamp(GetMentality(),0.f,GetMaxMentality()));
+		SetMentality(FMath::Clamp(GetMentality(), 0.f, GetMaxMentality()));
+	}
+	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
+	{
+		const float LocalIncomingDamage = GetIncomingDamage();
+		SetIncomingDamage(0.f);
+		if (LocalIncomingDamage > 0)
+		{
+			const float NewHealth = GetHealth() - LocalIncomingDamage;
+			SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
+
+			const bool bFatal = NewHealth <= 0.f;
+		}
 	}
 }
 
