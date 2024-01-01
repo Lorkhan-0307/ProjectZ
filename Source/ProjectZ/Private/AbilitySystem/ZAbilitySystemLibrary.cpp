@@ -53,3 +53,16 @@ void UZAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldCon
 	const FGameplayEffectSpecHandle VitalAttributesSpecHandle = ASC->MakeOutgoingSpec(CharacterClassInfo->VitalAttribute, Level, VitalAttributesContextHandle);
 	ASC->ApplyGameplayEffectSpecToSelf(*VitalAttributesSpecHandle.Data.Get());
 }
+
+void UZAbilitySystemLibrary::GiveStartupAbility(const UObject* WorldContextObject, UAbilitySystemComponent* ASC)
+{
+	AZGameModeBase* ZGameMode = Cast<AZGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
+	if (ZGameMode == nullptr) return;
+
+	UCharacterClassInfo* CharacterClassInfo = ZGameMode->CharacterClassInfo;
+	for(TSubclassOf<UGameplayAbility> AbilityClass : CharacterClassInfo->CommonAbility)
+	{
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
+		ASC->GiveAbility(AbilitySpec);
+	}
+}

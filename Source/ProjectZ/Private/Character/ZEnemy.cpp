@@ -32,6 +32,7 @@ void AZEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	InitAbilityActorInfo();
+	UZAbilitySystemLibrary::GiveStartupAbility(this, AbilitySystemComponent);
 
 	if (const UZAttributeSet* ZAS = Cast<UZAttributeSet>(AttributeSet))
 	{
