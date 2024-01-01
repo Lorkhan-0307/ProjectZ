@@ -4,13 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
+#include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "GameFramework/Character.h"
 #include "Interaction/CombatInterface.h"
 #include "ZCharacterBase.generated.h"
 
+class UGameplayAbility;
 class UGameplayEffect;
 class UAbilitySystemComponent;
 class UAttributeSet;
+class UAnimMontage;
 
 UCLASS(Abstract)
 class PROJECTZ_API AZCharacterBase : public ACharacter, public IAbilitySystemInterface, public ICombatInterface
@@ -24,7 +27,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	UCardComponent* CardComponent;
 
-	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
+	// Move function to ZAbilitySystemLibrary
+	//void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE UCardComponent* GetCardComponent() const { return CardComponent; }
@@ -32,9 +36,14 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	FORCEINLINE UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 
+	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
+	virtual void Die() override;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual int32 GetLevel();
+
+	virtual FVector GetCombatSocketLocation() override;
 
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
@@ -42,13 +51,30 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly ,Category = "Character Class Default")
+	int32 Level = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly ,Category = "Character Class Default")
+	ECharacterClass CharacterClass = ECharacterClass::JohnDoe;
+
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
+	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
+
 	virtual void InitAbilityActorInfo();
-	
-	void InitializeDefaultAttributes() const;
+
+	virtual void InitializeDefaultAttributes() const;
+
+	void AddCharacterAbility();
+
+private:
+	UPROPERTY(EditAnywhere, Category = Ability)
+	TArray<TSubclassOf<UGameplayAbility>> StartupAbility;
+
+	TObjectPtr<UAnimMontage> HitReactMontage;
 };

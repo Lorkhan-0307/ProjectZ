@@ -9,10 +9,8 @@
 #include "CardComponent.generated.h"
 
 class AZCharacterBase;
-class AZCharacter;
+class AZNonCombatCharacter;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDrawAndAddCardDelegate, FCard, NewCard);
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateHandCardDelegate, int32, NewHandCount);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateLeftHandCardDelegate, FCard, LeftCard);
 
@@ -103,6 +101,8 @@ private:
 
 	UPROPERTY()
 	AZCharacterBase* ZCharacter;
+
+	TMap<FActiveGameplayEffectHandle, UAbilitySystemComponent*> ActiveEffectHandles;
 
 	void ShuffleDeck();
 	void MakeCardDeck();

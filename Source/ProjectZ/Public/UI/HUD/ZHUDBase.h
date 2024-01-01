@@ -6,7 +6,8 @@
 #include "GameFramework/HUD.h"
 #include "ZHUDBase.generated.h"
 
-class AZCharacter;
+class UOverlayWidgetController;
+class AZNonCombatCharacter;
 class UZUserWidget;
 class UZWidgetController;
 class UAttributeSet;
@@ -14,6 +15,7 @@ class UAbilitySystemComponent;
 struct FWidgetControllerParams;
 class APlayerState;
 class APlayerController;
+class AZPlayerCharacter;
 
 UCLASS()
 class PROJECTZ_API AZHUDBase : public AHUD
@@ -21,24 +23,24 @@ class PROJECTZ_API AZHUDBase : public AHUD
 	GENERATED_BODY()
 
 public:
-	UPROPERTY()
-	TObjectPtr<UZUserWidget> OverlayWidget;
+	void InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS, AZPlayerCharacter* Character);
 
-	void InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS, AZCharacter* Character);
-
-	virtual UZWidgetController* GetOverlayWidgetController(const FWidgetControllerParams& WidgetControllerParams);
+	virtual UOverlayWidgetController* GetOverlayWidgetController(const FWidgetControllerParams& WidgetControllerParams);
 
 protected:
+	UPROPERTY()
+	TObjectPtr<UZUserWidget> OverlayWidget;
+	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UZUserWidget> OverlayWidgetClass;
 
 	UPROPERTY()
-	TObjectPtr<UZWidgetController> OverlayWidgetController;
+	TObjectPtr<UOverlayWidgetController> OverlayWidgetController;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UZWidgetController> OverlayWidgetControllerClass;
 
 private:
 	UPROPERTY()
-	AZCharacter* ZCharacter;
+	AZPlayerCharacter* ZCharacter;
 };

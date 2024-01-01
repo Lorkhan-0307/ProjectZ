@@ -2,11 +2,14 @@
 
 
 #include "Player/ZNonCombatPlayerController.h"
-#include "EnhancedInputComponent.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
 #include "EnhancedInputSubsystems.h"
+#include "AbilitySystem/ZAbilitySystemComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Character/CardComponent.h"
-#include "Character/ZCharacter.h"
+#include "Character/ZNonCombatCharacter.h"
+#include "Input/ZInputComponent.h"
 
 void AZNonCombatPlayerController::BeginPlay()
 {
@@ -20,18 +23,16 @@ void AZNonCombatPlayerController::BeginPlay()
 		Subsystem->AddMappingContext(ZContext, 0);
 	}
 
-	CardComponent = Cast<AZCharacter>(GetCharacter())->GetCardComponent();
+	CardComponent = Cast<AZNonCombatCharacter>(GetCharacter())->GetCardComponent();
 }
 
 void AZNonCombatPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
-
-	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AZNonCombatPlayerController::Move);
-	EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AZNonCombatPlayerController::Look);
-	EnhancedInputComponent->BindAction(TestAction, ETriggerEvent::Triggered, this, &AZNonCombatPlayerController::Test);
+	ZInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AZNonCombatPlayerController::Move);
+	ZInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AZNonCombatPlayerController::Look);
+	
 }
 
 void AZNonCombatPlayerController::Move(const FInputActionValue& Value)
@@ -54,10 +55,4 @@ void AZNonCombatPlayerController::Look(const FInputActionValue& InputActionValue
 		ControlledPawn->AddControllerPitchInput(LookAxisVector.Y);
 		ControlledPawn->AddControllerYawInput(LookAxisVector.X);
 	}
-}
-
-void AZNonCombatPlayerController::Test()
-{
-	//if (CardComponent->GetDeckSize()>0)
-		//CardComponent->DrawAndAddCardDelegate.Broadcast(CardComponent->DrawCard());
 }

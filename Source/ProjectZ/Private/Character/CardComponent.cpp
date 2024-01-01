@@ -4,7 +4,7 @@
 #include "Character/CardComponent.h"
 // TO DO : Add ZCombatPlayerController
 #include "Player/ZNonCombatPlayerController.h"
-#include "Character/ZCharacter.h"
+#include "Character/ZNonCombatCharacter.h"
 #include "UI/HUD/ZHUDBase.h"
 #include "GameplayEffect.h"
 #include "Data/CharacterInfo.h"
@@ -149,9 +149,9 @@ void UCardComponent::ApplyEffectToTarget(TSubclassOf<UGameplayEffect> Effect, in
 	const FGameplayEffectSpecHandle EffectSpecHandle = TargetASC->MakeOutgoingSpec(Effect, CardLevel, EffectContextHandle);
 	const FActiveGameplayEffectHandle ActiveEffectHandle = TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
 
-	/* Not Implement yet
+	/* Not Implement Yet
 	const bool bIsInfinite = EffectSpecHandle.Data.Get()->Def.Get()->DurationPolicy == EGameplayEffectDurationType::Infinite;
-	if (bIsInfinite && Effect.RemovalPolicy == EEffectRemovalPolicy::RemoveOnEndOverlap)
+	if (bIsInfinite)
 	{
 		ActiveEffectHandles.Add(ActiveEffectHandle, TargetASC);
 	}

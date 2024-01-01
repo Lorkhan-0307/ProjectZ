@@ -3,16 +3,17 @@
 
 #include "Ui/HUD/ZHUDBase.h"
 
-#include "Character/ZCharacter.h"
+#include "Character/ZNonCombatCharacter.h"
 #include "Player/ZNonCombatPlayerController.h"
 #include "UI/ZUserWidget.h"
+#include "UI/WidgetController/OverlayWidgetController.h"
 #include "Ui/WidgetController/ZWidgetController.h"
 
-UZWidgetController* AZHUDBase::GetOverlayWidgetController(const FWidgetControllerParams& WidgetControllerParams)
+UOverlayWidgetController* AZHUDBase::GetOverlayWidgetController(const FWidgetControllerParams& WidgetControllerParams)
 {
 	if (OverlayWidgetController == nullptr)
 	{
-		OverlayWidgetController = NewObject<UZWidgetController>(this, OverlayWidgetControllerClass);
+		OverlayWidgetController = NewObject<UOverlayWidgetController>(this, OverlayWidgetControllerClass);
 		OverlayWidgetController->SetWidgetControllerParams(WidgetControllerParams);
 		OverlayWidgetController->BindCallbacksToDependencies();
 
@@ -22,7 +23,7 @@ UZWidgetController* AZHUDBase::GetOverlayWidgetController(const FWidgetControlle
 }
 
 // Create Overlay and Assign OverlayWidgetController to Overlay
-void AZHUDBase::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS, AZCharacter* Character)
+void AZHUDBase::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS, AZPlayerCharacter* Character)
 {
 	if (OverlayWidget != nullptr) return;
 	ZCharacter = Character;

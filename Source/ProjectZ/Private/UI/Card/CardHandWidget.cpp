@@ -4,7 +4,7 @@
 #include "UI/Card/CardHandWidget.h"
 
 #include "Character/CardComponent.h"
-#include "Character/ZCharacter.h"
+#include "Character/ZNonCombatCharacter.h"
 #include "Components/Overlay.h"
 #include "Components/TextBlock.h"
 #include "UI/Card/CardWidget.h"

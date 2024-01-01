@@ -51,6 +51,9 @@ struct FEffectProperties
 	ACharacter* TargetCharacter = nullptr;
 };
 
+template<class T>
+using TStaticFunPtr = typename TBaseStaticDelegateInstance<T,FDefaultDelegateUserPolicy>::FFuncPtr;
+
 UCLASS()
 class PROJECTZ_API UZAttributeSet : public UAttributeSet
 {
@@ -62,22 +65,16 @@ public:
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
+	TMap<FGameplayTag,TStaticFunPtr<FGameplayAttribute()>> TagToAttribute;
+
 	// Vital Attributes
 	UPROPERTY(BlueprintReadOnly, Category = "Vital Attributes")
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, Health) // Make Getter, Setter
 
 	UPROPERTY(BlueprintReadOnly, Category = "Vital Attributes")
-	FGameplayAttributeData MaxHealth;
-	ATTRIBUTE_ACCESSORS(UZAttributeSet, MaxHealth)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Vital Attributes")
 	FGameplayAttributeData Mentality;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, Mentality)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Vital Attributes")
-	FGameplayAttributeData MaxMentality;
-	ATTRIBUTE_ACCESSORS(UZAttributeSet, MaxMentality)
 
 	UPROPERTY(BlueprintReadOnly, Category = "Vital Attributes")
 	FGameplayAttributeData Cost;
@@ -111,6 +108,18 @@ public:
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, Engineering)
 
 	// Secondary Attributes
+	UPROPERTY(BlueprintReadOnly, Category = "Secondary Attributes")
+	FGameplayAttributeData MaxHealth;
+	ATTRIBUTE_ACCESSORS(UZAttributeSet, MaxHealth)
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Secondary Attributes")
+	FGameplayAttributeData MaxMentality;
+	ATTRIBUTE_ACCESSORS(UZAttributeSet, MaxMentality)
+
+	// Meta Attributes
+	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
+	FGameplayAttributeData IncomingDamage;
+	ATTRIBUTE_ACCESSORS(UZAttributeSet, IncomingDamage)
 
 private:
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;

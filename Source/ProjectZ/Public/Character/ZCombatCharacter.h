@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Character/ZCharacterBase.h"
+#include "ZPlayerCharacter.h"
 #include "ZCombatCharacter.generated.h"
 
 class UCameraComponent;
@@ -11,7 +11,7 @@ class UCardComponent;
 class USpringArmComponent;
 
 UCLASS()
-class PROJECTZ_API AZCombatCharacter : public AZCharacterBase
+class PROJECTZ_API AZCombatCharacter : public AZPlayerCharacter
 {
 	GENERATED_BODY()
 

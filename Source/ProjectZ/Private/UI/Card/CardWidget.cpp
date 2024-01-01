@@ -5,7 +5,7 @@
 
 #include "Blueprint/DragDropOperation.h"
 #include "Character/CardComponent.h"
-#include "Character/ZCharacter.h"
+#include "Character/ZNonCombatCharacter.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Data/Card.h"

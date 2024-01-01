@@ -5,15 +5,13 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "InputActionValue.h"
+#include "GameplayTagContainer.h"
+#include "ZPlayerControllerBase.h"
 #include "ZNonCombatPlayerController.generated.h"
 
-class UCardHandHUD;
-class UInputMappingContext;
-class UInputAction;
-class UCardComponent;
 
 UCLASS()
-class PROJECTZ_API AZNonCombatPlayerController : public APlayerController
+class PROJECTZ_API AZNonCombatPlayerController : public AZPlayerControllerBase
 {
 	GENERATED_BODY()
 
@@ -38,13 +36,8 @@ private:
 	TObjectPtr<UInputAction> TestAction;
 	
 	void Move(const FInputActionValue& InputActionValue);
-
 	void Look(const FInputActionValue& InputActionValue);
 
-	void Test(); 
-
-	UPROPERTY()
-	UCardComponent* CardComponent;
 };
 
 

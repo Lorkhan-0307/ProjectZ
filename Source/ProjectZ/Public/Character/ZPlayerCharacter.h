@@ -4,26 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "Character/ZCharacterBase.h"
-#include "ZCharacter.generated.h"
+#include "ZPlayerCharacter.generated.h"
 
-class UCameraComponent;
-class UCardComponent;
-
+/**
+ * 
+ */
 UCLASS()
-class PROJECTZ_API AZCharacter : public AZCharacterBase
+class PROJECTZ_API AZPlayerCharacter : public AZCharacterBase
 {
 	GENERATED_BODY()
 
 public:
-	AZCharacter();
-
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void InitAbilityActorInfo() override;
 
 	virtual int32 GetLevel() override;
 
 private:
-	UPROPERTY(VisibleAnywhere, Category = Camera)
-	UCameraComponent* FirstPersonCamera;
-	
+	bool bIsPossessed = false;
 };

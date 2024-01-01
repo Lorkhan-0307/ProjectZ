@@ -4,7 +4,7 @@
 #include "Ui/NonCombat/NonCombatOverlay.h"
 
 #include "Character/CardComponent.h"
-#include "Character/ZCharacter.h"
+#include "Character/ZNonCombatCharacter.h"
 #include "Ui/Card/CardWidget.h"
 #include "Player/ZNonCombatPlayerController.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
@@ -24,38 +24,6 @@ void UNonCombatOverlay::SetCardComponent(UCardComponent* CC)
 		CardComponent->UpdateRightHandCardDelegate.AddDynamic(this, &UNonCombatOverlay::UpdateRightHandCard);
 	}
 }
-
-/*
-void UNonCombatOverlay::WidgetControllerSet()
-{
-	Super::WidgetControllerSet();
-}
-
-void UNonCombatOverlay::OnHealthChanged(float NewValue)
-{
-	Health = NewValue;
-	if (MaxHealth != 0) HealthBar->SetPercent(Health / MaxHealth);
-}
-
-void UNonCombatOverlay::OnMaxHealthChanged(float NewValue)
-{
-	MaxHealth = NewValue;
-	if (MaxHealth != 0) HealthBar->SetPercent(Health / MaxHealth);
-}
-
-void UNonCombatOverlay::OnMentalityChanged(float NewValue)
-{
-	Mentality = NewValue;
-	if (MaxMentality != 0) MentalityBar->SetPercent(Mentality / MaxMentality);
-}
-
-void UNonCombatOverlay::OnMaxMentalityChanged(float NewValue)
-{
-	MaxMentality = NewValue;
-	if (MaxMentality != 0) MentalityBar->SetPercent(Mentality / MaxMentality);
-}
-*/
-
 
 void UNonCombatOverlay::WidgetControllerSet()
 {
