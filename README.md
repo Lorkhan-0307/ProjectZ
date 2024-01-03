@@ -42,6 +42,8 @@ ProjectZ
 				- Attribute Based : Coefficient * (PreMultiplyAdditiveValue +Attribute Value) + PostMultiplyAdditiveValue
 				- Custom Caclulation Class : 더 복잡한 계산 방식이 필요 할 경우 GameplayModMagnitudeCalculation 클래스를 만들어서 사용 Ex) Attribute 가 여러개 필요 할 경우 (MMC_MaxHealth)
 				- Set by Caller : Tag를 통해 Value를 설정
+	- Execution
+		- ExecCalcDamage : 데미지 계산을 수행하는 Execution
 	- Tags : Effect에 Tag 넣기. 옵션들은 읽어보시는게 빠를거같아요
 	- Stacking : Stacking Effect. Ex) 출혈 상태 이상 중첩 시키기
 - Initialize Character Attribute

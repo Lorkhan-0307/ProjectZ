@@ -6,6 +6,7 @@
 
 struct FCard;
 
+// this class move to AbilitySystem/Data/CharacterClassInfo
 USTRUCT(BlueprintType)
 struct FCharacterInfo : public FTableRowBase
 {

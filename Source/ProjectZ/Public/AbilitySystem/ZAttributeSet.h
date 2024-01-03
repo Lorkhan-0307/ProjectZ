@@ -116,6 +116,31 @@ public:
 	FGameplayAttributeData MaxMentality;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, MaxMentality)
 
+	// TO DO : Set Secondary Attribute calculation in GameplayEffect that setting Secondary Attributes
+	UPROPERTY(BlueprintReadOnly, Category = "Secondary Attributes")
+	FGameplayAttributeData Armor;
+	ATTRIBUTE_ACCESSORS(UZAttributeSet, Armor)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Secondary Attributes")
+	FGameplayAttributeData ArmorPenetration;
+	ATTRIBUTE_ACCESSORS(UZAttributeSet, ArmorPenetration)
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Secondary Attributes")
+	FGameplayAttributeData DodgeChance;
+	ATTRIBUTE_ACCESSORS(UZAttributeSet, DodgeChance)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Secondary Attributes")
+	FGameplayAttributeData CriticalHitChance;
+	ATTRIBUTE_ACCESSORS(UZAttributeSet, CriticalHitChance)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Secondary Attributes")
+	FGameplayAttributeData CriticalHitDamage;
+	ATTRIBUTE_ACCESSORS(UZAttributeSet, CriticalHitDamage)
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Secondary Attributes")
+	FGameplayAttributeData CriticalHitResistance;
+	ATTRIBUTE_ACCESSORS(UZAttributeSet, CriticalHitResistance)
+
 	// Meta Attributes
 	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
 	FGameplayAttributeData IncomingDamage;

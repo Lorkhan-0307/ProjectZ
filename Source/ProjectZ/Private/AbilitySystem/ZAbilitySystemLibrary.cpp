@@ -16,12 +16,12 @@ UOverlayWidgetController* UZAbilitySystemLibrary::GetOverlayWidgetController(con
 {
 	if (APlayerController* PC = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
 	{
-		if (AZHUDBase* ZHUD=Cast<AZHUDBase>(PC->GetHUD()))
+		if (AZHUDBase* ZHUD = Cast<AZHUDBase>(PC->GetHUD()))
 		{
 			AZPlayerState* PS = PC->GetPlayerState<AZPlayerState>();
 			UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
 			UAttributeSet* AS = PS->GetAttributeSet();
-			const FWidgetControllerParams WidgetControllerParams(PC,PS,ASC,AS);
+			const FWidgetControllerParams WidgetControllerParams(PC, PS, ASC, AS);
 			return ZHUD->GetOverlayWidgetController(WidgetControllerParams);
 		}
 	}
@@ -35,7 +35,7 @@ void UZAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldCon
 
 	AActor* AvatarActor = ASC->GetAvatarActor();
 
-	UCharacterClassInfo* CharacterClassInfo = ZGameMode->CharacterClassInfo;
+	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
 	FCharacterClassDefaultInfo ClassDefaultInfo = CharacterClassInfo->GetClassDefaultInfo(CharacterClass);
 
 	FGameplayEffectContextHandle PrimaryAttributesContextHandle = ASC->MakeEffectContext();
@@ -59,10 +59,17 @@ void UZAbilitySystemLibrary::GiveStartupAbility(const UObject* WorldContextObjec
 	AZGameModeBase* ZGameMode = Cast<AZGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
 	if (ZGameMode == nullptr) return;
 
-	UCharacterClassInfo* CharacterClassInfo = ZGameMode->CharacterClassInfo;
-	for(TSubclassOf<UGameplayAbility> AbilityClass : CharacterClassInfo->CommonAbility)
+	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
+	for (TSubclassOf<UGameplayAbility> AbilityClass : CharacterClassInfo->CommonAbility)
 	{
 		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
 		ASC->GiveAbility(AbilitySpec);
 	}
+}
+
+UCharacterClassInfo* UZAbilitySystemLibrary::GetCharacterClassInfo(const UObject* WorldContextObject)
+{
+	AZGameModeBase* AuraGameMode = Cast<AZGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
+	if (AuraGameMode == nullptr) return nullptr;
+	return AuraGameMode->CharacterClassInfo;
 }
