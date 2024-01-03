@@ -12,6 +12,7 @@
 #include "Player/ZPlayerState.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/ZAbilitySystemLibrary.h"
 
 
 // Sets default values for this component's properties
@@ -61,8 +62,9 @@ void UCardComponent::InitializeNonCombat(AZCharacterBase* Character)
 {
 	ZCharacter = Character;
 	// For Test
-	if (ZCharacter && ZCharacter->GetPlayerState()) Cast<AZPlayerState>(ZCharacter->GetPlayerState())->SetCharacterName(FName("JohnDoe"));
-	InitializeCardInventory(Cast<AZPlayerState>(ZCharacter->GetPlayerState())->GetCharacterName());
+	//if (ZCharacter && ZCharacter->GetPlayerState()) Cast<AZPlayerState>(ZCharacter->GetPlayerState())->SetCharacterName(FName("JohnDoe"));
+	UCharacterClassInfo* CharacterClassInfo = UZAbilitySystemLibrary::GetCharacterClassInfo(Character);
+	InitializeCardInventory(CharacterClassInfo);
 
 	// For Test
 	SetLeftHandCard(ConvertCardNameToFCard(FName("Axe")));
@@ -97,11 +99,10 @@ FCard UCardComponent::ConvertCardNameToFCard(FName CardName)
 }
 
 // When game starts, initialize card inventory by character data table
-void UCardComponent::InitializeCardInventory(FName CharacterName)
+void UCardComponent::InitializeCardInventory(UCharacterClassInfo* CharacterClassInfo)
 {
-	const FCharacterInfo& CharacterInfo = *CharacterDataTable->FindRow<FCharacterInfo>(CharacterName, FString(""));
-	const TArray<FName>& DefaultCards = CharacterInfo.DefaultCards;
-	for (const FName& CardName : DefaultCards)
+	TArray<FName> Cards = CharacterClassInfo->GetClassDefaultInfo(ZCharacter->GetCharacterClass()).DefaultCards;
+	for (const FName& CardName : Cards)
 	{
 		CardInventory.Add(ConvertCardNameToFCard(CardName));
 	}
