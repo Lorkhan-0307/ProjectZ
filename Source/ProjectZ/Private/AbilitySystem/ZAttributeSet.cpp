@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "ZGameplayTag.h"
+#include "AbilitySystem/ZAbilitySystemLibrary.h"
 #include "Interaction/CombatInterface.h"
 
 UZAttributeSet::UZAttributeSet()
@@ -77,6 +78,17 @@ void UZAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackD
 				FGameplayTagContainer TagContainer;
 				TagContainer.AddTag(FZGameplayTag::Get().Effect_HitReact);
 				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			}
+
+			const bool bDodge = UZAbilitySystemLibrary::IsDodged(Props.EffectContextHandle);
+			const bool bCriticalHit = UZAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
+			if (bDodge)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Dodge"));
+			}
+			if (bCriticalHit)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Critical"));
 			}
 		}
 	}

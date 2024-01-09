@@ -11,6 +11,7 @@
 #include "UI/WidgetController/ZWidgetController.h"
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "AbilitySystemComponent.h"
+#include "ZAbilityType.h"
 
 UOverlayWidgetController* UZAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
 {
@@ -72,4 +73,38 @@ UCharacterClassInfo* UZAbilitySystemLibrary::GetCharacterClassInfo(const UObject
 	AZGameModeBase* AuraGameMode = Cast<AZGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
 	if (AuraGameMode == nullptr) return nullptr;
 	return AuraGameMode->CharacterClassInfo;
+}
+
+bool UZAbilitySystemLibrary::IsDodged(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FZGameplayEffectContext* ZEffectContext = static_cast<const FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return ZEffectContext->IsDodged();
+	}
+	return false;
+}
+
+bool UZAbilitySystemLibrary::IsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FZGameplayEffectContext* ZEffectContext = static_cast<const FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return ZEffectContext->IsCriticalHit();
+	}
+	return false;
+}
+
+void UZAbilitySystemLibrary::SetIsDodged(FGameplayEffectContextHandle& EffectContextHandle, bool bInIsDodged)
+{
+	if (FZGameplayEffectContext* ZEffectContext = static_cast<FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		ZEffectContext->SetIsDodged(bInIsDodged);
+	}
+}
+
+void UZAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& EffectContextHandle, bool bInIsCriticalHit)
+{
+	if (FZGameplayEffectContext* ZEffectContext = static_cast<FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		ZEffectContext->SetIsCriticalHit(bInIsCriticalHit);
+	}
 }

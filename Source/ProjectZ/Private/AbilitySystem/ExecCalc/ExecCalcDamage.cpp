@@ -4,7 +4,9 @@
 #include "AbilitySystem/ExecCalc/ExecCalcDamage.h"
 
 #include "AbilitySystemComponent.h"
+#include "ZAbilityType.h"
 #include "ZGameplayTag.h"
+#include "AbilitySystem/ZAbilitySystemLibrary.h"
 #include "AbilitySystem/ZAttributeSet.h"
 #include "Interaction/CombatInterface.h"
 
@@ -74,6 +76,10 @@ void UExecCalcDamage::Execute_Implementation(const FGameplayEffectCustomExecutio
 	TargetDodgeChance = FMath::Max<float>(TargetDodgeChance, 0.f);
 
 	const bool bBlocked = FMath::RandRange(1, 100) < TargetDodgeChance;
+
+	FGameplayEffectContextHandle EffectContextHandle = Spec.GetContext();
+	UZAbilitySystemLibrary::SetIsDodged(EffectContextHandle, bBlocked);
+
 	Damage = bBlocked ? 0.f : Damage;
 
 	// ArmorPenetration ignores a percentage of the Target's Armor
@@ -107,6 +113,8 @@ void UExecCalcDamage::Execute_Implementation(const FGameplayEffectCustomExecutio
 	// Critical Hit Resistance reduces Critical Hit chance by a certain percentage
 	const float EffectiveCriticalHitChance = SourceCriticalHitChance - TargetCriticalHitResistance;
 	const bool bCriticalHit = FMath::RandRange(1, 100) < EffectiveCriticalHitChance;
+
+	UZAbilitySystemLibrary::SetIsCriticalHit(EffectContextHandle, bCriticalHit);
 
 	Damage = bCriticalHit ? SourceCriticalHitDamage * Damage : Damage;
 
