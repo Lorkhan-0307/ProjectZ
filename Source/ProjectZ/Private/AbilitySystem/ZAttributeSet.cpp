@@ -21,6 +21,15 @@ UZAttributeSet::UZAttributeSet()
 
 	TagToAttribute.Add(GameplayTag.Attributes_Secondary_MaxHealth, GetMaxHealthAttribute);
 	TagToAttribute.Add(GameplayTag.Attributes_Secondary_MaxMentality, GetMaxMentalityAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Secondary_Armor, GetArmorAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Secondary_ArmorPenetration, GetArmorPenetrationAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Secondary_DodgeChance, GetDodgeChanceAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Secondary_CriticalHitChance, GetCriticalHitChanceAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Secondary_CriticalHitDamage, GetCriticalHitDamageAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Secondary_CriticalHitResistance, GetCriticalHitResistanceAttribute);
+
+	TagToAttribute.Add(GameplayTag.Attributes_Resistance_Fire, GetFireResistanceAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Resistance_Physical, GetPhysicalResistanceAttribute);
 }
 
 // Clamp Attributes

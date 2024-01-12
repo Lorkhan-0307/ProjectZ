@@ -20,6 +20,11 @@ struct ZDamageStatic
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitDamage)
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitResistance)
 
+	DECLARE_ATTRIBUTE_CAPTUREDEF(FireResistance)
+	DECLARE_ATTRIBUTE_CAPTUREDEF(PhysicalResistance)
+
+	TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition> TagsToCaptureDef;
+
 	ZDamageStatic()
 	{
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UZAttributeSet, Armor, Target, false);
@@ -28,6 +33,20 @@ struct ZDamageStatic
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UZAttributeSet, CriticalHitChance, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UZAttributeSet, CriticalHitDamage, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UZAttributeSet, CriticalHitResistance, Target, false);
+
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UZAttributeSet, FireResistance, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UZAttributeSet, PhysicalResistance, Target, false);
+
+		const FZGameplayTag& Tags = FZGameplayTag::Get();
+		TagsToCaptureDef.Add(Tags.Attributes_Secondary_Armor, ArmorDef);
+		TagsToCaptureDef.Add(Tags.Attributes_Secondary_ArmorPenetration, ArmorPenetrationDef);
+		TagsToCaptureDef.Add(Tags.Attributes_Secondary_DodgeChance, DodgeChanceDef);
+		TagsToCaptureDef.Add(Tags.Attributes_Secondary_CriticalHitChance, CriticalHitChanceDef);
+		TagsToCaptureDef.Add(Tags.Attributes_Secondary_CriticalHitDamage, CriticalHitDamageDef);
+		TagsToCaptureDef.Add(Tags.Attributes_Secondary_CriticalHitResistance, CriticalHitResistanceDef);
+
+		TagsToCaptureDef.Add(Tags.Attributes_Resistance_Fire, FireResistanceDef);
+		TagsToCaptureDef.Add(Tags.Attributes_Resistance_Physical, PhysicalResistanceDef);
 	}
 };
 
@@ -45,6 +64,9 @@ UExecCalcDamage::UExecCalcDamage()
 	RelevantAttributesToCapture.Add(DamageStatic().CriticalHitChanceDef);
 	RelevantAttributesToCapture.Add(DamageStatic().CriticalHitDamageDef);
 	RelevantAttributesToCapture.Add(DamageStatic().CriticalHitResistanceDef);
+
+	RelevantAttributesToCapture.Add(DamageStatic().FireResistanceDef);
+	RelevantAttributesToCapture.Add(DamageStatic().PhysicalResistanceDef);
 }
 
 void UExecCalcDamage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
@@ -64,7 +86,26 @@ void UExecCalcDamage::Execute_Implementation(const FGameplayEffectCustomExecutio
 	EvaluationParameters.TargetTags = TargetTag;
 
 	// Get Damage Set by Caller Magnitude
-	float Damage = Spec.GetSetByCallerMagnitude(FZGameplayTag::Get().Damage);
+	float Damage = 0.f;
+	for (const auto& Pair : FZGameplayTag::Get().DamageTypeToResistance)
+	{
+		const FGameplayTag DamageTypeTag = Pair.Key;
+		const FGameplayTag ResistanceTag = Pair.Value;
+
+		checkf(ZDamageStatic().TagsToCaptureDef.Contains(ResistanceTag), TEXT("TagsToCaptureDef doesn't contain Tag: [%s] in ExecCalc_Damage"), *ResistanceTag.ToString());
+
+		const FGameplayEffectAttributeCaptureDefinition CaptureDef = ZDamageStatic().TagsToCaptureDef[ResistanceTag];
+
+		float DamageTypeValue = Spec.GetSetByCallerMagnitude(Pair.Key);
+
+		float Resistance = 0.f;
+		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(CaptureDef, EvaluationParameters, Resistance);
+		Resistance = FMath::Clamp(Resistance, 0.f, 100.f);
+
+		DamageTypeValue *= (100.f - Resistance) / 100.f;
+
+		Damage += DamageTypeValue;
+	}
 
 	// Example of Damage calculation
 

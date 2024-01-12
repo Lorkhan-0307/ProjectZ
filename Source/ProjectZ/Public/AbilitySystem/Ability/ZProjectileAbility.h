@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AbilitySystem/Ability/ZGameplayAbility.h"
+#include "ZDamageGameplayAbility.h"
 #include "ZProjectileAbility.generated.h"
 
 class AZProjectile;
 class UGameplayEffect;
 
 UCLASS()
-class PROJECTZ_API UZProjectileAbility : public UZGameplayAbility
+class PROJECTZ_API UZProjectileAbility : public UZDamageGameplayAbility
 {
 	GENERATED_BODY()
 
@@ -22,7 +22,4 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<AZProjectile> ProjectileClass;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<UGameplayEffect> DamageEffectClass;
 };

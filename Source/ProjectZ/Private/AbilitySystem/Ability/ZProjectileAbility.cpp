@@ -42,14 +42,18 @@ void UZProjectileAbility::SpawnProjectile()
 		EffectContextHandle.AddActors(Actors);
 		FHitResult HitResult;
 		EffectContextHandle.AddHitResult(HitResult);
-		
+
 		const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), EffectContextHandle);
 
 		const FZGameplayTag GameplayTag = FZGameplayTag::Get();
-		// Get damage for CurveTable with card level
-		//const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel());
-		const float ScaledDamage = 15.f;
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTag.Damage, ScaledDamage);
+
+		for (auto& Pair : DamageType)
+		{
+			const float ScaledDamage = Pair.Value.GetValueAtLevel(GetAbilityLevel());
+			// Get damage for CurveTable with card level
+			//const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel());
+			UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Pair.Key, ScaledDamage);
+		}
 
 		Projectile->DamageEffectSpecHandle = SpecHandle;
 
