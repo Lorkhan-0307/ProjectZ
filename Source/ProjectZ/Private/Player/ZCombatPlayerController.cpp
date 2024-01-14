@@ -18,7 +18,7 @@ void AZCombatPlayerController::BeginPlay()
     {
         Subsystem->AddMappingContext(ZContext, 0);
     }
-    SetControlRotation(FRotator::MakeFromEuler(FVector(0.f, 315.f, 0.f)));
+    SetControlRotation(FRotator::MakeFromEuler(FVector(0.f, 345.f, 0.f)));
 }
 
 void AZCombatPlayerController::SetupInputComponent()
@@ -50,7 +50,7 @@ void AZCombatPlayerController::ZoomCam(const FInputActionValue& Value)
         if(SpringArmComponent)
         {
             SpringArmComponent->TargetArmLength+=MovementFloat*100;
-            SpringArmComponent->TargetArmLength=FMath::Clamp(SpringArmComponent->TargetArmLength, 500, 1500);
+            SpringArmComponent->TargetArmLength=FMath::Clamp(SpringArmComponent->TargetArmLength, 1000, 3000);
         }
     }
 }
