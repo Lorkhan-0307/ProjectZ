@@ -27,7 +27,7 @@ AZCombatCharacter::AZCombatCharacter()
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(GetCapsuleComponent());
 	SpringArm->SetRelativeLocation(FVector(-10.f, 0.f, 60.f)); // Positioning StringArm
-	SpringArm->TargetArmLength = 800.f;
+	SpringArm->TargetArmLength = 2000.f;
 	SpringArm->bDoCollisionTest = false;
 	SpringArm->bUsePawnControlRotation = true;
 
