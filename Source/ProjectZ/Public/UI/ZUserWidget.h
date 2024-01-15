@@ -28,24 +28,6 @@ public:
 	virtual void SetCardComponent(UCardComponent* CC);
 
 protected:
-	UPROPERTY(meta = (BindWidget))
-	UProgressBar* HealthBar;
-	
-	UPROPERTY(meta = (BindWidget))
-	UProgressBar* MentalityBar;
-	
-	UFUNCTION()
-	virtual void OnHealthChanged(float NewValue);
-	
-	UFUNCTION()
-	virtual void OnMaxHealthChanged(float NewValue); 
-
-	UFUNCTION()
-	virtual void OnMentalityChanged(float NewValue);
-
-	UFUNCTION()
-	virtual void OnMaxMentalityChanged(float NewValue);
-	
 	//UFUNCTION(BlueprintImplementableEvent) 
 	virtual void WidgetControllerSet();
 

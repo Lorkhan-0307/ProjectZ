@@ -34,15 +34,23 @@ protected:
 
 private:
 
-	/*
-	virtual void OnHealthChanged(float NewValue) override;
+	UPROPERTY(meta = (BindWidget))
+	UProgressBar* HealthBar;
 	
-	virtual void OnMaxHealthChanged(float NewValue) override; 
+	UPROPERTY(meta = (BindWidget))
+	UProgressBar* MentalityBar;
 	
-	virtual void OnMentalityChanged(float NewValue) override;
+	UFUNCTION()
+	virtual void OnHealthChanged(float NewValue);
 	
-	virtual void OnMaxMentalityChanged(float NewValue) override;
-	*/
+	UFUNCTION()
+	virtual void OnMaxHealthChanged(float NewValue); 
+
+	UFUNCTION()
+	virtual void OnMentalityChanged(float NewValue);
+
+	UFUNCTION()
+	virtual void OnMaxMentalityChanged(float NewValue);
 	
 	
 	UFUNCTION()

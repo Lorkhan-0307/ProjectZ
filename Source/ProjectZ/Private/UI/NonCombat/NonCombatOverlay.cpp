@@ -8,6 +8,7 @@
 #include "Ui/Card/CardWidget.h"
 #include "Player/ZNonCombatPlayerController.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
+#include "Components/ProgressBar.h"
 
 
 void UNonCombatOverlay::NativeConstruct()
@@ -23,11 +24,6 @@ void UNonCombatOverlay::SetCardComponent(UCardComponent* CC)
 		CardComponent->UpdateLeftHandCardDelegate.AddDynamic(this, &UNonCombatOverlay::UpdateLeftHandCard);
 		CardComponent->UpdateRightHandCardDelegate.AddDynamic(this, &UNonCombatOverlay::UpdateRightHandCard);
 	}
-}
-
-void UNonCombatOverlay::WidgetControllerSet()
-{
-	Super::WidgetControllerSet();
 }
 
 void UNonCombatOverlay::UpdateLeftHandCard(FCard LeftCard)
@@ -50,4 +46,37 @@ void UNonCombatOverlay::UpdateRightHandCard(FCard RightCard)
 	}
 	SetVisibility(ESlateVisibility::Visible);
 	RightHandCardWidget->InitCardStatus(RightCard);
+}
+
+void UNonCombatOverlay::OnHealthChanged(float NewValue)
+{
+	Health = NewValue;
+	if (MaxHealth != 0) HealthBar->SetPercent(Health / MaxHealth);
+}
+
+void UNonCombatOverlay::OnMaxHealthChanged(float NewValue)
+{
+	MaxHealth = NewValue;
+	if (MaxHealth != 0) HealthBar->SetPercent(Health / MaxHealth);
+}
+
+void UNonCombatOverlay::OnMentalityChanged(float NewValue)
+{
+	Mentality = NewValue;
+	if (MaxMentality != 0) MentalityBar->SetPercent(Mentality / MaxMentality);
+}
+
+void UNonCombatOverlay::OnMaxMentalityChanged(float NewValue)
+{
+	MaxMentality = NewValue;
+	if (MaxMentality != 0) MentalityBar->SetPercent(Mentality / MaxMentality);
+}
+
+void UNonCombatOverlay::WidgetControllerSet()
+{
+	UOverlayWidgetController* OverlayWidgetController = Cast<UOverlayWidgetController>(WidgetController);
+	OverlayWidgetController->OnHealthChanged.AddDynamic(this, &UNonCombatOverlay::OnHealthChanged);
+	OverlayWidgetController->OnMaxHealthChanged.AddDynamic(this, &UNonCombatOverlay::OnMaxHealthChanged);
+	OverlayWidgetController->OnMentalityChanged.AddDynamic(this, &UNonCombatOverlay::OnMentalityChanged);
+	OverlayWidgetController->OnMaxMentalityChanged.AddDynamic(this, &UNonCombatOverlay::OnMaxMentalityChanged);
 }
