@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "ZGameplayTag.h"
+#include "AbilitySystem/ZAbilitySystemLibrary.h"
 #include "Interaction/CombatInterface.h"
 
 UZAttributeSet::UZAttributeSet()
@@ -20,6 +21,15 @@ UZAttributeSet::UZAttributeSet()
 
 	TagToAttribute.Add(GameplayTag.Attributes_Secondary_MaxHealth, GetMaxHealthAttribute);
 	TagToAttribute.Add(GameplayTag.Attributes_Secondary_MaxMentality, GetMaxMentalityAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Secondary_Armor, GetArmorAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Secondary_ArmorPenetration, GetArmorPenetrationAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Secondary_DodgeChance, GetDodgeChanceAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Secondary_CriticalHitChance, GetCriticalHitChanceAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Secondary_CriticalHitDamage, GetCriticalHitDamageAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Secondary_CriticalHitResistance, GetCriticalHitResistanceAttribute);
+
+	TagToAttribute.Add(GameplayTag.Attributes_Resistance_Fire, GetFireResistanceAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Resistance_Physical, GetPhysicalResistanceAttribute);
 }
 
 // Clamp Attributes
@@ -77,6 +87,17 @@ void UZAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackD
 				FGameplayTagContainer TagContainer;
 				TagContainer.AddTag(FZGameplayTag::Get().Effect_HitReact);
 				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			}
+
+			const bool bDodge = UZAbilitySystemLibrary::IsDodged(Props.EffectContextHandle);
+			const bool bCriticalHit = UZAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
+			if (bDodge)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Dodge"));
+			}
+			if (bCriticalHit)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Critical"));
 			}
 		}
 	}

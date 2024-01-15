@@ -27,14 +27,14 @@ public:
 	UPROPERTY(EditAnywhere)
 	UCardComponent* CardComponent;
 
-	// Move function to ZAbilitySystemLibrary
-	//void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
+	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass) const;
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE UCardComponent* GetCardComponent() const { return CardComponent; }
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	FORCEINLINE UAttributeSet* GetAttributeSet() const { return AttributeSet; }
+	FORCEINLINE ECharacterClass GetCharacterClass() const { return CharacterClass; }
 
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
 	virtual void Die() override;
@@ -51,10 +51,10 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly ,Category = "Character Class Default")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Default")
 	int32 Level = 1;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly ,Category = "Character Class Default")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Default")
 	ECharacterClass CharacterClass = ECharacterClass::JohnDoe;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")

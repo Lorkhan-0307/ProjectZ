@@ -8,6 +8,7 @@
 #include "GameplayEffectTypes.h"
 #include "CardComponent.generated.h"
 
+class UCharacterClassInfo;
 class AZCharacterBase;
 class AZNonCombatCharacter;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDrawAndAddCardDelegate, FCard, NewCard);
@@ -45,7 +46,7 @@ public:
 	void InitializeCombat(AZCharacterBase* Character);
 
 	FCard ConvertCardNameToFCard(FName CardName);
-	void InitializeCardInventory(FName CharacterName);
+	void InitializeCardInventory(UCharacterClassInfo* CharacterClassInfo);
 
 	// Active Card, Apply Effect to target
 	void ActiveCard(FCard Card);
@@ -72,10 +73,6 @@ private:
 	// Card data
 	UPROPERTY(EditAnywhere, Category = Card)
 	UDataTable* CardDataTable;
-
-	// Character Data
-	UPROPERTY(EditAnywhere, Category = Card)
-	UDataTable* CharacterDataTable;
 
 	// Card Inventory : For NonCombat
 	UPROPERTY(VisibleAnywhere, Category = Card)

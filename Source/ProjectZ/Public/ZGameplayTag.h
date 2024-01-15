@@ -11,9 +11,6 @@ struct FZGameplayTag
 public:
 	static const FZGameplayTag& Get() {return GameplayTag;}
 	static void InitializeNativeGameplayTags();
-
-	FGameplayTag Attributes_Secondary_MaxHealth;
-	FGameplayTag Attributes_Secondary_MaxMentality;
 	
 	FGameplayTag Attributes_Primary_Sociability;
 	FGameplayTag Attributes_Primary_AntiSociability;
@@ -21,11 +18,27 @@ public:
 	FGameplayTag Attributes_Primary_Dexterity;
 	FGameplayTag Attributes_Primary_Engineering;
 
+	FGameplayTag Attributes_Secondary_MaxHealth;
+	FGameplayTag Attributes_Secondary_MaxMentality;
+	FGameplayTag Attributes_Secondary_Armor;
+	FGameplayTag Attributes_Secondary_ArmorPenetration;
+	FGameplayTag Attributes_Secondary_DodgeChance;
+	FGameplayTag Attributes_Secondary_CriticalHitChance;
+	FGameplayTag Attributes_Secondary_CriticalHitDamage;
+	FGameplayTag Attributes_Secondary_CriticalHitResistance;
+
+	FGameplayTag Attributes_Resistance_Fire;
+	FGameplayTag Attributes_Resistance_Physical;
+
 	// For Test
 	FGameplayTag InputTag_T;
 	//FGameplayTag Event_Montage_ThrowingStone;
 
 	FGameplayTag Damage;
+	FGameplayTag Damage_Fire;
+	FGameplayTag Damage_Physical;
+
+	TMap<FGameplayTag, FGameplayTag> DamageTypeToResistance;
 
 	FGameplayTag Effect_HitReact;
 private:
