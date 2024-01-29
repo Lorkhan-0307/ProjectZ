@@ -6,6 +6,7 @@
 #include "ZPlayerCharacter.h"
 #include "ZNonCombatCharacter.generated.h"
 
+class USpringArmComponent;
 class UCameraComponent;
 class UCardComponent;
 
@@ -17,7 +18,9 @@ class PROJECTZ_API AZNonCombatCharacter : public AZPlayerCharacter
 public:
 	AZNonCombatCharacter();
 
+	UPROPERTY(EditAnywhere, Category = Camera)
+	UCameraComponent* TopDownCamera;
+
 private:
-	UPROPERTY(VisibleAnywhere, Category = Camera)
-	UCameraComponent* FirstPersonCamera;
+
 };

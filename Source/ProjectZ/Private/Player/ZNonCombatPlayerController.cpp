@@ -15,6 +15,8 @@ void AZNonCombatPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SetShowMouseCursor(true);
+
 	check(ZContext);
 
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
@@ -37,17 +39,20 @@ void AZNonCombatPlayerController::SetupInputComponent()
 
 void AZNonCombatPlayerController::Move(const FInputActionValue& Value)
 {
+	/*
 	const FVector2D MovementVector = Value.Get<FVector2D>();
-
+	
 	if (APawn* ControlledPawn = GetPawn<APawn>())
 	{
 		ControlledPawn->AddMovementInput(ControlledPawn->GetActorForwardVector(), MovementVector.Y);
 		ControlledPawn->AddMovementInput(ControlledPawn->GetActorRightVector(), MovementVector.X);
 	}
+	*/
 }
 
 void AZNonCombatPlayerController::Look(const FInputActionValue& InputActionValue)
 {
+	/*
 	const FVector2D LookAxisVector = InputActionValue.Get<FVector2D>();
 
 	if (APawn* ControlledPawn = GetPawn<APawn>())
@@ -55,4 +60,5 @@ void AZNonCombatPlayerController::Look(const FInputActionValue& InputActionValue
 		ControlledPawn->AddControllerPitchInput(LookAxisVector.Y);
 		ControlledPawn->AddControllerYawInput(LookAxisVector.X);
 	}
+	*/
 }
