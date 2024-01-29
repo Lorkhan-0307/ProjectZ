@@ -32,6 +32,8 @@ public:
 
 	// For Test
 	FGameplayTag InputTag_T;
+
+	FGameplayTag InputTag_RMB;
 	//FGameplayTag Event_Montage_ThrowingStone;
 
 	FGameplayTag Damage;

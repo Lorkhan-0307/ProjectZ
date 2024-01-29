@@ -9,6 +9,7 @@
 #include "Camera/CameraComponent.h"
 #include "Character/CardComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "UI/HUD/ZNonCombatHUD.h"
 #include "Player/ZNonCombatPlayerController.h"
 #include "Player/ZPlayerState.h"
@@ -29,9 +30,14 @@ AZNonCombatCharacter::AZNonCombatCharacter()
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 0.f, 850.f);
 
-	FirstPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
-	FirstPersonCamera->SetupAttachment(GetCapsuleComponent());
-	FirstPersonCamera->SetRelativeLocation(FVector(-10.f, 0.f, 60.f)); // Position the camera
-	FirstPersonCamera->bUsePawnControlRotation = true;
-}
+	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	SpringArmComponent->SetupAttachment(GetCapsuleComponent());
+	SpringArmComponent->TargetArmLength = 400.f;
 
+	FirstPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
+	const FDetachmentTransformRules DetachmentTransformRules(EDetachmentRule::KeepWorld, true);
+	FirstPersonCamera->DetachFromComponent(DetachmentTransformRules);
+	//FirstPersonCamera->SetRelativeLocation(FVector(-10.f, 0.f, 60.f)); // Position the camera
+	FirstPersonCamera->SetRelativeLocation(FVector(0.f, 0.f, 0.f)); // Position the camera
+	FirstPersonCamera->bUsePawnControlRotation = false;
+}
