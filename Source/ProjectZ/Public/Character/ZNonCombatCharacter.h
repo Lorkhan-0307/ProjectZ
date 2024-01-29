@@ -19,9 +19,8 @@ public:
 	AZNonCombatCharacter();
 
 	UPROPERTY(EditAnywhere, Category = Camera)
-	UCameraComponent* FirstPersonCamera;
+	UCameraComponent* TopDownCamera;
 
 private:
-	UPROPERTY(EditAnywhere, Category = Camera)
-	USpringArmComponent* SpringArmComponent;
+
 };

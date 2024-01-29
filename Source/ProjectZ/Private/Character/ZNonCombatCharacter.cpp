@@ -30,14 +30,10 @@ AZNonCombatCharacter::AZNonCombatCharacter()
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 0.f, 850.f);
 
-	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
-	SpringArmComponent->SetupAttachment(GetCapsuleComponent());
-	SpringArmComponent->TargetArmLength = 400.f;
-
-	FirstPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
+	TopDownCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("TopDownCamera"));
 	const FDetachmentTransformRules DetachmentTransformRules(EDetachmentRule::KeepWorld, true);
-	FirstPersonCamera->DetachFromComponent(DetachmentTransformRules);
+	TopDownCamera->DetachFromComponent(DetachmentTransformRules);
 	//FirstPersonCamera->SetRelativeLocation(FVector(-10.f, 0.f, 60.f)); // Position the camera
-	FirstPersonCamera->SetRelativeLocation(FVector(0.f, 0.f, 0.f)); // Position the camera
-	FirstPersonCamera->bUsePawnControlRotation = false;
+	TopDownCamera->SetRelativeLocation(FVector(0.f, 0.f, 0.f)); // Position the camera
+	TopDownCamera->bUsePawnControlRotation = false;
 }

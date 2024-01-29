@@ -43,7 +43,8 @@ void AZPlayerControllerBase::BeginPlay()
 	Super::BeginPlay();
 	CameraLocation = GetCharacter()->GetActorLocation() + CameraBaseLocation;
 	const AZNonCombatCharacter* ZPlayerCharacter = Cast<AZNonCombatCharacter>(GetPawn());
-	ZPlayerCharacter->FirstPersonCamera->SetWorldLocation(CameraLocation);
+	ZPlayerCharacter->TopDownCamera->SetWorldLocation(CameraLocation);
+	ZPlayerCharacter->TopDownCamera->SetWorldRotation(CameraBaseRotation);
 }
 
 void AZPlayerControllerBase::CameraMove(const FInputActionValue& InputActionValue)
@@ -54,7 +55,7 @@ void AZPlayerControllerBase::CameraMove(const FInputActionValue& InputActionValu
 	if (const AZNonCombatCharacter* ZPlayerCharacter = Cast<AZNonCombatCharacter>(GetPawn()))
 	{
 		CameraLocation += FVector(MovementVector.X, MovementVector.Y, 0.f) * CameraMS;
-		ZPlayerCharacter->FirstPersonCamera->SetWorldLocation(CameraLocation);
+		ZPlayerCharacter->TopDownCamera->SetWorldLocation(CameraLocation);
 	}
 }
 
@@ -66,16 +67,12 @@ void AZPlayerControllerBase::CameraReset()
 		FTransform CameraTransform;
 
 		CameraLocation = GetCharacter()->GetActorLocation() + CameraBaseLocation;
-		ZPlayerCharacter->FirstPersonCamera->SetWorldLocation(CameraLocation, false);
+		ZPlayerCharacter->TopDownCamera->SetWorldLocation(CameraLocation);
 	}
 }
 
 void AZPlayerControllerBase::AbilityInputTagPressed(FGameplayTag InputTag)
 {
-	if (InputTag.MatchesTagExact(FZGameplayTag::Get().InputTag_RMB))
-	{
-		bAutoRunning = false;
-	}
 }
 
 void AZPlayerControllerBase::AbilityInputTagReleased(FGameplayTag InputTag)
@@ -103,7 +100,6 @@ void AZPlayerControllerBase::AbilityInputTagReleased(FGameplayTag InputTag)
 			if (NavPath->PathPoints.Num() > 0)
 			{
 				CachedDestination = NavPath->PathPoints.Last();
-				bAutoRunning = true;
 				UAIBlueprintHelperLibrary::SimpleMoveToLocation(this,CachedDestination);
 			}
 		}
@@ -122,7 +118,7 @@ void AZPlayerControllerBase::AbilityInputTagHeld(FGameplayTag InputTag)
 		return;
 	}
 
-	// 
+	// Not Implemented Yet
 	/*
 	if (bIsCombat)
 	{

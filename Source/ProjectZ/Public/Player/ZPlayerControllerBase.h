@@ -57,7 +57,6 @@ private:
 	FVector CachedDestination = FVector::ZeroVector;
 	float FollowTime = 0.f;
 	float ShortPressThreshold = 0.5f;
-	bool bAutoRunning = false;
 
 	UPROPERTY(EditDefaultsOnly)
 	float AutoRunAcceptanceRadius = 50.f;
@@ -72,6 +71,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	FVector CameraBaseLocation = FVector(-30.f, 0.f, 1000.f);
+
+	UPROPERTY(EditDefaultsOnly)
+	FRotator CameraBaseRotation = FRotator(-70.f, 0.f, 0.f);
 
 	UPROPERTY(EditDefaultsOnly)
 	float CameraMS = 3.f;
