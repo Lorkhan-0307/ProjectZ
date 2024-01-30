@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "GameplayTagContainer.h"
+#include "InputActionValue.h"
 #include "ZPlayerControllerBase.generated.h"
 
 class UZInputConfig;
@@ -43,7 +44,13 @@ private:
 	TObjectPtr<UInputAction> CameraMoveAction;
 
 	UPROPERTY(EditAnywhere, Category = Input)
+	TObjectPtr<UInputAction> CameraRotateAction;
+
+	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputAction> CameraResetAction;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	TObjectPtr<UInputAction> CameraZoomAction;
 
 	UPROPERTY()
 	TObjectPtr<UZAbilitySystemComponent> ZAbilitySystemComponent;
@@ -65,16 +72,34 @@ private:
 	TObjectPtr<USplineComponent> Spline;
 
 	void CameraMove(const FInputActionValue& InputActionValue);
+	void CameraRotate(const FInputActionValue& InputActionValue);
 	void CameraReset();
+	void CameraZoom(const FInputActionValue& InputActionValue);
 
 	FVector CameraLocation;
 
-	UPROPERTY(EditDefaultsOnly)
-	FVector CameraBaseLocation = FVector(-30.f, 0.f, 1000.f);
+	FRotator CameraRotation;
 
-	UPROPERTY(EditDefaultsOnly)
-	FRotator CameraBaseRotation = FRotator(-70.f, 0.f, 0.f);
+	FVector RotateLocation;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = Camera)
+	float CameraBaseHeight = 1000.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = Camera)
+	float CameraBaseAngle = -70.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = Camera)
 	float CameraMS = 3.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = Camera)
+	float CameraRS = 5.f;
+	
+	UPROPERTY(EditDefaultsOnly, Category = Camera)
+	float CameraRadius = 0.1f;
+
+	UPROPERTY(EditDefaultsOnly, Category = Camera)
+	float CameraZoomSpeed = 1.f;
+	
+	void SetCameraLocation();
+	void SetRotateLocation();
 };

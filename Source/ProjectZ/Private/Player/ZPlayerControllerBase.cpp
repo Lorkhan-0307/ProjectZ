@@ -30,7 +30,9 @@ void AZPlayerControllerBase::SetupInputComponent()
 	// Bind Input Action with tags
 	ZInputComponent->BindAbilityAction(InputConfig, this, &AZPlayerControllerBase::AbilityInputTagPressed, &AZPlayerControllerBase::AbilityInputTagReleased, &AZPlayerControllerBase::AbilityInputTagHeld);
 	ZInputComponent->BindAction(CameraMoveAction, ETriggerEvent::Triggered, this, &AZPlayerControllerBase::CameraMove);
+	ZInputComponent->BindAction(CameraRotateAction, ETriggerEvent::Triggered, this, &AZPlayerControllerBase::CameraRotate);
 	ZInputComponent->BindAction(CameraResetAction, ETriggerEvent::Triggered, this, &AZPlayerControllerBase::CameraReset);
+	ZInputComponent->BindAction(CameraZoomAction, ETriggerEvent::Triggered, this, &AZPlayerControllerBase::CameraZoom);
 }
 
 void AZPlayerControllerBase::PlayerTick(float DeltaTime)
@@ -41,10 +43,12 @@ void AZPlayerControllerBase::PlayerTick(float DeltaTime)
 void AZPlayerControllerBase::BeginPlay()
 {
 	Super::BeginPlay();
-	CameraLocation = GetCharacter()->GetActorLocation() + CameraBaseLocation;
-	const AZNonCombatCharacter* ZPlayerCharacter = Cast<AZNonCombatCharacter>(GetPawn());
-	ZPlayerCharacter->TopDownCamera->SetWorldLocation(CameraLocation);
-	ZPlayerCharacter->TopDownCamera->SetWorldRotation(CameraBaseRotation);
+	CameraReset();
+	CameraRotation = FRotator(CameraBaseAngle, 0.f, 0.f);
+	CameraLocation = GetCharacter()->GetActorLocation() + FVector(0.f, 0.f, CameraBaseHeight);
+
+	SetRotateLocation();
+	SetCameraLocation();
 }
 
 void AZPlayerControllerBase::CameraMove(const FInputActionValue& InputActionValue)
@@ -54,20 +58,53 @@ void AZPlayerControllerBase::CameraMove(const FInputActionValue& InputActionValu
 	// TO DO : Change AZNonCombatCharacter -> AZPlayerCharacter
 	if (const AZNonCombatCharacter* ZPlayerCharacter = Cast<AZNonCombatCharacter>(GetPawn()))
 	{
-		CameraLocation += FVector(MovementVector.X, MovementVector.Y, 0.f) * CameraMS;
-		ZPlayerCharacter->TopDownCamera->SetWorldLocation(CameraLocation);
+		const float Radian = FMath::DegreesToRadians(CameraRotation.Yaw);
+		const float DeltaX = MovementVector.X * FMath::Cos(Radian) - MovementVector.Y * FMath::Sin(Radian);
+		const float DeltaY = MovementVector.X * FMath::Sin(Radian) + MovementVector.Y * FMath::Cos(Radian);
+		CameraLocation += FVector(DeltaX, DeltaY, 0.f) * CameraMS;
+		ZPlayerCharacter->TopDownCamera->SetWorldLocation(CameraLocation + RotateLocation);
 	}
+}
+
+void AZPlayerControllerBase::CameraRotate(const FInputActionValue& InputActionValue)
+{
+	const float RotationValue = InputActionValue.Get<float>();
+	CameraRotation += FRotator(0.f, CameraRS * RotationValue, 0.f);
+	SetRotateLocation();
+	SetCameraLocation();
 }
 
 void AZPlayerControllerBase::CameraReset()
 {
+	CameraLocation = FVector(GetCharacter()->GetActorLocation().X, GetCharacter()->GetActorLocation().Y, CameraLocation.Z);
+	SetCameraLocation();
+}
+
+void AZPlayerControllerBase::CameraZoom(const FInputActionValue& InputActionValue)
+{
+	const float ZoomValue = InputActionValue.Get<float>();
+
+	CameraLocation.Z -= ZoomValue * CameraZoomSpeed;
+	SetRotateLocation();
+	SetCameraLocation();
+}
+
+void AZPlayerControllerBase::SetCameraLocation()
+{
 	if (const AZNonCombatCharacter* ZPlayerCharacter = Cast<AZNonCombatCharacter>(GetPawn()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("!!"));
-		FTransform CameraTransform;
+		ZPlayerCharacter->TopDownCamera->SetWorldLocation(CameraLocation + RotateLocation);
+	}
+}
 
-		CameraLocation = GetCharacter()->GetActorLocation() + CameraBaseLocation;
-		ZPlayerCharacter->TopDownCamera->SetWorldLocation(CameraLocation);
+void AZPlayerControllerBase::SetRotateLocation()
+{
+	const float Radian = FMath::DegreesToRadians(CameraRotation.Yaw);
+	const float Radius = CameraLocation.Z * FMath::Tan(FMath::DegreesToRadians(CameraRotation.Pitch)) * CameraRadius;
+	if (const AZNonCombatCharacter* ZPlayerCharacter = Cast<AZNonCombatCharacter>(GetPawn()))
+	{
+		ZPlayerCharacter->TopDownCamera->SetWorldRotation(CameraRotation);
+		RotateLocation = FVector(Radius * FMath::Cos(Radian), Radius * FMath::Sin(Radian), 0.f);
 	}
 }
 
@@ -100,7 +137,7 @@ void AZPlayerControllerBase::AbilityInputTagReleased(FGameplayTag InputTag)
 			if (NavPath->PathPoints.Num() > 0)
 			{
 				CachedDestination = NavPath->PathPoints.Last();
-				UAIBlueprintHelperLibrary::SimpleMoveToLocation(this,CachedDestination);
+				UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, CachedDestination);
 			}
 		}
 	}
