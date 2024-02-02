@@ -6,6 +6,7 @@
 #include "ZPlayerCharacter.h"
 #include "ZNonCombatCharacter.generated.h"
 
+class USplineComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class UCardComponent;
@@ -21,6 +22,11 @@ public:
 	UPROPERTY(EditAnywhere, Category = Camera)
 	UCameraComponent* TopDownCamera;
 
+
+protected:
+	virtual void Tick(float DeltaSeconds) override;
 private:
 
 };
+
+

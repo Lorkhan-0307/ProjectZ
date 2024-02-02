@@ -15,6 +15,7 @@
 #include "Character/CardComponent.h"
 #include "Character/ZNonCombatCharacter.h"
 #include "Components/SplineComponent.h"
+#include "Components/SplineMeshComponent.h"
 #include "Input/ZInputComponent.h"
 
 AZPlayerControllerBase::AZPlayerControllerBase()

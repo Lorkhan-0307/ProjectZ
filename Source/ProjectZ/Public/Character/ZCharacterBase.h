@@ -27,6 +27,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	UCardComponent* CardComponent;
 
+	UFUNCTION(BlueprintCallable)
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass) const;
 
 	UFUNCTION(BlueprintCallable)
@@ -38,6 +39,9 @@ public:
 
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
 	virtual void Die() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<UGameplayEffect> TestEffect;
 
 protected:
 	virtual void BeginPlay() override;

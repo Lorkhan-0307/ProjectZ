@@ -9,6 +9,7 @@
 class UProgressBar;
 class UCardWidget;
 class UCardComponent;
+class UImage;
 
 UCLASS()
 class PROJECTZ_API UNonCombatOverlay : public UZUserWidget
@@ -33,16 +34,31 @@ protected:
 
 
 private:
+	UPROPERTY(meta = (BindWidget))
+	UProgressBar* HealthBar;
+	
+	UPROPERTY(meta = (BindWidget))
+	UProgressBar* MentalityBar;
 
-	/*
-	virtual void OnHealthChanged(float NewValue) override;
 	
-	virtual void OnMaxHealthChanged(float NewValue) override; 
+	UPROPERTY(meta = (BindWidget))
+	UImage* HealthCheckingBar;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* MentalityCheckingBar;
 	
-	virtual void OnMentalityChanged(float NewValue) override;
 	
-	virtual void OnMaxMentalityChanged(float NewValue) override;
-	*/
+	UFUNCTION()
+	virtual void OnHealthChanged(float NewValue);
+	
+	UFUNCTION()
+	virtual void OnMaxHealthChanged(float NewValue); 
+
+	UFUNCTION()
+	virtual void OnMentalityChanged(float NewValue);
+
+	UFUNCTION()
+	virtual void OnMaxMentalityChanged(float NewValue);
 	
 	
 	UFUNCTION()
@@ -50,4 +66,9 @@ private:
 
 	UFUNCTION()
 	void UpdateRightHandCard(FCard RightCard);
+
+	float GetHealthCheckingBarPos();
+	float GetMentalityCheckingBarPos();
+	void SetHealthCheckingBarPos();
+	void SetMentalityCheckingBarPos();
 };

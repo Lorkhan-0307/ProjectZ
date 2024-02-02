@@ -37,3 +37,11 @@ AZNonCombatCharacter::AZNonCombatCharacter()
 	TopDownCamera->SetRelativeLocation(FVector(0.f, 0.f, 0.f)); // Position the camera
 	TopDownCamera->bUsePawnControlRotation = false;
 }
+
+void AZNonCombatCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	
+	
+}
+

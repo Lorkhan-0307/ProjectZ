@@ -26,6 +26,9 @@ public:
 	AZPlayerControllerBase();
 	virtual void SetupInputComponent() override;
 
+	FORCEINLINE USplineComponent* GetSplineComponent() const { return Spline; }
+	FORCEINLINE FVector GetCachedDestination() const { return CachedDestination; }
+
 protected:
 	virtual void PlayerTick(float DeltaTime) override;
 	virtual void BeginPlay() override;
@@ -93,13 +96,13 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = Camera)
 	float CameraRS = 5.f;
-	
+
 	UPROPERTY(EditDefaultsOnly, Category = Camera)
 	float CameraRadius = 0.1f;
 
 	UPROPERTY(EditDefaultsOnly, Category = Camera)
 	float CameraZoomSpeed = 1.f;
-	
+
 	void SetCameraLocation();
 	void SetRotateLocation();
 };
