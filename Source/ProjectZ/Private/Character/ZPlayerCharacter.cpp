@@ -136,6 +136,7 @@ void AZPlayerCharacter::UpdateSplinePath()
 		USplineMeshComponent* SplineMeshComponent = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
 		SplineMeshComponent->SetForwardAxis(ESplineMeshAxis::Z);
 		SplineMeshComponent->SetStaticMesh(DefaultMesh);
+		SplineMeshComponent->CastShadow = false;
 
 		SplineMeshComponent->SetMobility(EComponentMobility::Movable);
 		SplineMeshComponent->CreationMethod = EComponentCreationMethod::UserConstructionScript;
@@ -143,8 +144,8 @@ void AZPlayerCharacter::UpdateSplinePath()
 		SplineMeshComponent->RegisterComponentWithWorld(GetWorld());
 
 		SplineMeshComponent->AttachToComponent(Spline, FAttachmentTransformRules::KeepRelativeTransform);
-		SplineMeshComponent->SetStartScale(FVector2D(0.05f, 0.05f));
-		SplineMeshComponent->SetEndScale(FVector2D(0.05f, 0.05f));
+		SplineMeshComponent->SetStartScale(SplineScale);
+		SplineMeshComponent->SetEndScale(SplineScale);
 
 		const FVector StartPoint = Spline->GetLocationAtSplinePoint(SplineCount, ESplineCoordinateSpace::Local);
 		const FVector StartTangent = Spline->GetTangentAtSplinePoint(SplineCount, ESplineCoordinateSpace::Local);

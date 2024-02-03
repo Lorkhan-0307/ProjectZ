@@ -18,7 +18,7 @@ class PROJECTZ_API AZPlayerCharacter : public AZCharacterBase
 
 public:
 	AZPlayerCharacter();
-	
+
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void InitAbilityActorInfo() override;
 
@@ -39,6 +39,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = Spline)
 	float SplineHeight = 20.f;
+
+	UPROPERTY(EditAnywhere, Category = Spline)
+	FVector2D SplineScale = FVector2D(0.02f, 0.02f);
 
 	void UpdateSplinePath();
 };
