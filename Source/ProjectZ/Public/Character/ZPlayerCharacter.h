@@ -6,6 +6,8 @@
 #include "Character/ZCharacterBase.h"
 #include "ZPlayerCharacter.generated.h"
 
+class USplineComponent;
+class USplineMeshComponent;
 /**
  * 
  */
@@ -15,11 +17,31 @@ class PROJECTZ_API AZPlayerCharacter : public AZCharacterBase
 	GENERATED_BODY()
 
 public:
+	AZPlayerCharacter();
+
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void InitAbilityActorInfo() override;
 
 	virtual int32 GetLevel() override;
 
+	virtual void Tick(float DeltaSeconds) override;
+
 private:
 	bool bIsPossessed = false;
+
+	UPROPERTY(EditAnywhere)
+	USplineComponent* Spline;
+
+	TArray<USplineMeshComponent*> SplineMesh;
+
+	UPROPERTY(EditAnywhere, Category = Spline)
+	UStaticMesh* DefaultMesh;
+
+	UPROPERTY(EditAnywhere, Category = Spline)
+	float SplineHeight = 20.f;
+
+	UPROPERTY(EditAnywhere, Category = Spline)
+	FVector2D SplineScale = FVector2D(0.02f, 0.02f);
+
+	void UpdateSplinePath();
 };
