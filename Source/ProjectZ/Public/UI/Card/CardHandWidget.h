@@ -8,6 +8,9 @@
 #include "Data/Card.h"
 #include "CardHandWidget.generated.h"
 
+class USizeBox;
+class UCanvasPanel;
+class UCanvasPanelSlot;
 class UOverlay;
 class UCardComponent;
 
@@ -27,19 +30,16 @@ protected:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	UOverlay* CardOverlay;
+	UCanvasPanel* CardCanvasPanel;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	USizeBox* CardSizeBox;
 
 	UPROPERTY(EditAnywhere, Category = Card)
 	TSubclassOf<UCardWidget> CardWidgetClass;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Card)
 	TArray<UCardWidget*> HandCard;
-
-	UPROPERTY()
-	UCardWidget* LeftHandCardWidget;
-
-	UPROPERTY()
-	UCardWidget* RightHandCardWidget;
 
 	// Card Horizontal Distance
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
@@ -71,14 +71,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
 	FWidgetTransform CardSpawnPosition;
 
-	// Distance from the Left
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
-	FVector2D LeftHandCardPosition; 
-
-	// Distance from the Right
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
-	FVector2D RightHandCardPosition; 
-
 	UFUNCTION(BlueprintCallable)
 	void AddCardToHand(FCard NewCard);
 
@@ -98,12 +90,6 @@ private:
 	float GetCardXPosition(int32 Index);
 	float GetCardYPosition(int32 Index);
 	float GetCardAngle(int32 Index);
-
-	UFUNCTION()
-	void UpdateLeftHandCard(FCard LeftCard);
-
-	UFUNCTION()
-	void UpdateRightHandCard(FCard RightCard);
 
 	UFUNCTION()
 	void DragStarted(UCardWidget* CardDragged);

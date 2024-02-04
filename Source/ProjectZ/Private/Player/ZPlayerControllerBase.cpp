@@ -16,6 +16,7 @@
 #include "Character/ZNonCombatCharacter.h"
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
+#include "Game/ZGameModeBase.h"
 #include "Input/ZInputComponent.h"
 
 AZPlayerControllerBase::AZPlayerControllerBase()
@@ -124,6 +125,15 @@ void AZPlayerControllerBase::AbilityInputTagReleased(FGameplayTag InputTag)
 		return;
 	}
 
+	if (Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->GetCurrentTurn() != ETurn::ET_PlayerTurn)
+	{
+		if (GetASC())
+		{
+			GetASC()->AbilityInputTagHeld(InputTag);
+		}
+		return;
+	}
+
 	const APawn* ControlledPawn = GetPawn();
 	if (FollowTime <= ShortPressThreshold && ControlledPawn)
 	{
@@ -155,10 +165,8 @@ void AZPlayerControllerBase::AbilityInputTagHeld(FGameplayTag InputTag)
 		}
 		return;
 	}
-
-	// Not Implemented Yet
-	/*
-	if (bIsCombat)
+	
+	if (Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->GetCurrentTurn() != ETurn::ET_PlayerTurn)
 	{
 		if (GetASC())
 		{
@@ -166,7 +174,7 @@ void AZPlayerControllerBase::AbilityInputTagHeld(FGameplayTag InputTag)
 		}
 		return;
 	}
-	*/
+	
 
 	// Hold mouse button
 	FollowTime += GetWorld()->GetDeltaSeconds();

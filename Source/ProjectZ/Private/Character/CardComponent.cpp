@@ -13,6 +13,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/ZAbilitySystemLibrary.h"
+#include "Game/ZGameModeBase.h"
 
 
 // Sets default values for this component's properties
@@ -49,6 +50,10 @@ void UCardComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 // Draw Card for deck and add card to hand
 void UCardComponent::DrawCard()
 {
+	if (Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->GetCurrentTurn() != ETurn::ET_PlayerTurn)
+	{
+		return;
+	}
 	if (CardDeck.Num() == 0) return;
 	const FCard TopCard = CardDeck.Top();
 	CardDeck.Pop();

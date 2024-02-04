@@ -13,6 +13,8 @@
 // TO DO : Replace to CombatPlayerController
 #include "Player/ZNonCombatPlayerController.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
+#include "Components/CanvasPanelSlot.h"
 #include "UI/Card/CardDragDropOperation.h"
 #include "Ui/Card/CardHandWidget.h"
 
@@ -20,12 +22,16 @@
 void UCardWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+	SetDesiredSizeInViewport(CardSize);
 }
 
 void UCardWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
-	if (GetCachedGeometry().GetAbsolutePosition().X != DestinationTransform.Translation.X) SetPosition(InDeltaTime);
+	if (UCanvasPanelSlot* CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(this))
+	{
+		if (CanvasPanelSlot->GetPosition() != DestinationPosition) SetPosition(InDeltaTime);
+	}
 }
 
 void UCardWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -67,11 +73,13 @@ void UCardWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPoint
 void UCardWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	Super::NativeOnDragCancelled(InDragDropEvent, InOperation);
-	if (InOperation->DefaultDragVisual->GetCachedGeometry().GetAbsolutePosition().Y < CardHandWidget->GetPlayCardHeight())
+	//const UCanvasPanelSlot* CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(InOperation->DefaultDragVisual);
+	UE_LOG(LogTemp, Warning, TEXT("%d"), GEngine->GameViewport->Viewport->GetSizeXY().Y);
+	if (InOperation->DefaultDragVisual->GetCachedGeometry().AbsolutePosition.Y < GEngine->GameViewport->Viewport->GetSizeXY().Y * CardComponent->GetPlayCardHeight())
 	{
 		// TO DO : Active Card Effect
 		CardComponent->ActiveCard(CardStat);
-		
+
 		CardDragEndDelegate.Broadcast(this, true);
 		RemoveFromParent();
 		CollectGarbage(EObjectFlags::RF_BeginDestroyed);
@@ -99,7 +107,8 @@ void UCardWidget::InitCardStatus(FCard CardStatus)
 // Set Position by Interpolation
 void UCardWidget::SetPosition(float DeltaTime)
 {
-	if (GetRenderTransform() == DestinationTransform) return;
-	SetRenderTranslation(FMath::Vector2DInterpTo(GetRenderTransform().Translation, DestinationTransform.Translation, DeltaTime, InterpSpeed));
-	SetRenderTransformAngle(FMath::FInterpTo(GetRenderTransform().Angle, DestinationTransform.Angle, DeltaTime, InterpSpeed));
+	UCanvasPanelSlot* CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(this);
+	if (CanvasPanelSlot == nullptr) return;
+	CanvasPanelSlot->SetPosition(FMath::Vector2DInterpTo(CanvasPanelSlot->GetPosition(), DestinationPosition, DeltaTime, InterpSpeed));
+	SetRenderTransformAngle(FMath::FInterpTo(GetRenderTransform().Angle, DestinationAngle, DeltaTime, InterpSpeed));
 }

@@ -14,6 +14,8 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
+#include "Game/ZGameModeBase.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "UI/HUD/ZNonCombatHUD.h"
 #include "Player/ZNonCombatPlayerController.h"
@@ -85,6 +87,12 @@ void AZPlayerCharacter::UpdateSplinePath()
 			}
 		}
 		SplineMesh.Empty();
+	}
+
+	const AZGameModeBase* ZGameMode = Cast<AZGameModeBase>(UGameplayStatics::GetGameMode(this));
+	if (ZGameMode && ZGameMode->GetCurrentTurn() != ETurn::ET_PlayerTurn)
+	{
+		return;
 	}
 
 	FVector StartPos = GetActorLocation();

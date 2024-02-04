@@ -7,15 +7,36 @@
 #include "ZGameModeBase.generated.h"
 
 class UCharacterClassInfo;
-/**
- * 
- */
+
+UENUM(BlueprintType)
+enum class ETurn : uint8
+{
+	ET_PlayerTurn UMETA(DisplayName = "Player Turn"),
+	ET_EnemyTurn UMETA(DisplayName = "Enemy Turn")
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTurnChangedDelegate, ETurn, CurrentTurn);
+
 UCLASS()
 class PROJECTZ_API AZGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 
 public:
+	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintCallable)
+	void SetTurn(ETurn Turn);
+	
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE ETurn GetCurrentTurn() const { return CurrentTurn; }
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FTurnChangedDelegate TurnChangedDelegate;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Character Class Default")
 	TObjectPtr<UCharacterClassInfo> CharacterClassInfo;
+
+private:
+	ETurn CurrentTurn = ETurn::ET_PlayerTurn;
 };

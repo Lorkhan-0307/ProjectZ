@@ -3,6 +3,9 @@
 
 #include "Ui/NonCombat/NonCombatOverlay.h"
 
+#include "Components/SizeBox.h"
+#include "Components/CanvasPanel.h"
+#include "UI/Card/CardHandWidget.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Character/CardComponent.h"
 #include "Character/ZNonCombatCharacter.h"
@@ -12,6 +15,8 @@
 #include "Player/ZNonCombatPlayerController.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "Components/ProgressBar.h"
+#include "Components/TextBlock.h"
+#include "Game/ZGameModeBase.h"
 
 
 void UNonCombatOverlay::NativeConstruct()
@@ -20,6 +25,14 @@ void UNonCombatOverlay::NativeConstruct()
 
 	HealthCheckingBar->SetVisibility(ESlateVisibility::Visible);
 	MentalityCheckingBar->SetVisibility(ESlateVisibility::Visible);
+	TurnText->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UNonCombatOverlay::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+	UpdateCardPosition();
+	SetCardHandPosition(InDeltaTime);
 }
 
 void UNonCombatOverlay::SetCardComponent(UCardComponent* CC)
@@ -29,6 +42,7 @@ void UNonCombatOverlay::SetCardComponent(UCardComponent* CC)
 	{
 		CardComponent->UpdateLeftHandCardDelegate.AddDynamic(this, &UNonCombatOverlay::UpdateLeftHandCard);
 		CardComponent->UpdateRightHandCardDelegate.AddDynamic(this, &UNonCombatOverlay::UpdateRightHandCard);
+		CardComponent->DrawAndAddCardDelegate.AddDynamic(this, &UNonCombatOverlay::AddCardToHand);
 	}
 }
 
@@ -36,10 +50,15 @@ void UNonCombatOverlay::WidgetControllerSet()
 {
 	Super::WidgetControllerSet();
 	UOverlayWidgetController* OverlayWidgetController = Cast<UOverlayWidgetController>(WidgetController);
-	OverlayWidgetController->OnHealthChanged.AddDynamic(this, &UNonCombatOverlay::OnHealthChanged);
-	OverlayWidgetController->OnMaxHealthChanged.AddDynamic(this, &UNonCombatOverlay::OnMaxHealthChanged);
-	OverlayWidgetController->OnMentalityChanged.AddDynamic(this, &UNonCombatOverlay::OnMentalityChanged);
-	OverlayWidgetController->OnMaxMentalityChanged.AddDynamic(this, &UNonCombatOverlay::OnMaxMentalityChanged);
+	if (OverlayWidgetController)
+	{
+		OverlayWidgetController->OnHealthChanged.AddDynamic(this, &UNonCombatOverlay::OnHealthChanged);
+		OverlayWidgetController->OnMaxHealthChanged.AddDynamic(this, &UNonCombatOverlay::OnMaxHealthChanged);
+		OverlayWidgetController->OnMentalityChanged.AddDynamic(this, &UNonCombatOverlay::OnMentalityChanged);
+		OverlayWidgetController->OnMaxMentalityChanged.AddDynamic(this, &UNonCombatOverlay::OnMaxMentalityChanged);
+	}
+
+	Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->TurnChangedDelegate.AddDynamic(this, &UNonCombatOverlay::TurnChanged);
 }
 
 void UNonCombatOverlay::UpdateLeftHandCard(FCard LeftCard)
@@ -62,6 +81,146 @@ void UNonCombatOverlay::UpdateRightHandCard(FCard RightCard)
 	}
 	SetVisibility(ESlateVisibility::Visible);
 	RightHandCardWidget->InitCardStatus(RightCard);
+}
+
+// Get Card, Create card widget
+void UNonCombatOverlay::AddCardToHand(FCard NewCard)
+{
+	UCardWidget* CardWidget = CreateCardWidget(NewCard);
+	HandCard.Add(CardWidget);
+}
+
+// Set Card Position
+void UNonCombatOverlay::UpdateCardPosition()
+{
+	for (int i = 0; i < HandCard.Num(); i++)
+	{
+		HandCard[i]->DestinationPosition = FVector2D(GetCardXPosition(i), GetCardYPosition(i));
+		HandCard[i]->DestinationAngle = GetCardAngle(i);
+	}
+}
+
+// Create Card Widget by FCard
+UCardWidget* UNonCombatOverlay::CreateCardWidget(FCard CardStatus)
+{
+	UCardWidget* CardWidget = CreateWidget<UCardWidget>(GetOwningPlayer(), CardWidgetClass);
+	CardWidget->InitCardStatus(CardStatus);
+	CardWidget->CardComponent = CardComponent;
+
+	CardWidget->RemoveFromParent();
+	CardHandCanvas->AddChild(CardWidget);
+	UCanvasPanelSlot* CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(CardWidget);
+	CanvasPanelSlot->SetSize(FVector2D(200.f, 280.f));
+	CanvasPanelSlot->SetPosition(CardSpawnPosition);
+	const FAnchors Anchors(0, 0, 0, 0);
+	CanvasPanelSlot->SetAnchors(Anchors);
+
+	CardWidget->CardDragStartDelegate.AddDynamic(this, &UNonCombatOverlay::DragStarted);
+	CardWidget->CardDragEndDelegate.AddDynamic(this, &UNonCombatOverlay::DragEnded);
+	CardWidget->AddToViewport();
+	return CardWidget;
+}
+
+float UNonCombatOverlay::GetCardXPosition(int32 Index)
+{
+	UCanvasPanelSlot* CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(HandCard[Index]);
+	float XPos = CardHandSizeBox->GetDesiredSize().X / 2 + GetCardIndexPositionFromCenter(Index) * CardDistance - CardSize.X / 2;
+	if (HandCard[Index]->GetMouseHovered()) XPos += MouseHoveredHeight * FMath::Sin(FMath::DegreesToRadians(GetCardAngle(Index)));
+	return XPos;
+}
+
+float UNonCombatOverlay::GetCardYPosition(int32 Index)
+{
+	float YPos = FMath::Abs(GetCardIndexPositionFromCenter(Index)) * ArcHeight;
+	if (HandCard[Index]->GetMouseHovered()) YPos -= MouseHoveredHeight * FMath::Cos(FMath::DegreesToRadians(GetCardAngle(Index)));
+	return YPos;
+}
+
+float UNonCombatOverlay::GetCardAngle(int32 Index)
+{
+	return GetCardIndexPositionFromCenter(Index) * CardAngle;
+}
+
+void UNonCombatOverlay::DragStarted(UCardWidget* CardDragged)
+{
+	NowDragCard = CardDragged;
+}
+
+void UNonCombatOverlay::DragEnded(UCardWidget* CardDragged, bool bIsUsed)
+{
+	NowDragCard = nullptr;
+	if (bIsUsed)
+	{
+		HandCard.Remove(CardDragged);
+	}
+}
+
+// Convert card index 0, 1, 2, 3, 4 -> -2, -1, 0, 1, 2
+float UNonCombatOverlay::GetCardIndexPositionFromCenter(int32 Index) const
+{
+	float NewIndex = (float)Index - (((float)HandCard.Num() - 1.f) / 2.f);
+	if (NewIndex < 0)
+	{
+		NewIndex -= 0.5f;
+	}
+	NewIndex = FMath::RoundToFloat(NewIndex);
+	if (HandCard.Num() % 2 == 0)
+	{
+		if (NewIndex < 0) NewIndex += 0.5f;
+		else
+		{
+			NewIndex -= 0.5f;
+		}
+	}
+	return NewIndex;
+}
+
+void UNonCombatOverlay::TurnChanged(ETurn Turn)
+{
+	CurrentTurn = Turn;
+	bCardHandPositionSet = false;
+	ShowTurnText();
+}
+
+void UNonCombatOverlay::SetCardHandPosition(float DeltaTime)
+{
+	if (bCardHandPositionSet) return;
+
+	FVector2D DestinationPosition;
+
+	UCanvasPanelSlot* CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(CardHandSizeBox);
+	if (CurrentTurn == ETurn::ET_PlayerTurn)
+	{
+		DestinationPosition = FVector2D(0.f, 0.f);
+	}
+	else
+	{
+		DestinationPosition = FVector2D(0.f, CanvasPanelSlot->GetSize().Y);
+	}
+	CanvasPanelSlot->SetPosition(FMath::Vector2DInterpTo(CanvasPanelSlot->GetPosition(), DestinationPosition, DeltaTime, CardHandInterpSpeed));
+	if (CanvasPanelSlot->GetPosition() == DestinationPosition)
+	{
+		bCardHandPositionSet = true;
+	}
+}
+
+void UNonCombatOverlay::ShowTurnText()
+{
+	if (CurrentTurn == ETurn::ET_PlayerTurn)
+	{
+		TurnText->SetText(FText::FromString("Player Turn"));
+	}
+	else if (CurrentTurn == ETurn::ET_EnemyTurn)
+	{
+		TurnText->SetText(FText::FromString("Enemy Turn"));
+	}
+	TurnText->SetVisibility(ESlateVisibility::Visible);
+	GetWorld()->GetTimerManager().SetTimer(TurnTextTimer, this, &UNonCombatOverlay::HideTurnText, TurnTextDisplayTime, false);
+}
+
+void UNonCombatOverlay::HideTurnText()
+{
+	TurnText->SetVisibility(ESlateVisibility::Hidden);
 }
 
 float UNonCombatOverlay::GetHealthCheckingBarPos()

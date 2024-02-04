@@ -59,6 +59,7 @@ public:
 
 	FORCEINLINE FCard GetLeftHandCard() const { return LeftHandCard; }
 	FORCEINLINE FCard GetRightHandCard() const { return RightHandCard; }
+	FORCEINLINE float GetPlayCardHeight() const { return PlayCardHeight; }
 	FORCEINLINE void SetLeftHandCard(FCard Card) { LeftHandCard = Card; }
 	FORCEINLINE void SetRightHandCard(FCard Card) { RightHandCard = Card; }
 
@@ -88,6 +89,9 @@ private:
 	// Number of cards in hand when start combat
 	UPROPERTY(EditAnywhere, Category = Card)
 	int32 FirstCardCount;
+
+	UPROPERTY(EditAnywhere, meta = (ClampMin=0.f, ClampMax=1.f), Category = Card)
+	float PlayCardHeight = 0.5f;
 
 	FCard LeftHandCard;
 

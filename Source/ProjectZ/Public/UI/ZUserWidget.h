@@ -35,11 +35,5 @@ protected:
 	UPROPERTY()
 	UCardComponent* CardComponent;
 
-	float Health;
-	float MaxHealth;
-	float Mentality;
-	float MaxMentality;
-
-
 private:
 };
