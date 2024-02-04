@@ -214,6 +214,10 @@ void UNonCombatOverlay::ShowTurnText()
 	{
 		TurnText->SetText(FText::FromString("Enemy Turn"));
 	}
+	else
+	{
+		return;
+	}
 	TurnText->SetVisibility(ESlateVisibility::Visible);
 	GetWorld()->GetTimerManager().SetTimer(TurnTextTimer, this, &UNonCombatOverlay::HideTurnText, TurnTextDisplayTime, false);
 }

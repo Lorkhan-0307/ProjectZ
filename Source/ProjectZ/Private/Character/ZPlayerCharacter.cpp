@@ -90,7 +90,7 @@ void AZPlayerCharacter::UpdateSplinePath()
 	}
 
 	const AZGameModeBase* ZGameMode = Cast<AZGameModeBase>(UGameplayStatics::GetGameMode(this));
-	if (ZGameMode && ZGameMode->GetCurrentTurn() != ETurn::ET_PlayerTurn)
+	if (ZGameMode->GetCurrentTurn() != ETurn::ET_PlayerTurn)
 	{
 		return;
 	}

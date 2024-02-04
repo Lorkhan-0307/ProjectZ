@@ -11,6 +11,9 @@ class UCharacterClassInfo;
 UENUM(BlueprintType)
 enum class ETurn : uint8
 {
+	// NonCombat
+	ET_NonCombat UMETA(DisplayName = "NonCombat"),
+	// Combat
 	ET_PlayerTurn UMETA(DisplayName = "Player Turn"),
 	ET_EnemyTurn UMETA(DisplayName = "Enemy Turn")
 };
@@ -38,5 +41,5 @@ public:
 	TObjectPtr<UCharacterClassInfo> CharacterClassInfo;
 
 private:
-	ETurn CurrentTurn = ETurn::ET_PlayerTurn;
+	ETurn CurrentTurn = ETurn::ET_NonCombat;
 };

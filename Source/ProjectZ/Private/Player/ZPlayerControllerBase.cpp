@@ -122,15 +122,14 @@ void AZPlayerControllerBase::AbilityInputTagReleased(FGameplayTag InputTag)
 		{
 			GetASC()->AbilityInputTagHeld(InputTag);
 		}
+		FollowTime = 0.f;
 		return;
 	}
 
-	if (Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->GetCurrentTurn() != ETurn::ET_PlayerTurn)
+	const ETurn CurrentTurn = Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->GetCurrentTurn();
+	if (CurrentTurn == ETurn::ET_EnemyTurn)
 	{
-		if (GetASC())
-		{
-			GetASC()->AbilityInputTagHeld(InputTag);
-		}
+		FollowTime = 0.f;
 		return;
 	}
 
@@ -165,25 +164,18 @@ void AZPlayerControllerBase::AbilityInputTagHeld(FGameplayTag InputTag)
 		}
 		return;
 	}
-	
-	if (Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->GetCurrentTurn() != ETurn::ET_PlayerTurn)
-	{
-		if (GetASC())
-		{
-			GetASC()->AbilityInputTagHeld(InputTag);
-		}
-		return;
-	}
-	
 
 	// Hold mouse button
 	FollowTime += GetWorld()->GetDeltaSeconds();
-
+	
 	FHitResult Hit;
 	if (GetHitResultUnderCursor(ECC_Visibility, false, Hit))
 	{
 		CachedDestination = Hit.ImpactPoint;
 	}
+	
+	const ETurn CurrentTurn = Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->GetCurrentTurn();
+	if (CurrentTurn != ETurn::ET_NonCombat) return;
 
 	if (APawn* ControlledPawn = GetPawn())
 	{
