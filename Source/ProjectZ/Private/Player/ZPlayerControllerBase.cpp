@@ -126,8 +126,9 @@ void AZPlayerControllerBase::AbilityInputTagReleased(FGameplayTag InputTag)
 		return;
 	}
 
-	const ETurn CurrentTurn = Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->GetCurrentTurn();
-	if (CurrentTurn == ETurn::ET_EnemyTurn)
+	AZGameModeBase* GameMode = Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode());
+	const ETurn CurrentTurn = GameMode->GetCurrentTurn();
+	if (!(CurrentTurn == ETurn::ET_NonCombat || CurrentTurn == ETurn::ET_MoveTurn))
 	{
 		FollowTime = 0.f;
 		return;
@@ -148,6 +149,10 @@ void AZPlayerControllerBase::AbilityInputTagReleased(FGameplayTag InputTag)
 			{
 				CachedDestination = NavPath->PathPoints.Last();
 				UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, CachedDestination);
+				if (CurrentTurn == ETurn::ET_MoveTurn)
+				{
+					GameMode->SetTurn(ETurn::ET_PlayerTurn);
+				}
 			}
 		}
 	}
@@ -167,13 +172,13 @@ void AZPlayerControllerBase::AbilityInputTagHeld(FGameplayTag InputTag)
 
 	// Hold mouse button
 	FollowTime += GetWorld()->GetDeltaSeconds();
-	
+
 	FHitResult Hit;
 	if (GetHitResultUnderCursor(ECC_Visibility, false, Hit))
 	{
 		CachedDestination = Hit.ImpactPoint;
 	}
-	
+
 	const ETurn CurrentTurn = Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->GetCurrentTurn();
 	if (CurrentTurn != ETurn::ET_NonCombat) return;
 

@@ -6,6 +6,7 @@
 #include "Character/ZCharacterBase.h"
 #include "ZPlayerCharacter.generated.h"
 
+class UCostPathLengthWidget;
 class USplineComponent;
 class USplineMeshComponent;
 /**
@@ -26,6 +27,9 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 
+	int32 GetPathCost();
+	float GetPathLength();
+
 private:
 	bool bIsPossessed = false;
 
@@ -44,4 +48,7 @@ private:
 	FVector2D SplineScale = FVector2D(0.02f, 0.02f);
 
 	void UpdateSplinePath();
+
+	float SplineLength;
+	
 };

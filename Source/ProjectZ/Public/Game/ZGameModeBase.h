@@ -14,6 +14,7 @@ enum class ETurn : uint8
 	// NonCombat
 	ET_NonCombat UMETA(DisplayName = "NonCombat"),
 	// Combat
+	ET_MoveTurn UMETA(DisplayName = "MoveTurn"),
 	ET_PlayerTurn UMETA(DisplayName = "Player Turn"),
 	ET_EnemyTurn UMETA(DisplayName = "Enemy Turn")
 };

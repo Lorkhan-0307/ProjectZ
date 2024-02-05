@@ -6,6 +6,7 @@
 #include "UI/ZUserWidget.h"
 #include "NonCombatOverlay.generated.h"
 
+class UCostPathLengthWidget;
 class UTextBlock;
 class UCanvasPanel;
 class UOverlay;
@@ -41,6 +42,9 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* MentalityCheckingBar;
+
+	UPROPERTY(meta = (BindWidget))
+	UCostPathLengthWidget* PathLengthCostWidget;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UCardWidget> CardWidgetClass;
@@ -165,4 +169,6 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float TurnTextDisplayTime = 3.f;
+
+	void SetCostPathLengthWidgetPosition();
 };

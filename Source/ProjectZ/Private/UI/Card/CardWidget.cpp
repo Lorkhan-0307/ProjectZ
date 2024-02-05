@@ -15,6 +15,7 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Game/ZGameModeBase.h"
 #include "UI/Card/CardDragDropOperation.h"
 #include "Ui/Card/CardHandWidget.h"
 
@@ -22,13 +23,13 @@
 void UCardWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	SetDesiredSizeInViewport(CardSize);
 }
 
 void UCardWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
-	if (UCanvasPanelSlot* CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(this))
+	CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(this);
+	if (CanvasPanelSlot)
 	{
 		if (CanvasPanelSlot->GetPosition() != DestinationPosition) SetPosition(InDeltaTime);
 	}
@@ -73,12 +74,19 @@ void UCardWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPoint
 void UCardWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	Super::NativeOnDragCancelled(InDragDropEvent, InOperation);
-	//const UCanvasPanelSlot* CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(InOperation->DefaultDragVisual);
-	UE_LOG(LogTemp, Warning, TEXT("%d"), GEngine->GameViewport->Viewport->GetSizeXY().Y);
-	if (InOperation->DefaultDragVisual->GetCachedGeometry().AbsolutePosition.Y < GEngine->GameViewport->Viewport->GetSizeXY().Y * CardComponent->GetPlayCardHeight())
+	//UE_LOG(LogTemp, Warning, TEXT("%f"), InOperation->DefaultDragVisual->GetCachedGeometry().GetAbsolutePosition().Y+InOperation->DefaultDragVisual->GetCachedGeometry().GetAbsoluteSize().Y);
+	// + InOperation->DefaultDragVisual->GetCachedGeometry().GetAbsoluteSize().Y
+	const FVector2D MousePosition = UWidgetLayoutLibrary::GetMousePositionOnViewport(this) * UWidgetLayoutLibrary::GetViewportScale(this);
+	if (MousePosition.Y < CardComponent->GetPlayCardHeight())
 	{
 		// TO DO : Active Card Effect
 		CardComponent->ActiveCard(CardStat);
+
+		AZGameModeBase* GameMode = Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode());
+		if (GameMode->GetCurrentTurn() == ETurn::ET_MoveTurn)
+		{
+			GameMode->SetTurn(ETurn::ET_PlayerTurn);
+		}
 
 		CardDragEndDelegate.Broadcast(this, true);
 		RemoveFromParent();
@@ -102,12 +110,13 @@ void UCardWidget::InitCardStatus(FCard CardStatus)
 	ManaText->SetText(FText::FromString(FString::FromInt(CardStatus.CardCost)));
 	AtkText->SetText(FText::FromString(FString::FromInt(CardStatus.CardAtk)));
 	DefText->SetText(FText::FromString(FString::FromInt(CardStatus.CardCost)));
+
+	CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(this);
 }
 
 // Set Position by Interpolation
 void UCardWidget::SetPosition(float DeltaTime)
 {
-	UCanvasPanelSlot* CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(this);
 	if (CanvasPanelSlot == nullptr) return;
 	CanvasPanelSlot->SetPosition(FMath::Vector2DInterpTo(CanvasPanelSlot->GetPosition(), DestinationPosition, DeltaTime, InterpSpeed));
 	SetRenderTransformAngle(FMath::FInterpTo(GetRenderTransform().Angle, DestinationAngle, DeltaTime, InterpSpeed));

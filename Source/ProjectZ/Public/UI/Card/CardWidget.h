@@ -12,6 +12,7 @@
  * 
  */
 
+class UCanvasPanelSlot;
 class UTextBlock;
 class UImage;
 class UDataTable;
@@ -99,4 +100,9 @@ private:
 	bool bMouseHovered = false;
 
 	FCard CardStat;
+
+	float CardHandYSize;
+
+	UPROPERTY()
+	UCanvasPanelSlot* CanvasPanelSlot;
 };

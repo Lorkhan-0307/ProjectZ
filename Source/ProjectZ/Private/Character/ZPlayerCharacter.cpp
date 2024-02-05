@@ -3,10 +3,13 @@
 
 #include "Character/ZPlayerCharacter.h"
 
+#include "UI/Combat/CostPathLengthWidget.h"
+#include "Blueprint/UserWidget.h"
 #include "AbilitySystemComponent.h"
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
 #include "AbilitySystem/ZAbilitySystemComponent.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Character/CardComponent.h"
@@ -90,7 +93,8 @@ void AZPlayerCharacter::UpdateSplinePath()
 	}
 
 	const AZGameModeBase* ZGameMode = Cast<AZGameModeBase>(UGameplayStatics::GetGameMode(this));
-	if (ZGameMode->GetCurrentTurn() != ETurn::ET_PlayerTurn)
+	const FVector2D MousePosition = UWidgetLayoutLibrary::GetMousePositionOnViewport(this) * UWidgetLayoutLibrary::GetViewportScale(this);
+	if (ZGameMode->GetCurrentTurn() != ETurn::ET_MoveTurn || MousePosition.Y > CardComponent->GetPlayCardHeight())
 	{
 		return;
 	}
@@ -165,4 +169,15 @@ void AZPlayerCharacter::UpdateSplinePath()
 
 		SplineMesh.Add(SplineMeshComponent);
 	}
+	SplineLength = Spline->GetSplineLength() / 100.f;
+}
+
+int32 AZPlayerCharacter::GetPathCost()
+{
+	return FMath::CeilToInt32(SplineLength);
+}
+
+float AZPlayerCharacter::GetPathLength()
+{
+	return SplineLength;
 }
