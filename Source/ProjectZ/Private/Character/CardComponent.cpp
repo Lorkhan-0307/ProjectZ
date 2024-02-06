@@ -132,6 +132,7 @@ void UCardComponent::MakeCardDeck()
 	AddCardToDeck(FName("KitchenKnife"));
 	AddCardToDeck(FName("Sword"));
 	AddCardToDeck(FName("Axe"));
+	AddCardToDeck(FName("ThrowStone"));
 	// ...
 
 	ShuffleDeck();
@@ -186,6 +187,10 @@ void UCardComponent::ActiveCard(FCard Card)
 				ApplyEffectToTarget(InfiniteEffect, Card.CardLevel, TargetCharacter);
 			}
 		}
+	}
+
+	if (Card.CardType == ECardType::ECT_Skill)
+	{
 	}
 }
 

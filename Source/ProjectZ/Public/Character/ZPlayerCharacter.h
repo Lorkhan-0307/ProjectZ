@@ -30,6 +30,13 @@ public:
 	int32 GetPathCost();
 	float GetPathLength();
 
+	void ShowSKillRange(float Range);
+	void HideSkillRange();
+
+protected:
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* SkillRangeMesh;
+
 private:
 	bool bIsPossessed = false;
 
@@ -50,5 +57,4 @@ private:
 	void UpdateSplinePath();
 
 	float SplineLength;
-	
 };

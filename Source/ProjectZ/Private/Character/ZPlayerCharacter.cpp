@@ -28,6 +28,11 @@
 AZPlayerCharacter::AZPlayerCharacter()
 {
 	Spline = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
+
+	SkillRangeMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SkillRange"));
+	SkillRangeMesh->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
+	SkillRangeMesh->SetVisibility(false);
+	SkillRangeMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 // When PlayerController Possess the Character
@@ -180,4 +185,15 @@ int32 AZPlayerCharacter::GetPathCost()
 float AZPlayerCharacter::GetPathLength()
 {
 	return SplineLength;
+}
+
+void AZPlayerCharacter::ShowSKillRange(float Range)
+{
+	SkillRangeMesh->SetWorldScale3D(FVector(Range, Range, 1.f));
+	SkillRangeMesh->SetVisibility(true);
+}
+
+void AZPlayerCharacter::HideSkillRange()
+{
+	SkillRangeMesh->SetVisibility(false);
 }

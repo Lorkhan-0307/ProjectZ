@@ -4,6 +4,7 @@
 #include "Engine/DataTable.h"
 #include "Card.generated.h"
 
+class UZGameplayAbility;
 class UGameplayEffect;
 
 UENUM(BlueprintType)
@@ -48,6 +49,9 @@ struct FCard : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 CardLevel;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SkillRange;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
 	TArray<TSubclassOf<UGameplayEffect>> InstantGameplayEffects;
@@ -57,6 +61,9 @@ struct FCard : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
 	TArray<TSubclassOf<UGameplayEffect>> InfiniteGameplayEffects;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Card Ability")
+	TSubclassOf<UZGameplayAbility> CardAbility;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool IsValid = true;
