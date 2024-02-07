@@ -18,6 +18,7 @@
 #include "Components/SplineMeshComponent.h"
 #include "Game/ZGameModeBase.h"
 #include "Input/ZInputComponent.h"
+#include "Interaction/EnemyInterface.h"
 
 AZPlayerControllerBase::AZPlayerControllerBase()
 {
@@ -40,6 +41,7 @@ void AZPlayerControllerBase::SetupInputComponent()
 void AZPlayerControllerBase::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
+	CursorTrace();
 }
 
 void AZPlayerControllerBase::BeginPlay()
@@ -110,6 +112,36 @@ void AZPlayerControllerBase::SetRotateLocation()
 	}
 }
 
+void AZPlayerControllerBase::CursorTrace()
+{
+	FHitResult CursorHit;
+	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, CursorHit);
+	if (!CursorHit.bBlockingHit) return;
+
+	LastActor = ThisActor;
+	ThisActor = Cast<IEnemyInterface>(CursorHit.GetActor());
+
+	if (LastActor == nullptr)
+	{
+		if (ThisActor != nullptr)
+		{
+			ThisActor->HighlightActor();
+		}
+	}
+	else
+	{
+		if (ThisActor == nullptr)
+		{
+			LastActor->UnHighlightActor();
+		}
+		else if (LastActor != ThisActor)
+		{
+			ThisActor->HighlightActor();
+			LastActor->UnHighlightActor();
+		}
+	}
+}
+
 void AZPlayerControllerBase::AbilityInputTagPressed(FGameplayTag InputTag)
 {
 }
@@ -122,7 +154,6 @@ void AZPlayerControllerBase::AbilityInputTagReleased(FGameplayTag InputTag)
 		{
 			GetASC()->AbilityInputTagHeld(InputTag);
 		}
-		FollowTime = 0.f;
 		return;
 	}
 
@@ -161,6 +192,27 @@ void AZPlayerControllerBase::AbilityInputTagReleased(FGameplayTag InputTag)
 
 void AZPlayerControllerBase::AbilityInputTagHeld(FGameplayTag InputTag)
 {
+	if (InputTag.MatchesTagExact(FZGameplayTag::Get().InputTag_LMB))
+	{
+		CardComponent = CardComponent == nullptr ? Cast<AZCharacterBase>(GetPawn())->CardComponent : CardComponent;
+		if (GetASC() && CardComponent && CardComponent->bActivatingCard)
+		{
+			FHitResult HitResult;
+			GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
+			float Distance = FVector::DistXY(GetCharacter()->GetActorLocation(), HitResult.Location);
+			if (Cast<IEnemyInterface>(HitResult.GetActor()) && Distance < CardComponent->ActivatingCard.SkillRange)
+			{
+				GetASC()->AbilityInputTagHeld(CardComponent->ActivatingCard.CardTag);
+				CardComponent->bActivatingCard = false;
+			}
+		}
+		else if (GetASC())
+		{
+			GetASC()->AbilityInputTagHeld(InputTag);
+		}
+		return;
+	}
+
 	if (!InputTag.MatchesTagExact(FZGameplayTag::Get().InputTag_RMB))
 	{
 		if (GetASC())

@@ -27,15 +27,19 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* SkillRangeMesh;
+
 	int32 GetPathCost();
 	float GetPathLength();
 
+	UFUNCTION(BlueprintCallable)
 	void ShowSKillRange(float Range);
+	
+	UFUNCTION(BlueprintCallable)
 	void HideSkillRange();
 
 protected:
-	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* SkillRangeMesh;
 
 private:
 	bool bIsPossessed = false;

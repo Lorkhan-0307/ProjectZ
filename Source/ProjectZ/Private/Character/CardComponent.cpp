@@ -12,6 +12,7 @@
 #include "Player/ZPlayerState.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/ZAbilitySystemComponent.h"
 #include "AbilitySystem/ZAbilitySystemLibrary.h"
 #include "Game/ZGameModeBase.h"
 
@@ -191,6 +192,8 @@ void UCardComponent::ActiveCard(FCard Card)
 
 	if (Card.CardType == ECardType::ECT_Skill)
 	{
+		ActivatingCard = Card;
+		bActivatingCard = true;
 	}
 }
 

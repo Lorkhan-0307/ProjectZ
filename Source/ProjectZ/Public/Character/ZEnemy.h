@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Character/ZCharacterBase.h"
+#include "Interaction/EnemyInterface.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "ZEnemy.generated.h"
 
@@ -11,7 +12,7 @@
  * 
  */
 UCLASS()
-class PROJECTZ_API AZEnemy : public AZCharacterBase
+class PROJECTZ_API AZEnemy : public AZCharacterBase, public IEnemyInterface
 {
 	GENERATED_BODY()
 
@@ -20,6 +21,9 @@ public:
 
 	// Combat Interface
 	virtual int32 GetPlayerLevel() override;
+	
+	virtual void HighlightActor() override;
+	virtual void UnHighlightActor() override;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangeSignature OnHealthChanged;

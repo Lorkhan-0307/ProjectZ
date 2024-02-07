@@ -16,19 +16,22 @@ void UZProjectileAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 	UE_LOG(LogTemp, Warning, TEXT("AbilityActive"));
 }
 
-void UZProjectileAbility::SpawnProjectile()
+void UZProjectileAbility::SpawnProjectile(const FVector& ProjectileTargetLocation)
 {
-	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
-	if (!bIsServer) return;
 	if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo()))
 	{
 		const FVector SocketLocation = CombatInterface->GetCombatSocketLocation();
 		FTransform SpawnTransform;
+
 		// TO DO : Make Weapon and get socket, Set Projectile Rotation
 		//SpawnTransform.SetLocation(SocketLocation);
 		FVector Loc = GetAvatarActorFromActorInfo()->GetActorLocation();
-		Loc.X += 200;
+
+		FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
+		Rotation.Pitch = 0.f;
+
 		SpawnTransform.SetLocation(Loc);
+		SpawnTransform.SetRotation(Rotation.Quaternion());
 
 		// Use SpawnActorDeferred instead SpawnActor to give the Projectile a Gameplay Effect Spec for causing damage
 		AZProjectile* Projectile = GetWorld()->SpawnActorDeferred<AZProjectile>(ProjectileClass, SpawnTransform, GetOwningActorFromActorInfo(), Cast<APawn>(GetOwningActorFromActorInfo()), ESpawnActorCollisionHandlingMethod::AlwaysSpawn);

@@ -191,7 +191,7 @@ void UNonCombatOverlay::SetCardHandPosition(float DeltaTime)
 
 	UCanvasPanelSlot* CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(CardHandSizeBox);
 	const FVector2D MousePosition = UWidgetLayoutLibrary::GetMousePositionOnViewport(this) * UWidgetLayoutLibrary::GetViewportScale(this);
-	if ((CurrentTurn == ETurn::ET_PlayerTurn || CurrentTurn == ETurn::ET_MoveTurn) && MousePosition.Y > CardComponent->GetPlayCardHeight())
+	if ((CurrentTurn == ETurn::ET_PlayerTurn || CurrentTurn == ETurn::ET_MoveTurn) && MousePosition.Y > CardComponent->GetPlayCardHeight() && CardComponent->bActivatingCard == false)
 	{
 		// Card Hand Active
 		DestinationPosition = FVector2D(0.f, 0.f);
@@ -199,7 +199,7 @@ void UNonCombatOverlay::SetCardHandPosition(float DeltaTime)
 	else
 	{
 		// Card Hand Disable
-		DestinationPosition = FVector2D(0.f, CanvasPanelSlot->GetSize().Y);
+		DestinationPosition = FVector2D(0.f, CanvasPanelSlot->GetSize().Y + 100.f);
 	}
 	CanvasPanelSlot->SetPosition(FMath::Vector2DInterpTo(CanvasPanelSlot->GetPosition(), DestinationPosition, DeltaTime, CardHandInterpSpeed));
 	if (CanvasPanelSlot->GetPosition() == DestinationPosition)
@@ -257,8 +257,7 @@ void UNonCombatOverlay::SetCostPathLengthWidgetPosition()
 	}
 
 	UCanvasPanelSlot* CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(PathLengthCostWidget);
-	UE_LOG(LogTemp,Warning,TEXT("%f"),CanvasPanelSlot->GetSize().Y);
-	CanvasPanelSlot->SetPosition(MousePosition - FVector2D(0.f,CanvasPanelSlot->GetSize().Y));
+	CanvasPanelSlot->SetPosition(MousePosition - FVector2D(0.f, CanvasPanelSlot->GetSize().Y));
 }
 
 float UNonCombatOverlay::GetHealthCheckingBarPos()

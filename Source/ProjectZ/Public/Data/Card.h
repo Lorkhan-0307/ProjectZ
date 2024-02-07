@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Engine/DataTable.h"
 #include "Card.generated.h"
 
@@ -63,7 +64,7 @@ struct FCard : public FTableRowBase
 	TArray<TSubclassOf<UGameplayEffect>> InfiniteGameplayEffects;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Card Ability")
-	TSubclassOf<UZGameplayAbility> CardAbility;
+	FGameplayTag CardTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool IsValid = true;

@@ -7,6 +7,7 @@
 #include "AbilitySystem/ZAbilitySystemLibrary.h"
 #include "AbilitySystem/ZAttributeSet.h"
 #include "ZGameplayTag.h"
+#include "ProjectZ/ProjectZ.h"
 
 AZEnemy::AZEnemy()
 {
@@ -22,10 +23,23 @@ int32 AZEnemy::GetPlayerLevel()
 	return Level;
 }
 
+void AZEnemy::HighlightActor()
+{
+	GetMesh()->SetRenderCustomDepth(true);
+	GetMesh()->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
+
+	// Weapon->SetRenderCustomDepth(true);
+	// Weapon->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
+}
+
+void AZEnemy::UnHighlightActor()
+{
+	GetMesh()->SetRenderCustomDepth(false);
+}
+
 void AZEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {
 	bHitReacting = NewCount > 0;
-	
 }
 
 void AZEnemy::BeginPlay()

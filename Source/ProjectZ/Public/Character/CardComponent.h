@@ -51,6 +51,9 @@ public:
 	// Active Card, Apply Effect to target
 	void ActiveCard(FCard Card);
 
+	FCard ActivatingCard;
+	bool bActivatingCard = false;
+
 	//Getter, Setter
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE int32 GetDeckSize() const { return CardDeck.Num(); }

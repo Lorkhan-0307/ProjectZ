@@ -30,7 +30,7 @@ AZPlayerCharacter::AZPlayerCharacter()
 	Spline = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
 
 	SkillRangeMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SkillRange"));
-	SkillRangeMesh->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
+	SkillRangeMesh->SetupAttachment(GetRootComponent());
 	SkillRangeMesh->SetVisibility(false);
 	SkillRangeMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
