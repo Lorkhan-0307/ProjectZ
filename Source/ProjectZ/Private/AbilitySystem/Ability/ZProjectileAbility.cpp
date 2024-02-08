@@ -27,7 +27,7 @@ void UZProjectileAbility::SpawnProjectile(const FVector& ProjectileTargetLocatio
 		//SpawnTransform.SetLocation(SocketLocation);
 		FVector Loc = GetAvatarActorFromActorInfo()->GetActorLocation();
 
-		FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
+		FRotator Rotation = (ProjectileTargetLocation - Loc).Rotation();
 		Rotation.Pitch = 0.f;
 
 		SpawnTransform.SetLocation(Loc);

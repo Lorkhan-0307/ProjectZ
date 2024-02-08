@@ -10,6 +10,7 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Character/CardComponent.h"
 #include "Character/ZNonCombatCharacter.h"
+#include "Components/Button.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/Image.h"
 #include "Components/Overlay.h"
@@ -29,6 +30,8 @@ void UNonCombatOverlay::NativeConstruct()
 	HealthCheckingBar->SetVisibility(ESlateVisibility::Visible);
 	MentalityCheckingBar->SetVisibility(ESlateVisibility::Visible);
 	TurnText->SetVisibility(ESlateVisibility::Hidden);
+	ShowCostWidget(false);
+	ShowTurnEndButton(false);
 }
 
 void UNonCombatOverlay::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -67,9 +70,7 @@ void UNonCombatOverlay::SetCardComponent(UCardComponent* CC)
 
 		CardComponent->RightEquipPosMax.X = ViewportSize.X + CanvasPanelSlot->GetPosition().X * ViewPortScale;
 		CardComponent->RightEquipPosMax.Y = ViewportSize.Y + CanvasPanelSlot->GetPosition().Y * ViewPortScale;
-		
 	}
-	ShowCostWidget(false);
 }
 
 void UNonCombatOverlay::WidgetControllerSet()
@@ -87,6 +88,8 @@ void UNonCombatOverlay::WidgetControllerSet()
 	}
 
 	Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->TurnChangedDelegate.AddDynamic(this, &UNonCombatOverlay::TurnChanged);
+
+	TurnEndButton->OnClicked.AddDynamic(this, &UNonCombatOverlay::TurnEnd);
 }
 
 void UNonCombatOverlay::UpdateLeftHandCard(FCard LeftCard)
@@ -206,6 +209,7 @@ void UNonCombatOverlay::TurnChanged(ETurn Turn)
 	bCardHandPositionSet = false;
 	ShowTurnText();
 	ShowCostWidget(Turn == ETurn::ET_MoveTurn || Turn == ETurn::ET_PlayerTurn);
+	ShowTurnEndButton(Turn == ETurn::ET_MoveTurn || Turn == ETurn::ET_PlayerTurn);
 }
 
 void UNonCombatOverlay::SetCardHandPosition(float DeltaTime)
@@ -287,11 +291,26 @@ void UNonCombatOverlay::ShowCostWidget(bool bShow)
 {
 	const ESlateVisibility CostWidgetVisibility = bShow ? ESlateVisibility::Visible : ESlateVisibility::Hidden;
 	CostOverlay->SetVisibility(CostWidgetVisibility);
+	/*
 	TArray<UWidget*> ChildWidget = CostOverlay->GetAllChildren();
 	for (UWidget* Child : ChildWidget)
 	{
 		Child->SetVisibility(CostWidgetVisibility);
 	}
+	*/
+}
+
+void UNonCombatOverlay::ShowTurnEndButton(bool bShow)
+{
+	const ESlateVisibility TurnEndWidgetVisibility = bShow ? ESlateVisibility::Visible : ESlateVisibility::Hidden;
+	TurnEndButton->SetVisibility(TurnEndWidgetVisibility);
+}
+
+
+void UNonCombatOverlay::TurnEnd()
+{
+	Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->SetTurn(ETurn::ET_EnemyTurn);
+	CurrentTurn = ETurn::ET_EnemyTurn;
 }
 
 float UNonCombatOverlay::GetHealthCheckingBarPos()

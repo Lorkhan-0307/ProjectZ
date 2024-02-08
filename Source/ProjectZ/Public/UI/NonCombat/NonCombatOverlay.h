@@ -6,6 +6,7 @@
 #include "UI/ZUserWidget.h"
 #include "NonCombatOverlay.generated.h"
 
+class UButton;
 class UCostPathLengthWidget;
 class UTextBlock;
 class UCanvasPanel;
@@ -78,6 +79,9 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* TurnText;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* TurnEndButton;
 
 	float Health;
 	float MaxHealth;
@@ -193,4 +197,10 @@ private:
 	void SetCostPathLengthWidgetPosition();
 
 	void ShowCostWidget(bool bShow);
+
+	void ShowTurnEndButton(bool bShow);
+
+	UFUNCTION()
+	void TurnEnd();
 };
+
