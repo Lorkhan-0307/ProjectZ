@@ -49,10 +49,18 @@ public:
 	void InitializeCardInventory(UCharacterClassInfo* CharacterClassInfo);
 
 	// Active Card, Apply Effect to target
-	void ActiveCard(FCard Card);
+	void ActiveCard(FCard Card, bool bIsLeftHand = true);
+
+	void SetLeftHandCard(FCard Card);
+	void SetRightHandCard(FCard Card);
 
 	FCard ActivatingCard;
 	bool bActivatingCard = false;
+
+	FVector2D LeftEquipPosMin;
+	FVector2D LeftEquipPosMax;
+	FVector2D RightEquipPosMin;
+	FVector2D RightEquipPosMax;
 
 	//Getter, Setter
 	UFUNCTION(BlueprintCallable)
@@ -64,8 +72,6 @@ public:
 	FORCEINLINE FCard GetRightHandCard() const { return RightHandCard; }
 	FORCEINLINE float GetPlayCardHeight() const { return PlayCardHeight; }
 	FORCEINLINE void SetPlayCardHeight(float Height) { PlayCardHeight = Height; }
-	FORCEINLINE void SetLeftHandCard(FCard Card) { LeftHandCard = Card; }
-	FORCEINLINE void SetRightHandCard(FCard Card) { RightHandCard = Card; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -112,4 +118,6 @@ private:
 	void MakeCardDeck();
 
 	void ApplyEffectToTarget(TSubclassOf<UGameplayEffect> Effect, int32 CardLevel, AZCharacterBase* TargetCharacter);
+
+	void PayCost(int32 Cost);
 };

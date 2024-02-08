@@ -44,6 +44,12 @@ private:
 	UImage* MentalityCheckingBar;
 
 	UPROPERTY(meta = (BindWidget))
+	UOverlay* CostOverlay;
+	
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* CostText;
+
+	UPROPERTY(meta = (BindWidget))
 	UCostPathLengthWidget* PathLengthCostWidget;
 
 	UPROPERTY(EditAnywhere)
@@ -56,7 +62,13 @@ private:
 	UCardWidget* LeftHandCardWidget;
 
 	UPROPERTY(meta = (BindWidget))
+	USizeBox* LeftHandSizeBox;
+
+	UPROPERTY(meta = (BindWidget))
 	UCardWidget* RightHandCardWidget;
+
+	UPROPERTY(meta = (BindWidget))
+	USizeBox* RightHandSizeBox;
 
 	UPROPERTY(meta = (BindWidget))
 	USizeBox* CardHandSizeBox;
@@ -71,6 +83,8 @@ private:
 	float MaxHealth;
 	float Mentality;
 	float MaxMentality;
+	float Cost;
+	float MaxCost;
 
 	UPROPERTY(VisibleAnywhere, Category = Card)
 	TArray<UCardWidget*> HandCard;
@@ -110,6 +124,12 @@ private:
 
 	UFUNCTION()
 	virtual void OnMaxMentalityChanged(float NewValue);
+
+	UFUNCTION()
+	void OnCostChanged(float NewValue);
+
+	UFUNCTION()
+	void OnMaxCostChanged(float NewValue);
 
 	float GetHealthCheckingBarPos();
 	float GetMentalityCheckingBarPos();
@@ -171,4 +191,6 @@ private:
 	float TurnTextDisplayTime = 3.f;
 
 	void SetCostPathLengthWidgetPosition();
+
+	void ShowCostWidget(bool bShow);
 };

@@ -11,6 +11,7 @@
 #include "Data/Card.h"
 #include "Engine/DataTable.h"
 // TO DO : Replace to CombatPlayerController
+#include "AbilitySystem/ZAttributeSet.h"
 #include "Player/ZNonCombatPlayerController.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
@@ -39,9 +40,9 @@ void UCardWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointer
 {
 	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
 	bMouseHovered = true;
-	if (CardStat.CardType==ECardType::ECT_Skill)
+	if (CardStat.CardType == ECardType::ECT_Skill)
 	{
-		AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>( GetOwningPlayerPawn());
+		AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(GetOwningPlayerPawn());
 		PlayerCharacter->ShowSKillRange(CardStat.SkillRange);
 	}
 }
@@ -51,7 +52,7 @@ void UCardWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseLeave(InMouseEvent);
 	bMouseHovered = false;
-	AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>( GetOwningPlayerPawn());
+	AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(GetOwningPlayerPawn());
 	PlayerCharacter->HideSkillRange();
 }
 
@@ -78,17 +79,22 @@ void UCardWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPoint
 	CardDragStartDelegate.Broadcast(this);
 }
 
+
 void UCardWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	Super::NativeOnDragCancelled(InDragDropEvent, InOperation);
 	//UE_LOG(LogTemp, Warning, TEXT("%f"), InOperation->DefaultDragVisual->GetCachedGeometry().GetAbsolutePosition().Y+InOperation->DefaultDragVisual->GetCachedGeometry().GetAbsoluteSize().Y);
 	// + InOperation->DefaultDragVisual->GetCachedGeometry().GetAbsoluteSize().Y
 	const FVector2D MousePosition = UWidgetLayoutLibrary::GetMousePositionOnViewport(this) * UWidgetLayoutLibrary::GetViewportScale(this);
-	if (MousePosition.Y < CardComponent->GetPlayCardHeight())
+	bool bUseCard = MousePosition.Y < CardComponent->GetPlayCardHeight() && (CardStat.CardType == ECardType::ECT_Skill || CardStat.CardType == ECardType::ECT_UsablePassive); // Use Card
+	bUseCard = bUseCard || (CardComponent->LeftEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->LeftEquipPosMax) && CardStat.CardType == ECardType::ECT_CanEquip); // Equip Card Left
+	bUseCard = bUseCard || (CardComponent->RightEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->RightEquipPosMax) && CardStat.CardType == ECardType::ECT_CanEquip); // Equip Card Right
+	UZAttributeSet* AS = Cast<UZAttributeSet>(Cast<AZCharacterBase>(GetOwningPlayerPawn())->GetAttributeSet());
+	bUseCard = bUseCard && CardStat.CardCost < AS->GetCost();
+	UE_LOG(LogTemp, Warning, TEXT("%f %f"), MousePosition.X, MousePosition.Y);
+	if (bUseCard) // Use Card
 	{
-		// TO DO : Active Card Effect
-		CardComponent->ActiveCard(CardStat);
-
+		CardComponent->ActiveCard(CardStat, (CardComponent->LeftEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->LeftEquipPosMax) && CardStat.CardType == ECardType::ECT_CanEquip));
 		AZGameModeBase* GameMode = Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode());
 		if (GameMode->GetCurrentTurn() == ETurn::ET_MoveTurn)
 		{

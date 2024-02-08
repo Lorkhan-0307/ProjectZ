@@ -12,6 +12,7 @@
 #include "Character/ZNonCombatCharacter.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/Image.h"
+#include "Components/Overlay.h"
 #include "Ui/Card/CardWidget.h"
 #include "Player/ZNonCombatPlayerController.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
@@ -46,10 +47,29 @@ void UNonCombatOverlay::SetCardComponent(UCardComponent* CC)
 		CardComponent->UpdateLeftHandCardDelegate.AddDynamic(this, &UNonCombatOverlay::UpdateLeftHandCard);
 		CardComponent->UpdateRightHandCardDelegate.AddDynamic(this, &UNonCombatOverlay::UpdateRightHandCard);
 		CardComponent->DrawAndAddCardDelegate.AddDynamic(this, &UNonCombatOverlay::AddCardToHand);
-		const UCanvasPanelSlot* CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(CardHandSizeBox);
+
+		UCanvasPanelSlot* CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(CardHandSizeBox);
 		CardComponent->SetPlayCardHeight(UWidgetLayoutLibrary::GetViewportSize(this).Y - CanvasPanelSlot->GetSize().Y * UWidgetLayoutLibrary::GetViewportScale(this));
-		UE_LOG(LogTemp, Warning, TEXT("%f"), UWidgetLayoutLibrary::GetViewportSize(this).Y);
+
+		const FVector2D ViewportSize = UWidgetLayoutLibrary::GetViewportSize(this);
+		const float ViewPortScale = UWidgetLayoutLibrary::GetViewportScale(this);
+		CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(LeftHandSizeBox);
+
+		CardComponent->LeftEquipPosMin.X = CanvasPanelSlot->GetPosition().X * ViewPortScale;
+		CardComponent->LeftEquipPosMin.Y = ViewportSize.Y + (CanvasPanelSlot->GetPosition().Y - CanvasPanelSlot->GetSize().Y) * ViewPortScale;
+
+		CardComponent->LeftEquipPosMax.X = (CanvasPanelSlot->GetPosition().X + CanvasPanelSlot->GetSize().X) * ViewPortScale;
+		CardComponent->LeftEquipPosMax.Y = ViewportSize.Y + CanvasPanelSlot->GetPosition().Y * ViewPortScale;
+
+		CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(RightHandSizeBox);
+		CardComponent->RightEquipPosMin.X = ViewportSize.X + (CanvasPanelSlot->GetPosition().X - CanvasPanelSlot->GetSize().X) * ViewPortScale;
+		CardComponent->RightEquipPosMin.Y = ViewportSize.Y + (CanvasPanelSlot->GetPosition().Y - CanvasPanelSlot->GetSize().Y) * ViewPortScale;
+
+		CardComponent->RightEquipPosMax.X = ViewportSize.X + CanvasPanelSlot->GetPosition().X * ViewPortScale;
+		CardComponent->RightEquipPosMax.Y = ViewportSize.Y + CanvasPanelSlot->GetPosition().Y * ViewPortScale;
+		
 	}
+	ShowCostWidget(false);
 }
 
 void UNonCombatOverlay::WidgetControllerSet()
@@ -62,6 +82,8 @@ void UNonCombatOverlay::WidgetControllerSet()
 		OverlayWidgetController->OnMaxHealthChanged.AddDynamic(this, &UNonCombatOverlay::OnMaxHealthChanged);
 		OverlayWidgetController->OnMentalityChanged.AddDynamic(this, &UNonCombatOverlay::OnMentalityChanged);
 		OverlayWidgetController->OnMaxMentalityChanged.AddDynamic(this, &UNonCombatOverlay::OnMaxMentalityChanged);
+		OverlayWidgetController->OnCostChanged.AddDynamic(this, &UNonCombatOverlay::OnCostChanged);
+		OverlayWidgetController->OnMaxCostChanged.AddDynamic(this, &UNonCombatOverlay::OnMaxCostChanged);
 	}
 
 	Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->TurnChangedDelegate.AddDynamic(this, &UNonCombatOverlay::TurnChanged);
@@ -183,6 +205,7 @@ void UNonCombatOverlay::TurnChanged(ETurn Turn)
 	CurrentTurn = Turn;
 	bCardHandPositionSet = false;
 	ShowTurnText();
+	ShowCostWidget(Turn == ETurn::ET_MoveTurn || Turn == ETurn::ET_PlayerTurn);
 }
 
 void UNonCombatOverlay::SetCardHandPosition(float DeltaTime)
@@ -260,6 +283,17 @@ void UNonCombatOverlay::SetCostPathLengthWidgetPosition()
 	CanvasPanelSlot->SetPosition(MousePosition - FVector2D(0.f, CanvasPanelSlot->GetSize().Y));
 }
 
+void UNonCombatOverlay::ShowCostWidget(bool bShow)
+{
+	const ESlateVisibility CostWidgetVisibility = bShow ? ESlateVisibility::Visible : ESlateVisibility::Hidden;
+	CostOverlay->SetVisibility(CostWidgetVisibility);
+	TArray<UWidget*> ChildWidget = CostOverlay->GetAllChildren();
+	for (UWidget* Child : ChildWidget)
+	{
+		Child->SetVisibility(CostWidgetVisibility);
+	}
+}
+
 float UNonCombatOverlay::GetHealthCheckingBarPos()
 {
 	const UCanvasPanelSlot* CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(HealthBar);
@@ -312,4 +346,16 @@ void UNonCombatOverlay::OnMaxMentalityChanged(float NewValue)
 	MaxMentality = NewValue;
 	if (MaxMentality != 0) MentalityBar->SetPercent(Mentality / MaxMentality);
 	SetMentalityCheckingBarPos();
+}
+
+void UNonCombatOverlay::OnCostChanged(float NewValue)
+{
+	Cost = NewValue;
+	CostText->SetText(FText::FromString(FString::Printf(TEXT("%d/%d"), (int)Cost, (int)MaxCost)));
+}
+
+void UNonCombatOverlay::OnMaxCostChanged(float NewValue)
+{
+	MaxCost = NewValue;
+	CostText->SetText(FText::FromString(FString::Printf(TEXT("%d/%d"), (int)Cost, (int)MaxCost)));
 }

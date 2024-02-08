@@ -9,6 +9,7 @@
 #include "NavigationSystem.h"
 #include "ZGameplayTag.h"
 #include "AbilitySystem/ZAbilitySystemComponent.h"
+#include "AbilitySystem/ZAttributeSet.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Blueprint/UserWidget.h"
 #include "Camera/CameraComponent.h"
@@ -19,6 +20,7 @@
 #include "Game/ZGameModeBase.h"
 #include "Input/ZInputComponent.h"
 #include "Interaction/EnemyInterface.h"
+#include "Player/ZPlayerState.h"
 
 AZPlayerControllerBase::AZPlayerControllerBase()
 {
@@ -176,8 +178,12 @@ void AZPlayerControllerBase::AbilityInputTagReleased(FGameplayTag InputTag)
 				Spline->AddSplinePoint(PointLoc, ESplineCoordinateSpace::World);
 				DrawDebugSphere(GetWorld(), PointLoc, 8.f, 8, FColor::Green, false, 5.f);
 			}
-			if (NavPath->PathPoints.Num() > 0)
+
+			const int32 Cost = FMath::CeilToInt(Spline->GetSplineLength() / 100.f);
+			UZAttributeSet* AS = Cast<UZAttributeSet>(GetPlayerState<AZPlayerState>()->GetAttributeSet());
+			if (NavPath->PathPoints.Num() > 0 && AS->GetCost() >= Cost)
 			{
+				AS->SetCost(AS->GetCost() - Cost);
 				CachedDestination = NavPath->PathPoints.Last();
 				UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, CachedDestination);
 				if (CurrentTurn == ETurn::ET_MoveTurn)
@@ -199,8 +205,8 @@ void AZPlayerControllerBase::AbilityInputTagHeld(FGameplayTag InputTag)
 		{
 			FHitResult HitResult;
 			GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
-			float Distance = FVector::DistXY(GetCharacter()->GetActorLocation(), HitResult.Location);
-			if (Cast<IEnemyInterface>(HitResult.GetActor()) && Distance < CardComponent->ActivatingCard.SkillRange)
+			float Distance = FVector::DistXY(GetCharacter()->GetActorLocation(), HitResult.Location) / 100.f;
+			if (Cast<IEnemyInterface>(HitResult.GetActor()) && Distance <= CardComponent->ActivatingCard.SkillRange)
 			{
 				GetASC()->AbilityInputTagHeld(CardComponent->ActivatingCard.CardTag);
 				CardComponent->bActivatingCard = false;

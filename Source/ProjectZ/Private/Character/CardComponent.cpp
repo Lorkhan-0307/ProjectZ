@@ -14,6 +14,7 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/ZAbilitySystemComponent.h"
 #include "AbilitySystem/ZAbilitySystemLibrary.h"
+#include "AbilitySystem/ZAttributeSet.h"
 #include "Game/ZGameModeBase.h"
 
 
@@ -162,19 +163,20 @@ void UCardComponent::ApplyEffectToTarget(TSubclassOf<UGameplayEffect> Effect, in
 	*/
 }
 
-// Active Card and apply effect
-void UCardComponent::ActiveCard(FCard Card)
+void UCardComponent::PayCost(int32 Cost)
 {
-	/* TO DO : Create Combat System, find target of this card effect
-	const AZCharacterBase* TargetCharacter = Cast<AZCharacterBase>(CombatSystem->GetTarget(~~~));
-	*/
+	UZAttributeSet* AS = Cast<UZAttributeSet>(ZCharacter->GetAttributeSet());
+	AS->SetCost(AS->GetCost() - Cost);
+}
 
-	// For Test
-	if (Card.CardType == ECardType::ECT_UsablePassive)
+// Active Card and apply effect
+void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand)
+{
+	switch (Card.CardType)
 	{
-		AZCharacterBase* TargetCharacter = Cast<AZCharacterBase>(ZCharacter);
-		if (TargetCharacter)
+	case ECardType::ECT_UsablePassive:
 		{
+			AZCharacterBase* TargetCharacter = Cast<AZCharacterBase>(ZCharacter);
 			for (const auto& InstantEffect : Card.InstantGameplayEffects)
 			{
 				ApplyEffectToTarget(InstantEffect, Card.CardLevel, TargetCharacter);
@@ -187,14 +189,45 @@ void UCardComponent::ActiveCard(FCard Card)
 			{
 				ApplyEffectToTarget(InfiniteEffect, Card.CardLevel, TargetCharacter);
 			}
+			PayCost(Card.CardCost);
+			break;
 		}
-	}
 
-	if (Card.CardType == ECardType::ECT_Skill)
-	{
+	case ECardType::ECT_Skill:
 		ActivatingCard = Card;
 		bActivatingCard = true;
+		break;
+
+	case ECardType::ECT_CanEquip:
+		if (bIsLeftHand)
+		{
+			SetLeftHandCard(Card);
+		}
+		else
+		{
+			SetRightHandCard(Card);
+		}
+		PayCost(Card.CardCost);
+		break;
+
+	case ECardType::ECT_Passive:
+		break;
+
+	case ECardType::ECT_CantEquip:
+		break;
 	}
+}
+
+void UCardComponent::SetLeftHandCard(FCard Card)
+{
+	LeftHandCard = Card;
+	UpdateLeftHandCardDelegate.Broadcast(Card);
+}
+
+void UCardComponent::SetRightHandCard(FCard Card)
+{
+	RightHandCard = Card;
+	UpdateRightHandCardDelegate.Broadcast(Card);
 }
 
 
