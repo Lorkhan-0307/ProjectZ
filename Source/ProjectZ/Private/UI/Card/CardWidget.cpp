@@ -11,8 +11,12 @@
 #include "Data/Card.h"
 #include "Engine/DataTable.h"
 // TO DO : Replace to CombatPlayerController
+#include "AbilitySystem/ZAttributeSet.h"
 #include "Player/ZNonCombatPlayerController.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
+#include "Components/CanvasPanelSlot.h"
+#include "Game/ZGameModeBase.h"
 #include "UI/Card/CardDragDropOperation.h"
 #include "Ui/Card/CardHandWidget.h"
 
@@ -25,13 +29,22 @@ void UCardWidget::NativeConstruct()
 void UCardWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
-	if (GetCachedGeometry().GetAbsolutePosition().X != DestinationTransform.Translation.X) SetPosition(InDeltaTime);
+	CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(this);
+	if (CanvasPanelSlot)
+	{
+		if (CanvasPanelSlot->GetPosition() != DestinationPosition) SetPosition(InDeltaTime);
+	}
 }
 
 void UCardWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
 	bMouseHovered = true;
+	if (CardStat.CardType == ECardType::ECT_Skill)
+	{
+		AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(GetOwningPlayerPawn());
+		PlayerCharacter->ShowSKillRange(CardStat.SkillRange);
+	}
 }
 
 
@@ -39,6 +52,8 @@ void UCardWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseLeave(InMouseEvent);
 	bMouseHovered = false;
+	AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(GetOwningPlayerPawn());
+	PlayerCharacter->HideSkillRange();
 }
 
 FReply UCardWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -50,6 +65,11 @@ FReply UCardWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const F
 void UCardWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
 {
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
+
+	// Don't Drag Card in NonCombat Turn
+	AZGameModeBase* GameMode = Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode());
+	ETurn CurrentTurn = GameMode->GetCurrentTurn();
+	if (!(CurrentTurn == ETurn::ET_MoveTurn || CurrentTurn == ETurn::ET_PlayerTurn)) return;
 
 	UCardDragDropOperation* CardDragDropOperation = NewObject<UCardDragDropOperation>();
 
@@ -64,14 +84,55 @@ void UCardWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPoint
 	CardDragStartDelegate.Broadcast(this);
 }
 
+
 void UCardWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	Super::NativeOnDragCancelled(InDragDropEvent, InOperation);
-	if (InOperation->DefaultDragVisual->GetCachedGeometry().GetAbsolutePosition().Y < CardHandWidget->GetPlayCardHeight())
+
+	const FVector2D MousePosition = UWidgetLayoutLibrary::GetMousePositionOnViewport(this) * UWidgetLayoutLibrary::GetViewportScale(this);
+	UZAttributeSet* AS = Cast<UZAttributeSet>(Cast<AZCharacterBase>(GetOwningPlayerPawn())->GetAttributeSet());
+
+	bool bUnEquipCard = true;
+	if (CanvasPanelSlot == nullptr) // Equipping Card
 	{
-		// TO DO : Active Card Effect
-		CardComponent->ActiveCard(CardStat);
-		
+		const bool bIsLeftHandCard = GetCachedGeometry().GetAbsolutePosition().X < UWidgetLayoutLibrary::GetViewportSize(this).X / 2.f;
+		if (bIsLeftHandCard)
+		{
+			bUnEquipCard = !(CardComponent->LeftEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->LeftEquipPosMax) && CardStat.CardType == ECardType::ECT_CanEquip);
+		}
+		else
+		{
+			bUnEquipCard = !(CardComponent->RightEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->RightEquipPosMax) && CardStat.CardType == ECardType::ECT_CanEquip);
+		}
+		bUnEquipCard = bUnEquipCard && CardStat.CardCost < AS->GetCost();
+
+		if (bUnEquipCard)
+		{
+			CardStat.IsValid = false;
+			CardComponent->ActiveCard(CardStat, bIsLeftHandCard);
+		}
+		else
+		{
+			SetVisibility(ESlateVisibility::Visible);
+		}
+		return;
+	}
+
+
+	bool bUseCard = MousePosition.Y < CardComponent->GetPlayCardHeight() && (CardStat.CardType == ECardType::ECT_Skill || CardStat.CardType == ECardType::ECT_UsablePassive); // Use Card
+	bUseCard = bUseCard || (CardComponent->LeftEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->LeftEquipPosMax) && CardStat.CardType == ECardType::ECT_CanEquip); // Equip Card Left
+	bUseCard = bUseCard || (CardComponent->RightEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->RightEquipPosMax) && CardStat.CardType == ECardType::ECT_CanEquip); // Equip Card Right
+	bUseCard = bUseCard && CardStat.CardCost < AS->GetCost();
+
+	if (bUseCard) // Use Card
+	{
+		CardComponent->ActiveCard(CardStat, (CardComponent->LeftEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->LeftEquipPosMax) && CardStat.CardType == ECardType::ECT_CanEquip));
+		AZGameModeBase* GameMode = Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode());
+		if (GameMode->GetCurrentTurn() == ETurn::ET_MoveTurn)
+		{
+			GameMode->SetTurn(ETurn::ET_PlayerTurn);
+		}
+
 		CardDragEndDelegate.Broadcast(this, true);
 		RemoveFromParent();
 		CollectGarbage(EObjectFlags::RF_BeginDestroyed);
@@ -81,6 +142,9 @@ void UCardWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, U
 		CardDragEndDelegate.Broadcast(this, false);
 		SetVisibility(ESlateVisibility::Visible);
 		bMouseHovered = false;
+
+		AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(GetOwningPlayerPawn());
+		PlayerCharacter->HideSkillRange();
 	}
 }
 
@@ -94,12 +158,14 @@ void UCardWidget::InitCardStatus(FCard CardStatus)
 	ManaText->SetText(FText::FromString(FString::FromInt(CardStatus.CardCost)));
 	AtkText->SetText(FText::FromString(FString::FromInt(CardStatus.CardAtk)));
 	DefText->SetText(FText::FromString(FString::FromInt(CardStatus.CardCost)));
+
+	CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(this);
 }
 
 // Set Position by Interpolation
 void UCardWidget::SetPosition(float DeltaTime)
 {
-	if (GetRenderTransform() == DestinationTransform) return;
-	SetRenderTranslation(FMath::Vector2DInterpTo(GetRenderTransform().Translation, DestinationTransform.Translation, DeltaTime, InterpSpeed));
-	SetRenderTransformAngle(FMath::FInterpTo(GetRenderTransform().Angle, DestinationTransform.Angle, DeltaTime, InterpSpeed));
+	if (CanvasPanelSlot == nullptr) return;
+	CanvasPanelSlot->SetPosition(FMath::Vector2DInterpTo(CanvasPanelSlot->GetPosition(), DestinationPosition, DeltaTime, InterpSpeed));
+	SetRenderTransformAngle(FMath::FInterpTo(GetRenderTransform().Angle, DestinationAngle, DeltaTime, InterpSpeed));
 }

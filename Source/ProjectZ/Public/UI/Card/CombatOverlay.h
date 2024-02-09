@@ -52,4 +52,8 @@ protected:
 
 
 private:
+	float Health;
+	float MaxHealth;
+	float Mentality;
+	float MaxMentality;
 };

@@ -34,6 +34,7 @@ public:
 	FGameplayTag InputTag_T;
 
 	FGameplayTag InputTag_RMB;
+	FGameplayTag InputTag_LMB;
 	//FGameplayTag Event_Montage_ThrowingStone;
 
 	FGameplayTag Damage;
@@ -43,6 +44,8 @@ public:
 	TMap<FGameplayTag, FGameplayTag> DamageTypeToResistance;
 
 	FGameplayTag Effect_HitReact;
+
+	FGameplayTag Card_SKill_ThrowStone;
 private:
 	static FZGameplayTag GameplayTag;
 };

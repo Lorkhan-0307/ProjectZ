@@ -49,7 +49,18 @@ public:
 	void InitializeCardInventory(UCharacterClassInfo* CharacterClassInfo);
 
 	// Active Card, Apply Effect to target
-	void ActiveCard(FCard Card);
+	void ActiveCard(FCard Card, bool bIsLeftHand = true);
+
+	void SetLeftHandCard(FCard Card, bool bIsValid = true);
+	void SetRightHandCard(FCard Card, bool bIsValid = true);
+
+	FCard ActivatingCard;
+	bool bActivatingCard = false;
+
+	FVector2D LeftEquipPosMin;
+	FVector2D LeftEquipPosMax;
+	FVector2D RightEquipPosMin;
+	FVector2D RightEquipPosMax;
 
 	//Getter, Setter
 	UFUNCTION(BlueprintCallable)
@@ -59,8 +70,8 @@ public:
 
 	FORCEINLINE FCard GetLeftHandCard() const { return LeftHandCard; }
 	FORCEINLINE FCard GetRightHandCard() const { return RightHandCard; }
-	FORCEINLINE void SetLeftHandCard(FCard Card) { LeftHandCard = Card; }
-	FORCEINLINE void SetRightHandCard(FCard Card) { RightHandCard = Card; }
+	FORCEINLINE float GetPlayCardHeight() const { return PlayCardHeight; }
+	FORCEINLINE void SetPlayCardHeight(float Height) { PlayCardHeight = Height; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -88,6 +99,8 @@ private:
 	// Number of cards in hand when start combat
 	UPROPERTY(EditAnywhere, Category = Card)
 	int32 FirstCardCount;
+
+	float PlayCardHeight;
 
 	FCard LeftHandCard;
 

@@ -3,8 +3,12 @@
 
 #include "UI/Card/CardHandWidget.h"
 
+#include "Components/CanvasPanel.h"
+#include "Components/SizeBox.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 #include "Character/CardComponent.h"
 #include "Character/ZNonCombatCharacter.h"
+#include "Components/CanvasPanelSlot.h"
 #include "Components/Overlay.h"
 #include "Components/TextBlock.h"
 #include "UI/Card/CardWidget.h"
@@ -15,8 +19,6 @@ void UCardHandWidget::SetCardComponent(UCardComponent* CC)
 	if (CardComponent)
 	{
 		CardComponent->DrawAndAddCardDelegate.AddDynamic(this, &UCardHandWidget::AddCardToHand);
-		CardComponent->UpdateLeftHandCardDelegate.AddDynamic(this, &UCardHandWidget::UpdateLeftHandCard);
-		CardComponent->UpdateRightHandCardDelegate.AddDynamic(this, &UCardHandWidget::UpdateRightHandCard);
 	}
 }
 
@@ -45,10 +47,10 @@ void UCardHandWidget::UpdateCardPosition()
 {
 	for (int i = 0; i < HandCard.Num(); i++)
 	{
-		HandCard[i]->DestinationTransform = CalculateCardPosition(i);
+		HandCard[i]->DestinationPosition = FVector2D(GetCardXPosition(i), GetCardYPosition(i));
+		HandCard[i]->DestinationAngle = GetCardAngle(i);
+		UE_LOG(LogTemp,Warning,TEXT("%d %f %f"),i,GetCardXPosition(i),GetCardYPosition(i));
 	}
-	if (LeftHandCardWidget) LeftHandCardWidget->DestinationTransform = CalculateCardPosition(-2);
-	if (RightHandCardWidget) RightHandCardWidget->DestinationTransform = CalculateCardPosition(-1);
 }
 
 // Create Card Widget by FCard
@@ -58,9 +60,13 @@ UCardWidget* UCardHandWidget::CreateCardWidget(FCard CardStatus)
 	CardWidget->InitCardStatus(CardStatus);
 	CardWidget->CardHandWidget = this;
 	CardWidget->CardComponent = CardComponent;
-
+	
 	CardWidget->RemoveFromParent();
-	CardOverlay->AddChild(CardWidget);
+	CardCanvasPanel->AddChild(CardWidget);
+	UCanvasPanelSlot* CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(CardWidget);
+	CanvasPanelSlot->SetSize(FVector2D(200.f, 280.f));
+	const FAnchors Anchors(0,0,0,0);
+	CanvasPanelSlot->SetAnchors(Anchors);
 
 	CardWidget->CardDragStartDelegate.AddDynamic(this, &UCardHandWidget::DragStarted);
 	CardWidget->CardDragEndDelegate.AddDynamic(this, &UCardHandWidget::DragEnded);
@@ -70,29 +76,14 @@ UCardWidget* UCardHandWidget::CreateCardWidget(FCard CardStatus)
 
 float UCardHandWidget::GetCardXPosition(int32 Index)
 {
-	if (Index == -2)
-	{
-		return LeftHandCardPosition.X;
-	}
-	if (Index == -1)
-	{
-		return GetCachedGeometry().GetLocalSize().X - RightHandCardPosition.X - CardSize.X;
-	}
-	float XPos = GetCachedGeometry().GetLocalSize().X / 2 + GetCardIndexPositionFromCenter(Index) * CardDistance - CardSize.X / 2;
+	const UCanvasPanelSlot* CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(HandCard[Index]);
+	float XPos = CanvasPanelSlot->GetSize().X / 2 + GetCardIndexPositionFromCenter(Index) * CardDistance - CardSize.X / 2;
 	if (HandCard[Index]->GetMouseHovered()) XPos += MouseHoveredHeight * FMath::Sin(FMath::DegreesToRadians(GetCardAngle(Index)));
 	return XPos;
 }
 
 float UCardHandWidget::GetCardYPosition(int32 Index)
 {
-	if (Index == -2)
-	{
-		return LeftHandCardWidget->GetMouseHovered() ? -MouseHoveredHeight : 0;
-	}
-	if (Index == -1)
-	{
-		return RightHandCardWidget->GetMouseHovered() ? -MouseHoveredHeight : 0;
-	}
 	float YPos = FMath::Abs(GetCardIndexPositionFromCenter(Index)) * ArcHeight;
 	if (HandCard[Index]->GetMouseHovered()) YPos -= MouseHoveredHeight * FMath::Cos(FMath::DegreesToRadians(GetCardAngle(Index)));
 	return YPos;
@@ -144,26 +135,4 @@ FWidgetTransform UCardHandWidget::CalculateCardPosition(int32 Index)
 	CardDestination.Translation.Y = GetCardYPosition(Index);
 	CardDestination.Angle = Index < 0 ? 0 : GetCardAngle(Index);
 	return CardDestination;
-}
-
-void UCardHandWidget::UpdateLeftHandCard(FCard LeftCard)
-{
-	if (LeftHandCardWidget == nullptr)
-	{
-		LeftHandCardWidget = CreateCardWidget(LeftCard);
-		LeftHandCardWidget->SetRenderTranslation(LeftHandCardPosition);
-	}
-	SetVisibility(ESlateVisibility::Visible);
-	LeftHandCardWidget->InitCardStatus(LeftCard);
-}
-
-void UCardHandWidget::UpdateRightHandCard(FCard RightCard)
-{
-	if (RightHandCardWidget == nullptr)
-	{
-		RightHandCardWidget = CreateCardWidget(RightCard);
-		RightHandCardWidget->SetRenderTranslation(RightHandCardPosition);
-	}
-	SetVisibility(ESlateVisibility::Visible);
-	RightHandCardWidget->InitCardStatus(RightCard);
 }

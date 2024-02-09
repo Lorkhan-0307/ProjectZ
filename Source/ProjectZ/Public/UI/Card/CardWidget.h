@@ -12,6 +12,7 @@
  * 
  */
 
+class UCanvasPanelSlot;
 class UTextBlock;
 class UImage;
 class UDataTable;
@@ -58,11 +59,13 @@ public:
 
 	// Where the card should be
 	UPROPERTY(BlueprintReadWrite)
-	FWidgetTransform DestinationTransform;
+	FVector2D DestinationPosition;
+
+	float DestinationAngle;
 
 	UPROPERTY()
 	UCardHandWidget* CardHandWidget;
-	
+
 	UPROPERTY()
 	UCardComponent* CardComponent;
 
@@ -81,6 +84,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
 	int32 InterpSpeed = 5;
 
+	UPROPERTY(EditAnywhere, Category = Card)
+	FVector2D CardSize = FVector2D(200.f, 280.f);
+
 	void SetPosition(float DeltaTime);
 
 	UPROPERTY(EditAnywhere, Category = Card)
@@ -90,8 +96,13 @@ private:
 	bool bIsInPosition = false;
 
 	FVector2D ViewportSize;
-	
+
 	bool bMouseHovered = false;
 
 	FCard CardStat;
+
+	float CardHandYSize;
+
+	UPROPERTY()
+	UCanvasPanelSlot* CanvasPanelSlot;
 };

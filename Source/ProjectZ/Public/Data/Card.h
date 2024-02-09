@@ -1,9 +1,11 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Engine/DataTable.h"
 #include "Card.generated.h"
 
+class UZGameplayAbility;
 class UGameplayEffect;
 
 UENUM(BlueprintType)
@@ -48,6 +50,9 @@ struct FCard : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 CardLevel;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SkillRange;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
 	TArray<TSubclassOf<UGameplayEffect>> InstantGameplayEffects;
@@ -57,6 +62,9 @@ struct FCard : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
 	TArray<TSubclassOf<UGameplayEffect>> InfiniteGameplayEffects;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Card Ability")
+	FGameplayTag CardTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool IsValid = true;

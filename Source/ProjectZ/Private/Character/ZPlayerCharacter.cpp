@@ -3,10 +3,13 @@
 
 #include "Character/ZPlayerCharacter.h"
 
+#include "UI/Combat/CostPathLengthWidget.h"
+#include "Blueprint/UserWidget.h"
 #include "AbilitySystemComponent.h"
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
 #include "AbilitySystem/ZAbilitySystemComponent.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Character/CardComponent.h"
@@ -14,6 +17,8 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
+#include "Game/ZGameModeBase.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "UI/HUD/ZNonCombatHUD.h"
 #include "Player/ZNonCombatPlayerController.h"
@@ -23,6 +28,11 @@
 AZPlayerCharacter::AZPlayerCharacter()
 {
 	Spline = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
+
+	SkillRangeMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SkillRange"));
+	SkillRangeMesh->SetupAttachment(GetRootComponent());
+	SkillRangeMesh->SetVisibility(false);
+	SkillRangeMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 // When PlayerController Possess the Character
@@ -85,6 +95,13 @@ void AZPlayerCharacter::UpdateSplinePath()
 			}
 		}
 		SplineMesh.Empty();
+	}
+
+	const AZGameModeBase* ZGameMode = Cast<AZGameModeBase>(UGameplayStatics::GetGameMode(this));
+	const FVector2D MousePosition = UWidgetLayoutLibrary::GetMousePositionOnViewport(this) * UWidgetLayoutLibrary::GetViewportScale(this);
+	if (ZGameMode->GetCurrentTurn() != ETurn::ET_MoveTurn || MousePosition.Y > CardComponent->GetPlayCardHeight())
+	{
+		return;
 	}
 
 	FVector StartPos = GetActorLocation();
@@ -157,4 +174,26 @@ void AZPlayerCharacter::UpdateSplinePath()
 
 		SplineMesh.Add(SplineMeshComponent);
 	}
+	SplineLength = Spline->GetSplineLength() / 100.f;
+}
+
+int32 AZPlayerCharacter::GetPathCost()
+{
+	return FMath::CeilToInt32(SplineLength);
+}
+
+float AZPlayerCharacter::GetPathLength()
+{
+	return SplineLength;
+}
+
+void AZPlayerCharacter::ShowSKillRange(float Range)
+{
+	SkillRangeMesh->SetWorldScale3D(FVector(Range, Range, 1.f));
+	SkillRangeMesh->SetVisibility(true);
+}
+
+void AZPlayerCharacter::HideSkillRange()
+{
+	SkillRangeMesh->SetVisibility(false);
 }

@@ -9,6 +9,7 @@
 #include "NavigationSystem.h"
 #include "ZGameplayTag.h"
 #include "AbilitySystem/ZAbilitySystemComponent.h"
+#include "AbilitySystem/ZAttributeSet.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Blueprint/UserWidget.h"
 #include "Camera/CameraComponent.h"
@@ -16,7 +17,10 @@
 #include "Character/ZNonCombatCharacter.h"
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
+#include "Game/ZGameModeBase.h"
 #include "Input/ZInputComponent.h"
+#include "Interaction/EnemyInterface.h"
+#include "Player/ZPlayerState.h"
 
 AZPlayerControllerBase::AZPlayerControllerBase()
 {
@@ -39,6 +43,7 @@ void AZPlayerControllerBase::SetupInputComponent()
 void AZPlayerControllerBase::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
+	CursorTrace();
 }
 
 void AZPlayerControllerBase::BeginPlay()
@@ -109,6 +114,36 @@ void AZPlayerControllerBase::SetRotateLocation()
 	}
 }
 
+void AZPlayerControllerBase::CursorTrace()
+{
+	FHitResult CursorHit;
+	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, CursorHit);
+	if (!CursorHit.bBlockingHit) return;
+
+	LastActor = ThisActor;
+	ThisActor = Cast<IEnemyInterface>(CursorHit.GetActor());
+
+	if (LastActor == nullptr)
+	{
+		if (ThisActor != nullptr)
+		{
+			ThisActor->HighlightActor();
+		}
+	}
+	else
+	{
+		if (ThisActor == nullptr)
+		{
+			LastActor->UnHighlightActor();
+		}
+		else if (LastActor != ThisActor)
+		{
+			ThisActor->HighlightActor();
+			LastActor->UnHighlightActor();
+		}
+	}
+}
+
 void AZPlayerControllerBase::AbilityInputTagPressed(FGameplayTag InputTag)
 {
 }
@@ -124,6 +159,14 @@ void AZPlayerControllerBase::AbilityInputTagReleased(FGameplayTag InputTag)
 		return;
 	}
 
+	AZGameModeBase* GameMode = Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode());
+	const ETurn CurrentTurn = GameMode->GetCurrentTurn();
+	if (!(CurrentTurn == ETurn::ET_NonCombat || CurrentTurn == ETurn::ET_MoveTurn))
+	{
+		FollowTime = 0.f;
+		return;
+	}
+
 	const APawn* ControlledPawn = GetPawn();
 	if (FollowTime <= ShortPressThreshold && ControlledPawn)
 	{
@@ -135,10 +178,24 @@ void AZPlayerControllerBase::AbilityInputTagReleased(FGameplayTag InputTag)
 				Spline->AddSplinePoint(PointLoc, ESplineCoordinateSpace::World);
 				DrawDebugSphere(GetWorld(), PointLoc, 8.f, 8, FColor::Green, false, 5.f);
 			}
+
+			const int32 Cost = FMath::CeilToInt(Spline->GetSplineLength() / 100.f);
+			UZAttributeSet* AS = Cast<UZAttributeSet>(GetPlayerState<AZPlayerState>()->GetAttributeSet());
+
+			if (CurrentTurn == ETurn::ET_MoveTurn && Cost > AS->GetCost())
+			{
+				return;
+			}
+			
 			if (NavPath->PathPoints.Num() > 0)
 			{
+				AS->SetCost(AS->GetCost() - Cost);
 				CachedDestination = NavPath->PathPoints.Last();
 				UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, CachedDestination);
+				if (CurrentTurn == ETurn::ET_MoveTurn)
+				{
+					GameMode->SetTurn(ETurn::ET_PlayerTurn);
+				}
 			}
 		}
 	}
@@ -147,6 +204,27 @@ void AZPlayerControllerBase::AbilityInputTagReleased(FGameplayTag InputTag)
 
 void AZPlayerControllerBase::AbilityInputTagHeld(FGameplayTag InputTag)
 {
+	if (InputTag.MatchesTagExact(FZGameplayTag::Get().InputTag_LMB))
+	{
+		CardComponent = CardComponent == nullptr ? Cast<AZCharacterBase>(GetPawn())->CardComponent : CardComponent;
+		if (GetASC() && CardComponent && CardComponent->bActivatingCard)
+		{
+			FHitResult HitResult;
+			GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
+			float Distance = FVector::DistXY(GetCharacter()->GetActorLocation(), HitResult.Location) / 100.f;
+			if (Distance <= CardComponent->ActivatingCard.SkillRange)
+			{
+				GetASC()->AbilityInputTagHeld(CardComponent->ActivatingCard.CardTag);
+				CardComponent->bActivatingCard = false;
+			}
+		}
+		else if (GetASC())
+		{
+			GetASC()->AbilityInputTagHeld(InputTag);
+		}
+		return;
+	}
+
 	if (!InputTag.MatchesTagExact(FZGameplayTag::Get().InputTag_RMB))
 	{
 		if (GetASC())
@@ -156,18 +234,6 @@ void AZPlayerControllerBase::AbilityInputTagHeld(FGameplayTag InputTag)
 		return;
 	}
 
-	// Not Implemented Yet
-	/*
-	if (bIsCombat)
-	{
-		if (GetASC())
-		{
-			GetASC()->AbilityInputTagHeld(InputTag);
-		}
-		return;
-	}
-	*/
-
 	// Hold mouse button
 	FollowTime += GetWorld()->GetDeltaSeconds();
 
@@ -176,6 +242,9 @@ void AZPlayerControllerBase::AbilityInputTagHeld(FGameplayTag InputTag)
 	{
 		CachedDestination = Hit.ImpactPoint;
 	}
+
+	const ETurn CurrentTurn = Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->GetCurrentTurn();
+	if (CurrentTurn != ETurn::ET_NonCombat) return;
 
 	if (APawn* ControlledPawn = GetPawn())
 	{

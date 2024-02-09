@@ -41,4 +41,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayEffects")
 	static void SetIsCriticalHit(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool bInIsCriticalHit);
+
+	UFUNCTION(BlueprintCallable)
+	static bool PayCost(const UObject* WorldContextObject, int32 Cost);
 };

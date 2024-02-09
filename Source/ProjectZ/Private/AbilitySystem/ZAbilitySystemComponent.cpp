@@ -22,6 +22,7 @@ void UZAbilitySystemComponent::AddCharacterAbility(const TArray<TSubclassOf<UGam
 		if (const UZGameplayAbility* ZAbility = Cast<UZGameplayAbility>(AbilitySpec.Ability))
 		{
 			AbilitySpec.DynamicAbilityTags.AddTag(ZAbility->StartupInputTag);
+			AbilitySpec.DynamicAbilityTags.AddTag(ZAbility->CardSkillTag);
 			GiveAbility(AbilitySpec);
 		}
 	}

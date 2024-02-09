@@ -12,7 +12,10 @@
 #include "Player/ZPlayerState.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/ZAbilitySystemComponent.h"
 #include "AbilitySystem/ZAbilitySystemLibrary.h"
+#include "AbilitySystem/ZAttributeSet.h"
+#include "Game/ZGameModeBase.h"
 
 
 // Sets default values for this component's properties
@@ -131,6 +134,7 @@ void UCardComponent::MakeCardDeck()
 	AddCardToDeck(FName("KitchenKnife"));
 	AddCardToDeck(FName("Sword"));
 	AddCardToDeck(FName("Axe"));
+	AddCardToDeck(FName("ThrowStone"));
 	// ...
 
 	ShuffleDeck();
@@ -159,19 +163,15 @@ void UCardComponent::ApplyEffectToTarget(TSubclassOf<UGameplayEffect> Effect, in
 	*/
 }
 
-// Active Card and apply effect
-void UCardComponent::ActiveCard(FCard Card)
-{
-	/* TO DO : Create Combat System, find target of this card effect
-	const AZCharacterBase* TargetCharacter = Cast<AZCharacterBase>(CombatSystem->GetTarget(~~~));
-	*/
 
-	// For Test
-	if (Card.CardType == ECardType::ECT_UsablePassive)
+// Active Card and apply effect
+void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand)
+{
+	switch (Card.CardType)
 	{
-		AZCharacterBase* TargetCharacter = Cast<AZCharacterBase>(ZCharacter);
-		if (TargetCharacter)
+	case ECardType::ECT_UsablePassive:
 		{
+			AZCharacterBase* TargetCharacter = Cast<AZCharacterBase>(ZCharacter);
 			for (const auto& InstantEffect : Card.InstantGameplayEffects)
 			{
 				ApplyEffectToTarget(InstantEffect, Card.CardLevel, TargetCharacter);
@@ -184,8 +184,55 @@ void UCardComponent::ActiveCard(FCard Card)
 			{
 				ApplyEffectToTarget(InfiniteEffect, Card.CardLevel, TargetCharacter);
 			}
+			UZAbilitySystemLibrary::PayCost(this, Card.CardCost);
+			break;
 		}
+
+	case ECardType::ECT_Skill:
+		ActivatingCard = Card;
+		bActivatingCard = true;
+		break;
+
+	case ECardType::ECT_CanEquip:
+		if (bIsLeftHand)
+		{
+			SetLeftHandCard(Card);
+		}
+		else
+		{
+			SetRightHandCard(Card);
+		}
+		UZAbilitySystemLibrary::PayCost(this, Card.CardCost);
+		break;
+
+	case ECardType::ECT_Passive:
+		break;
+
+	case ECardType::ECT_CantEquip:
+		break;
 	}
+}
+
+void UCardComponent::SetLeftHandCard(FCard Card, bool bIsValid)
+{
+	if (bIsValid == false)
+	{
+		Card.IsValid = false;
+	}
+
+	LeftHandCard = Card;
+	UpdateLeftHandCardDelegate.Broadcast(Card);
+}
+
+void UCardComponent::SetRightHandCard(FCard Card, bool bIsValid)
+{
+	if (bIsValid == false)
+	{
+		Card.IsValid = false;
+	}
+	
+	RightHandCard = Card;
+	UpdateRightHandCardDelegate.Broadcast(Card);
 }
 
 

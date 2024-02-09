@@ -8,6 +8,7 @@
 #include "InputActionValue.h"
 #include "ZPlayerControllerBase.generated.h"
 
+class IEnemyInterface;
 class UZInputConfig;
 class UZInputComponent;
 class UInputMappingContext;
@@ -105,4 +106,8 @@ private:
 
 	void SetCameraLocation();
 	void SetRotateLocation();
+
+	void CursorTrace();
+	IEnemyInterface* LastActor;
+	IEnemyInterface* ThisActor;
 };
