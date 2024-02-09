@@ -181,7 +181,13 @@ void AZPlayerControllerBase::AbilityInputTagReleased(FGameplayTag InputTag)
 
 			const int32 Cost = FMath::CeilToInt(Spline->GetSplineLength() / 100.f);
 			UZAttributeSet* AS = Cast<UZAttributeSet>(GetPlayerState<AZPlayerState>()->GetAttributeSet());
-			if (NavPath->PathPoints.Num() > 0 && AS->GetCost() >= Cost)
+
+			if (CurrentTurn == ETurn::ET_MoveTurn && Cost > AS->GetCost())
+			{
+				return;
+			}
+			
+			if (NavPath->PathPoints.Num() > 0)
 			{
 				AS->SetCost(AS->GetCost() - Cost);
 				CachedDestination = NavPath->PathPoints.Last();
