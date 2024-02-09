@@ -206,7 +206,7 @@ void AZPlayerControllerBase::AbilityInputTagHeld(FGameplayTag InputTag)
 			FHitResult HitResult;
 			GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
 			float Distance = FVector::DistXY(GetCharacter()->GetActorLocation(), HitResult.Location) / 100.f;
-			if (Cast<IEnemyInterface>(HitResult.GetActor()) && Distance <= CardComponent->ActivatingCard.SkillRange)
+			if (Distance <= CardComponent->ActivatingCard.SkillRange)
 			{
 				GetASC()->AbilityInputTagHeld(CardComponent->ActivatingCard.CardTag);
 				CardComponent->bActivatingCard = false;
