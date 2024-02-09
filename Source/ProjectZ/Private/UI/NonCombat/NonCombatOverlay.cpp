@@ -70,6 +70,9 @@ void UNonCombatOverlay::SetCardComponent(UCardComponent* CC)
 
 		CardComponent->RightEquipPosMax.X = ViewportSize.X + CanvasPanelSlot->GetPosition().X * ViewPortScale;
 		CardComponent->RightEquipPosMax.Y = ViewportSize.Y + CanvasPanelSlot->GetPosition().Y * ViewPortScale;
+
+		LeftHandCardWidget->CardComponent = CardComponent;
+		RightHandCardWidget->CardComponent = CardComponent;
 	}
 }
 
@@ -96,10 +99,10 @@ void UNonCombatOverlay::UpdateLeftHandCard(FCard LeftCard)
 {
 	if (LeftCard.IsValid == false)
 	{
-		SetVisibility(ESlateVisibility::Hidden);
+		LeftHandCardWidget->SetVisibility(ESlateVisibility::Hidden);
 		return;
 	}
-	SetVisibility(ESlateVisibility::Visible);
+	LeftHandCardWidget->SetVisibility(ESlateVisibility::Visible);
 	LeftHandCardWidget->InitCardStatus(LeftCard);
 }
 
@@ -107,10 +110,10 @@ void UNonCombatOverlay::UpdateRightHandCard(FCard RightCard)
 {
 	if (RightCard.IsValid == false)
 	{
-		SetVisibility(ESlateVisibility::Hidden);
+		RightHandCardWidget->SetVisibility(ESlateVisibility::Hidden);
 		return;
 	}
-	SetVisibility(ESlateVisibility::Visible);
+	RightHandCardWidget->SetVisibility(ESlateVisibility::Visible);
 	RightHandCardWidget->InitCardStatus(RightCard);
 }
 

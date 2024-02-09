@@ -59,14 +59,17 @@ void UCardWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 FReply UCardWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
-	AZGameModeBase* GameMode = Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode());
 	return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
 }
 
 void UCardWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
 {
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
-	if (CanvasPanelSlot == nullptr) return;
+
+	// Don't Drag Card in NonCombat Turn
+	AZGameModeBase* GameMode = Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode());
+	ETurn CurrentTurn = GameMode->GetCurrentTurn();
+	if (!(CurrentTurn == ETurn::ET_MoveTurn || CurrentTurn == ETurn::ET_PlayerTurn)) return;
 
 	UCardDragDropOperation* CardDragDropOperation = NewObject<UCardDragDropOperation>();
 
@@ -85,15 +88,41 @@ void UCardWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPoint
 void UCardWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	Super::NativeOnDragCancelled(InDragDropEvent, InOperation);
-	//UE_LOG(LogTemp, Warning, TEXT("%f"), InOperation->DefaultDragVisual->GetCachedGeometry().GetAbsolutePosition().Y+InOperation->DefaultDragVisual->GetCachedGeometry().GetAbsoluteSize().Y);
-	// + InOperation->DefaultDragVisual->GetCachedGeometry().GetAbsoluteSize().Y
+
 	const FVector2D MousePosition = UWidgetLayoutLibrary::GetMousePositionOnViewport(this) * UWidgetLayoutLibrary::GetViewportScale(this);
+
+	bool bUnEquipCard = true;
+	if (CanvasPanelSlot == nullptr) // Equipping Card
+	{
+		const bool bIsLeftHandCard = GetCachedGeometry().GetAbsolutePosition().X < UWidgetLayoutLibrary::GetViewportSize(this).X / 2.f;
+		if (bIsLeftHandCard)
+		{
+			bUnEquipCard = !(CardComponent->LeftEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->LeftEquipPosMax) && CardStat.CardType == ECardType::ECT_CanEquip);
+		}
+		else
+		{
+			bUnEquipCard = !(CardComponent->RightEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->RightEquipPosMax) && CardStat.CardType == ECardType::ECT_CanEquip);
+		}
+
+		if (bUnEquipCard)
+		{
+			CardStat.IsValid = false;
+			CardComponent->ActiveCard(CardStat, bIsLeftHandCard);
+		}
+		else
+		{
+			SetVisibility(ESlateVisibility::Visible);
+		}
+		return;
+	}
+
+
 	bool bUseCard = MousePosition.Y < CardComponent->GetPlayCardHeight() && (CardStat.CardType == ECardType::ECT_Skill || CardStat.CardType == ECardType::ECT_UsablePassive); // Use Card
 	bUseCard = bUseCard || (CardComponent->LeftEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->LeftEquipPosMax) && CardStat.CardType == ECardType::ECT_CanEquip); // Equip Card Left
 	bUseCard = bUseCard || (CardComponent->RightEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->RightEquipPosMax) && CardStat.CardType == ECardType::ECT_CanEquip); // Equip Card Right
 	UZAttributeSet* AS = Cast<UZAttributeSet>(Cast<AZCharacterBase>(GetOwningPlayerPawn())->GetAttributeSet());
 	bUseCard = bUseCard && CardStat.CardCost < AS->GetCost();
-	UE_LOG(LogTemp, Warning, TEXT("%f %f"), MousePosition.X, MousePosition.Y);
+
 	if (bUseCard) // Use Card
 	{
 		CardComponent->ActiveCard(CardStat, (CardComponent->LeftEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->LeftEquipPosMax) && CardStat.CardType == ECardType::ECT_CanEquip));
@@ -112,6 +141,9 @@ void UCardWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, U
 		CardDragEndDelegate.Broadcast(this, false);
 		SetVisibility(ESlateVisibility::Visible);
 		bMouseHovered = false;
+
+		AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(GetOwningPlayerPawn());
+		PlayerCharacter->HideSkillRange();
 	}
 }
 

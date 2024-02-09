@@ -51,8 +51,8 @@ public:
 	// Active Card, Apply Effect to target
 	void ActiveCard(FCard Card, bool bIsLeftHand = true);
 
-	void SetLeftHandCard(FCard Card);
-	void SetRightHandCard(FCard Card);
+	void SetLeftHandCard(FCard Card, bool bIsValid = true);
+	void SetRightHandCard(FCard Card, bool bIsValid = true);
 
 	FCard ActivatingCard;
 	bool bActivatingCard = false;
@@ -118,6 +118,4 @@ private:
 	void MakeCardDeck();
 
 	void ApplyEffectToTarget(TSubclassOf<UGameplayEffect> Effect, int32 CardLevel, AZCharacterBase* TargetCharacter);
-
-	void PayCost(int32 Cost);
 };

@@ -163,11 +163,6 @@ void UCardComponent::ApplyEffectToTarget(TSubclassOf<UGameplayEffect> Effect, in
 	*/
 }
 
-void UCardComponent::PayCost(int32 Cost)
-{
-	UZAttributeSet* AS = Cast<UZAttributeSet>(ZCharacter->GetAttributeSet());
-	AS->SetCost(AS->GetCost() - Cost);
-}
 
 // Active Card and apply effect
 void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand)
@@ -189,7 +184,7 @@ void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand)
 			{
 				ApplyEffectToTarget(InfiniteEffect, Card.CardLevel, TargetCharacter);
 			}
-			PayCost(Card.CardCost);
+			UZAbilitySystemLibrary::PayCost(this, Card.CardCost);
 			break;
 		}
 
@@ -207,7 +202,7 @@ void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand)
 		{
 			SetRightHandCard(Card);
 		}
-		PayCost(Card.CardCost);
+		UZAbilitySystemLibrary::PayCost(this, Card.CardCost);
 		break;
 
 	case ECardType::ECT_Passive:
@@ -218,14 +213,24 @@ void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand)
 	}
 }
 
-void UCardComponent::SetLeftHandCard(FCard Card)
+void UCardComponent::SetLeftHandCard(FCard Card, bool bIsValid)
 {
+	if (bIsValid == false)
+	{
+		Card.IsValid = false;
+	}
+
 	LeftHandCard = Card;
 	UpdateLeftHandCardDelegate.Broadcast(Card);
 }
 
-void UCardComponent::SetRightHandCard(FCard Card)
+void UCardComponent::SetRightHandCard(FCard Card, bool bIsValid)
 {
+	if (bIsValid == false)
+	{
+		Card.IsValid = false;
+	}
+	
 	RightHandCard = Card;
 	UpdateRightHandCardDelegate.Broadcast(Card);
 }
