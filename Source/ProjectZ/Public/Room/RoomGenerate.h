@@ -16,8 +16,8 @@ public:
 	ARoomGenerate();
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	// Generates rectangle room with floor, wall, door
-	void BasicRoom();
+	// Generates rectangle room with floor, wall
+	UFUNCTION(BlueprintCallable) void BasicRoom();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") int RoomX;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") int RoomY;

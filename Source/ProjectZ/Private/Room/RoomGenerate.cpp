@@ -1,14 +1,18 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Room/RoomGenerate.h"
 #include "Components/InstancedStaticMeshComponent.h"
 
 UStaticMesh* CubeMesh;
 
-// Generates rectangle room with floor, wall, door
+// Generates rectangle room with floor, wall
 void ARoomGenerate::BasicRoom()
 {
+	Floor->ClearInstances();
+	XWall->ClearInstances();
+	YWall->ClearInstances();
+	RoomX = FMath::RandRange(1, 10);
+	RoomY = FMath::RandRange(1, 10);
 	for(int i=0; i<RoomX; i++)
 	{
 		for(int j=0; j<RoomY; j++)
