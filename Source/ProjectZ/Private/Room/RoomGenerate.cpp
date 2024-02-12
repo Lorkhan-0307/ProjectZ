@@ -15,8 +15,13 @@ void ARoomGenerate::BasicRoom()
 		{
 			Floor->AddInstance(FTransform(FVector(i*TileX, j*TileY, 0)));
 		}
-		Wall->AddInstance(FTransform(FVector(i*TileX, 0, 0)));
-		Wall->AddInstance(FTransform(FVector(i*TileX, RoomY*TileY*20, 0)));
+		XWall->AddInstance(FTransform(FVector(i*TileX, 0, 0)));
+		XWall->AddInstance(FTransform(FVector(i*TileX, RoomY*TileY*20, 0)));
+	}
+	for(int i=0; i<RoomY; i++)
+	{
+		YWall->AddInstance(FTransform(FVector(0, i*TileY, 0)));
+		YWall->AddInstance(FTransform(FVector(RoomX*TileX*20, i*TileY, 0)));
 	}
 }
 
@@ -28,18 +33,23 @@ ARoomGenerate::ARoomGenerate()
 
 	DefaultRoot = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DefaultRoot"));
 	Floor = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("Floor"));
-	Wall = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("Wall"));
+	XWall = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("XWall"));
+	YWall = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("YWall"));
 	CubeMesh = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("StaticMesh'/Engine/BasicShapes/Cube.Cube'")).Object;
 	SetRootComponent(DefaultRoot);
 	Floor->SetupAttachment(GetRootComponent());
-	Wall->SetupAttachment(GetRootComponent());
+	XWall->SetupAttachment(GetRootComponent());
+	YWall->SetupAttachment(GetRootComponent());
 	
 	Floor->SetStaticMesh(CubeMesh);
 	Floor->SetWorldScale3D(FVector(2, 2, 0.1));
 	Floor->SetRelativeLocation(FVector(100, 100, 0));
-	Wall->SetStaticMesh(CubeMesh);
-	Wall->SetWorldScale3D(FVector(2, 0.1, 2));
-	Wall->SetRelativeLocation(FVector(100, 0, 100));
+	XWall->SetStaticMesh(CubeMesh);
+	XWall->SetWorldScale3D(FVector(2, 0.1, 2));
+	XWall->SetRelativeLocation(FVector(100, 0, 100));
+	YWall->SetStaticMesh(CubeMesh);
+	YWall->SetWorldScale3D(FVector(0.1, 2, 2));
+	YWall->SetRelativeLocation(FVector(0, 100, 100));
 
 	RoomX = 1;
 	RoomY = 1;

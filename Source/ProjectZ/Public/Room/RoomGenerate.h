@@ -32,5 +32,6 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, Category = "Component") UStaticMeshComponent* DefaultRoot;
 	UPROPERTY(EditAnywhere, Category = "Component") UInstancedStaticMeshComponent* Floor;
-	UPROPERTY(EditAnywhere, Category = "Component") UInstancedStaticMeshComponent* Wall;
+	UPROPERTY(EditAnywhere, Category = "Component") UInstancedStaticMeshComponent* XWall;
+	UPROPERTY(EditAnywhere, Category = "Component") UInstancedStaticMeshComponent* YWall;
 };
