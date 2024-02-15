@@ -9,6 +9,7 @@
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
 #include "AbilitySystem/ZAbilitySystemComponent.h"
+#include "AbilitySystem/ZAttributeSet.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
@@ -177,6 +178,17 @@ void AZPlayerCharacter::UpdateSplinePath()
 	SplineLength = Spline->GetSplineLength() / 100.f;
 }
 
+void AZPlayerCharacter::TurnChanged(ETurn Turn)
+{
+	if (Turn != ETurn::ET_MoveTurn) return;
+
+	UZAttributeSet* AS = Cast<UZAttributeSet>(AttributeSet);
+	if (AS)
+	{
+		AS->SetCost(AS->GetMaxCost());
+	}
+}
+
 int32 AZPlayerCharacter::GetPathCost()
 {
 	return FMath::CeilToInt32(SplineLength);
@@ -196,4 +208,10 @@ void AZPlayerCharacter::ShowSKillRange(float Range)
 void AZPlayerCharacter::HideSkillRange()
 {
 	SkillRangeMesh->SetVisibility(false);
+}
+
+void AZPlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->TurnChangedDelegate.AddDynamic(this, &AZPlayerCharacter::TurnChanged);
 }

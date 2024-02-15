@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Game/ZGameModeBase.h"
 #include "Character/ZCharacterBase.h"
 #include "Interaction/EnemyInterface.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
@@ -50,5 +51,9 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<AZAIController> ZAIController;
+
+private:
+	UFUNCTION()
+	void TurnChanged(ETurn Turn);
 	
 };

@@ -10,6 +10,7 @@
 #include "AI/ZAIController.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Game/ZGameModeBase.h"
 #include "ProjectZ/ProjectZ.h"
 
 AZEnemy::AZEnemy()
@@ -28,6 +29,12 @@ void AZEnemy::PossessedBy(AController* NewController)
 	ZAIController = Cast<AZAIController>(NewController);
 	ZAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
 	ZAIController->RunBehaviorTree(BehaviorTree);
+	ZAIController->GetBlackboardComponent()->SetValueAsBool(FName("EnemyTurn"), false);
+	ZAIController->GetBlackboardComponent()->SetValueAsBool(FName("RangedAttacker"), false);
+	/*
+	if (CharacterClass == ECharacterClass::RangedAttackZombie)
+		ZAIController->GetBlackboardComponent()->SetValueAsBool(FName("RangedAttacker"), true);
+	*/
 }
 
 int32 AZEnemy::GetPlayerLevel()
@@ -77,6 +84,8 @@ void AZEnemy::BeginPlay()
 		OnHealthChanged.Broadcast(ZAS->GetHealth());
 		OnMaxHealthChanged.Broadcast(ZAS->GetMaxHealth());
 	}
+
+	Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->TurnChangedDelegate.AddDynamic(this, &AZEnemy::TurnChanged);
 }
 
 void AZEnemy::InitAbilityActorInfo()
@@ -85,4 +94,20 @@ void AZEnemy::InitAbilityActorInfo()
 	Cast<UZAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 
 	InitializeDefaultAttributes();
+}
+
+void AZEnemy::TurnChanged(ETurn Turn)
+{
+	if (Turn != ETurn::ET_EnemyTurn)
+	{
+		ZAIController->GetBlackboardComponent()->SetValueAsBool(FName("EnemyTurn"), false);
+		return;
+	}
+	
+	UZAttributeSet* AS = Cast<UZAttributeSet>(AttributeSet);
+	if (AS)
+	{
+		AS->SetCost(AS->GetMaxCost());
+	}
+	ZAIController->GetBlackboardComponent()->SetValueAsBool(FName("EnemyTurn"), true);
 }
