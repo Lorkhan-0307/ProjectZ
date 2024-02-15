@@ -8,6 +8,9 @@
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "ZEnemy.generated.h"
 
+class UBehaviorTree;
+class AZAIController;
+
 /**
  * 
  */
@@ -18,6 +21,8 @@ class PROJECTZ_API AZEnemy : public AZCharacterBase, public IEnemyInterface
 
 public:
 	AZEnemy();
+
+	virtual void PossessedBy(AController* NewController) override;
 
 	// Combat Interface
 	virtual int32 GetPlayerLevel() override;
@@ -39,4 +44,11 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo() override;
+
+	UPROPERTY(EditAnywhere, Category = AI)
+	TObjectPtr<UBehaviorTree> BehaviorTree;
+
+	UPROPERTY()
+	TObjectPtr<AZAIController> ZAIController;
+	
 };

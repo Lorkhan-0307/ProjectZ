@@ -7,6 +7,9 @@
 #include "AbilitySystem/ZAbilitySystemLibrary.h"
 #include "AbilitySystem/ZAttributeSet.h"
 #include "ZGameplayTag.h"
+#include "AI/ZAIController.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "ProjectZ/ProjectZ.h"
 
 AZEnemy::AZEnemy()
@@ -16,6 +19,15 @@ AZEnemy::AZEnemy()
 	AbilitySystemComponent = CreateDefaultSubobject<UZAbilitySystemComponent>("AbilitySystemComponent");
 
 	AttributeSet = CreateDefaultSubobject<UZAttributeSet>("AttributeSet");
+}
+
+void AZEnemy::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	ZAIController = Cast<AZAIController>(NewController);
+	ZAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
+	ZAIController->RunBehaviorTree(BehaviorTree);
 }
 
 int32 AZEnemy::GetPlayerLevel()
