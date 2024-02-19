@@ -25,6 +25,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") int RoomX;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") int RoomY;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") int DoorCount = 5;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") int DoorEvery = 3;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") int DoorRemainder = 2;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") bool EntryDoor = true;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") int TileX = 100;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") int TileY = 100;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") FRandomStream RoomStream;

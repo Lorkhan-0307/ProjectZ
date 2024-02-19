@@ -28,7 +28,7 @@ void ARoomGenerate::BasicRoom()
 		{
 			Floor->AddInstance(FTransform(FVector(i*TileX, j*TileY, 0)));
 		}
-		if(UKismetMathLibrary::RandomBoolWithWeightFromStream(float(DoorCount - DoorArray.Num()) / DoorCount, RoomStream))
+		if(i%DoorEvery == DoorRemainder && UKismetMathLibrary::RandomBoolWithWeightFromStream(float(DoorCount - DoorArray.Num()) / DoorCount, RoomStream))
 		{
 			DoorArray.Add(GetWorld()->SpawnActor<AActor>(Door, FTransform(FVector(i*TileX*2+100, 0, 0)+GetActorLocation())));
 		}
@@ -36,7 +36,7 @@ void ARoomGenerate::BasicRoom()
 		{
 			XWall->AddInstance(FTransform(FVector(i*TileX, 0, 0)));
 		}
-		if(UKismetMathLibrary::RandomBoolWithWeightFromStream(float(DoorCount - DoorArray.Num()) / DoorCount, RoomStream))
+		if(i%DoorEvery == DoorRemainder && UKismetMathLibrary::RandomBoolWithWeightFromStream(float(DoorCount - DoorArray.Num()) / DoorCount, RoomStream))
 		{
 			DoorArray.Add(GetWorld()->SpawnActor<AActor>(Door, FTransform(FVector(i*TileX*2+100, RoomY*TileY*2, 0)+GetActorLocation())));
 		}
@@ -47,7 +47,7 @@ void ARoomGenerate::BasicRoom()
 	}
 	for(int i=0; i<RoomY; i++)
 	{
-		if(UKismetMathLibrary::RandomBoolWithWeightFromStream(float(DoorCount - DoorArray.Num()) / DoorCount, RoomStream))
+		if(i%DoorEvery == DoorRemainder && UKismetMathLibrary::RandomBoolWithWeightFromStream(float(DoorCount - DoorArray.Num()) / DoorCount, RoomStream))
 		{
 			DoorArray.Add(GetWorld()->SpawnActor<AActor>(Door, FTransform(FRotator(0, 90, 0), FVector(0, i*TileY*2+100, 0)+GetActorLocation())));
 		}
@@ -55,7 +55,7 @@ void ARoomGenerate::BasicRoom()
 		{
 			YWall->AddInstance(FTransform(FVector(0, i*TileY, 0)));
 		}
-		if(UKismetMathLibrary::RandomBoolWithWeightFromStream(float(DoorCount - DoorArray.Num()) / DoorCount, RoomStream))
+		if(i%DoorEvery == DoorRemainder && UKismetMathLibrary::RandomBoolWithWeightFromStream(float(DoorCount - DoorArray.Num()) / DoorCount, RoomStream))
 		{
 			DoorArray.Add(GetWorld()->SpawnActor<AActor>(Door, FTransform(FRotator(0, 90, 0), FVector(RoomX*TileX*2, i*TileY*2+100, 0)+GetActorLocation())));
 		}
