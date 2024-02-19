@@ -11,8 +11,17 @@ void ARoomGenerate::BasicRoom()
 	Floor->ClearInstances();
 	XWall->ClearInstances();
 	YWall->ClearInstances();
+	for(AActor* actor : DoorArray)
+	{
+		if(actor)
+		{
+			actor->Destroy();
+		}
+	}
+	DoorArray.Empty();
 	RoomX = FMath::RandRange(1, 10);
 	RoomY = FMath::RandRange(1, 10);
+	//AActor* SpawnedActor;
 	for(int i=0; i<RoomX; i++)
 	{
 		for(int j=0; j<RoomY; j++)
@@ -20,16 +29,17 @@ void ARoomGenerate::BasicRoom()
 			Floor->AddInstance(FTransform(FVector(i*TileX, j*TileY, 0)));
 		}
 		//XWall->AddInstance(FTransform(FVector(i*TileX, 0, 0)));
-		GetWorld()->SpawnActor<AActor>(Door, FTransform(FVector(i*TileX*2+100, 0, 0)+GetActorLocation()));
+		//SpawnedActor = GetWorld()->SpawnActor<AActor>(Door, FTransform(FVector(i*TileX*2+100, 0, 0)+GetActorLocation()));
+		DoorArray.Add(GetWorld()->SpawnActor<AActor>(Door, FTransform(FVector(i*TileX*2+100, 0, 0)+GetActorLocation())));
 		//XWall->AddInstance(FTransform(FVector(i*TileX, RoomY*TileY*20, 0)));
-		GetWorld()->SpawnActor<AActor>(Door, FTransform(FVector(i*TileX*2+100, RoomY*TileY*2, 0)+GetActorLocation()));
+		DoorArray.Add(GetWorld()->SpawnActor<AActor>(Door, FTransform(FVector(i*TileX*2+100, RoomY*TileY*2, 0)+GetActorLocation())));
 	}
 	for(int i=0; i<RoomY; i++)
 	{
 		//YWall->AddInstance(FTransform(FVector(0, i*TileY, 0)));
-		GetWorld()->SpawnActor<AActor>(Door, FTransform(FRotator(0, 90, 0), FVector(0, i*TileY*2+100, 0)+GetActorLocation()));
+		DoorArray.Add(GetWorld()->SpawnActor<AActor>(Door, FTransform(FRotator(0, 90, 0), FVector(0, i*TileY*2+100, 0)+GetActorLocation())));
 		//YWall->AddInstance(FTransform(FVector(RoomX*TileX*20, i*TileY, 0)));
-		GetWorld()->SpawnActor<AActor>(Door, FTransform(FRotator(0, 90, 0), FVector(RoomX*TileX*2, i*TileY*2+100, 0)+GetActorLocation()));
+		DoorArray.Add(GetWorld()->SpawnActor<AActor>(Door, FTransform(FRotator(0, 90, 0), FVector(RoomX*TileX*2, i*TileY*2+100, 0)+GetActorLocation())));
 	}
 }
 
