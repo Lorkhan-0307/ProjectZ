@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Math/RandomStream.h"
 #include "RoomGenerate.generated.h"
 
 UCLASS()
@@ -23,9 +24,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") int RoomX;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") int RoomY;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") int DoorCount;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") int DoorCount = 5;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") int TileX = 100;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") int TileY = 100;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") FRandomStream RoomStream;
 
 protected:
 	// Called when the game starts or when spawned

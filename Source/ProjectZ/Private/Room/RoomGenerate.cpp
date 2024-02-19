@@ -2,6 +2,7 @@
 
 #include "Room/RoomGenerate.h"
 #include "Components/InstancedStaticMeshComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 UStaticMesh* CubeMesh;
 
@@ -11,35 +12,57 @@ void ARoomGenerate::BasicRoom()
 	Floor->ClearInstances();
 	XWall->ClearInstances();
 	YWall->ClearInstances();
-	for(AActor* actor : DoorArray)
+	for(AActor* Actor : DoorArray)
 	{
-		if(actor)
+		if(Actor)
 		{
-			actor->Destroy();
+			Actor->Destroy();
 		}
 	}
 	DoorArray.Empty();
 	RoomX = FMath::RandRange(1, 10);
 	RoomY = FMath::RandRange(1, 10);
-	//AActor* SpawnedActor;
 	for(int i=0; i<RoomX; i++)
 	{
 		for(int j=0; j<RoomY; j++)
 		{
 			Floor->AddInstance(FTransform(FVector(i*TileX, j*TileY, 0)));
 		}
-		//XWall->AddInstance(FTransform(FVector(i*TileX, 0, 0)));
-		//SpawnedActor = GetWorld()->SpawnActor<AActor>(Door, FTransform(FVector(i*TileX*2+100, 0, 0)+GetActorLocation()));
-		DoorArray.Add(GetWorld()->SpawnActor<AActor>(Door, FTransform(FVector(i*TileX*2+100, 0, 0)+GetActorLocation())));
-		//XWall->AddInstance(FTransform(FVector(i*TileX, RoomY*TileY*20, 0)));
-		DoorArray.Add(GetWorld()->SpawnActor<AActor>(Door, FTransform(FVector(i*TileX*2+100, RoomY*TileY*2, 0)+GetActorLocation())));
+		if(UKismetMathLibrary::RandomBoolWithWeightFromStream(float(DoorCount - DoorArray.Num()) / DoorCount, RoomStream))
+		{
+			DoorArray.Add(GetWorld()->SpawnActor<AActor>(Door, FTransform(FVector(i*TileX*2+100, 0, 0)+GetActorLocation())));
+		}
+		else
+		{
+			XWall->AddInstance(FTransform(FVector(i*TileX, 0, 0)));
+		}
+		if(UKismetMathLibrary::RandomBoolWithWeightFromStream(float(DoorCount - DoorArray.Num()) / DoorCount, RoomStream))
+		{
+			DoorArray.Add(GetWorld()->SpawnActor<AActor>(Door, FTransform(FVector(i*TileX*2+100, RoomY*TileY*2, 0)+GetActorLocation())));
+		}
+		else
+		{
+			XWall->AddInstance(FTransform(FVector(i*TileX, RoomY*TileY*20, 0)));
+		}
 	}
 	for(int i=0; i<RoomY; i++)
 	{
-		//YWall->AddInstance(FTransform(FVector(0, i*TileY, 0)));
-		DoorArray.Add(GetWorld()->SpawnActor<AActor>(Door, FTransform(FRotator(0, 90, 0), FVector(0, i*TileY*2+100, 0)+GetActorLocation())));
-		//YWall->AddInstance(FTransform(FVector(RoomX*TileX*20, i*TileY, 0)));
-		DoorArray.Add(GetWorld()->SpawnActor<AActor>(Door, FTransform(FRotator(0, 90, 0), FVector(RoomX*TileX*2, i*TileY*2+100, 0)+GetActorLocation())));
+		if(UKismetMathLibrary::RandomBoolWithWeightFromStream(float(DoorCount - DoorArray.Num()) / DoorCount, RoomStream))
+		{
+			DoorArray.Add(GetWorld()->SpawnActor<AActor>(Door, FTransform(FRotator(0, 90, 0), FVector(0, i*TileY*2+100, 0)+GetActorLocation())));
+		}
+		else
+		{
+			YWall->AddInstance(FTransform(FVector(0, i*TileY, 0)));
+		}
+		if(UKismetMathLibrary::RandomBoolWithWeightFromStream(float(DoorCount - DoorArray.Num()) / DoorCount, RoomStream))
+		{
+			DoorArray.Add(GetWorld()->SpawnActor<AActor>(Door, FTransform(FRotator(0, 90, 0), FVector(RoomX*TileX*2, i*TileY*2+100, 0)+GetActorLocation())));
+		}
+		else
+		{
+			YWall->AddInstance(FTransform(FVector(RoomX*TileX*20, i*TileY, 0)));
+		}
 	}
 }
 
@@ -60,6 +83,16 @@ ARoomGenerate::ARoomGenerate()
 	YWall->SetupAttachment(GetRootComponent());
 	RoomX = 1;
 	RoomY = 1;
+	
+	Floor->SetStaticMesh(CubeMesh);
+	Floor->SetWorldScale3D(FVector(2, 2, 0.1));
+	Floor->SetRelativeLocation(FVector(100, 100, 0));
+	XWall->SetStaticMesh(CubeMesh);
+	XWall->SetWorldScale3D(FVector(2, 0.1, 2));
+	XWall->SetRelativeLocation(FVector(100, 0, 100));
+	YWall->SetStaticMesh(CubeMesh);
+	YWall->SetWorldScale3D(FVector(0.1, 2, 2));
+	YWall->SetRelativeLocation(FVector(0, 100, 100));
 }
 
 // Called when the game starts or when spawned
