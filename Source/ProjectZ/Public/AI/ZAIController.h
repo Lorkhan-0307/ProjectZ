@@ -6,7 +6,9 @@
 #include "AIController.h"
 #include "ZAIController.generated.h"
 
+struct FAIStimulus;
 class UBehaviorTreeComponent;
+class UAISense;
 
 /**
  * 
@@ -20,6 +22,14 @@ public:
 	AZAIController();
 
 protected:
+	virtual void OnPossess(APawn* InPawn) override;
+	
 	UPROPERTY()
 	TObjectPtr<UBehaviorTreeComponent> BehaviorTreeComponent;
+
+	UPROPERTY(EditAnywhere, Category = AI)
+	TObjectPtr<UAIPerceptionComponent> AIPerceptionComponent;
+private:
+	UFUNCTION()
+	void FindTarget(AActor* Actor, FAIStimulus AIStimulus);
 };

@@ -312,8 +312,9 @@ void UNonCombatOverlay::ShowTurnEndButton(bool bShow)
 
 void UNonCombatOverlay::TurnEnd()
 {
-	Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->SetTurn(ETurn::ET_EnemyTurn);
-	CurrentTurn = ETurn::ET_EnemyTurn;
+	Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->NextTurn();
+	//Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->SetTurn(ETurn::ET_EnemyTurn);
+	//CurrentTurn = ETurn::ET_EnemyTurn;
 }
 
 float UNonCombatOverlay::GetHealthCheckingBarPos()

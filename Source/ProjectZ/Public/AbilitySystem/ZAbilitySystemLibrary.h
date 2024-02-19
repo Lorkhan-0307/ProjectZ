@@ -6,6 +6,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "ZAbilitySystemLibrary.generated.h"
 
+class AZCharacterBase;
 struct FGameplayEffectContextHandle;
 class UCharacterClassInfo;
 class UOverlayWidgetController;
@@ -43,5 +44,5 @@ public:
 	static void SetIsCriticalHit(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool bInIsCriticalHit);
 
 	UFUNCTION(BlueprintCallable)
-	static bool PayCost(const UObject* WorldContextObject, int32 Cost);
+	static bool PayCost(AZCharacterBase* Character, float Cost);
 };

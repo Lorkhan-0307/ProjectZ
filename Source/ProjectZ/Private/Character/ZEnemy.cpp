@@ -11,6 +11,7 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Game/ZGameModeBase.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "ProjectZ/ProjectZ.h"
 
 AZEnemy::AZEnemy()
@@ -20,6 +21,10 @@ AZEnemy::AZEnemy()
 	AbilitySystemComponent = CreateDefaultSubobject<UZAbilitySystemComponent>("AbilitySystemComponent");
 
 	AttributeSet = CreateDefaultSubobject<UZAttributeSet>("AttributeSet");
+
+	AIPerceptionStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("AIPerceptionStimuliSourceComponent"));
+	AIPerceptionStimuliSourceComponent->bAutoRegister = true;
+	//AIPerceptionStimuliSourceComponent->regi
 }
 
 void AZEnemy::PossessedBy(AController* NewController)
@@ -100,7 +105,7 @@ void AZEnemy::TurnChanged(ETurn Turn)
 {
 	if (Turn != ETurn::ET_EnemyTurn)
 	{
-		ZAIController->GetBlackboardComponent()->SetValueAsBool(FName("EnemyTurn"), false);
+		ZAIController->GetBlackboardComponent()->SetValueAsBool(FName("MyTurn"), false);
 		return;
 	}
 	
@@ -109,5 +114,9 @@ void AZEnemy::TurnChanged(ETurn Turn)
 	{
 		AS->SetCost(AS->GetMaxCost());
 	}
-	ZAIController->GetBlackboardComponent()->SetValueAsBool(FName("EnemyTurn"), true);
+	
+	if (!bIsMyTurn) return;
+	
+	ZAIController->GetBlackboardComponent()->SetValueAsFloat(FName("Cost"), AS->GetCost());
+	ZAIController->GetBlackboardComponent()->SetValueAsBool(FName("MyTurn"), true);
 }

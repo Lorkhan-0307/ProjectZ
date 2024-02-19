@@ -44,6 +44,8 @@ void AZPlayerCharacter::PossessedBy(AController* NewController)
 	bIsPossessed = true;
 	InitAbilityActorInfo();
 	AddCharacterAbility();
+
+	Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->TurnChangedDelegate.AddDynamic(this, &AZPlayerCharacter::TurnChanged);
 }
 
 // Setup Character
@@ -187,6 +189,8 @@ void AZPlayerCharacter::TurnChanged(ETurn Turn)
 	{
 		AS->SetCost(AS->GetMaxCost());
 	}
+
+	GetCharacterMovement()->StopActiveMovement();
 }
 
 int32 AZPlayerCharacter::GetPathCost()
@@ -213,5 +217,4 @@ void AZPlayerCharacter::HideSkillRange()
 void AZPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->TurnChangedDelegate.AddDynamic(this, &AZPlayerCharacter::TurnChanged);
 }

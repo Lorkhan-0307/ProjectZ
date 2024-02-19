@@ -91,10 +91,10 @@ void UCardWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, U
 
 	const FVector2D MousePosition = UWidgetLayoutLibrary::GetMousePositionOnViewport(this) * UWidgetLayoutLibrary::GetViewportScale(this);
 	UZAttributeSet* AS = Cast<UZAttributeSet>(Cast<AZCharacterBase>(GetOwningPlayerPawn())->GetAttributeSet());
-
-	bool bUnEquipCard = true;
+	
 	if (CanvasPanelSlot == nullptr) // Equipping Card
 	{
+		bool bUnEquipCard;
 		const bool bIsLeftHandCard = GetCachedGeometry().GetAbsolutePosition().X < UWidgetLayoutLibrary::GetViewportSize(this).X / 2.f;
 		if (bIsLeftHandCard)
 		{

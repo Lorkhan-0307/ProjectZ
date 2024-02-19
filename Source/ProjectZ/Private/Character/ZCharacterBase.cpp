@@ -8,6 +8,7 @@
 #include "AbilitySystem/ZAbilitySystemComponent.h"
 #include "AbilitySystem/ZAbilitySystemLibrary.h"
 #include "Components/CapsuleComponent.h"
+#include "Game/ZGameModeBase.h"
 
 // Sets default values
 AZCharacterBase::AZCharacterBase()
@@ -42,6 +43,10 @@ void AZCharacterBase::Die()
 	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->CharacterDie(this);
+
+	SetLifeSpan(LifeSpan);
 }
 
 // Called when the game starts or when spawned

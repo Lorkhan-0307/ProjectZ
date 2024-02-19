@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "ZGameModeBase.generated.h"
 
+class AZCharacterBase;
 class UCharacterClassInfo;
 
 UENUM(BlueprintType)
@@ -16,10 +17,13 @@ enum class ETurn : uint8
 	// Combat
 	ET_MoveTurn UMETA(DisplayName = "MoveTurn"),
 	ET_PlayerTurn UMETA(DisplayName = "Player Turn"),
-	ET_EnemyTurn UMETA(DisplayName = "Enemy Turn")
-};
+	ET_EnemyTurn UMETA(DisplayName = "Enemy Turn")};
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTurnChangedDelegate, ETurn, CurrentTurn);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCombatActorChangedDelegate, TArray<AActor*>&, CombatActor);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCombatStartDelegate, TArray<AActor*>&, CombatActor);
 
 UCLASS()
 class PROJECTZ_API AZGameModeBase : public AGameModeBase
@@ -29,18 +33,40 @@ class PROJECTZ_API AZGameModeBase : public AGameModeBase
 public:
 	virtual void BeginPlay() override;
 
+	void CombatStart();
+	void NextTurn();
+	void CharacterDie(AActor* DieActor);
+	
 	UFUNCTION(BlueprintCallable)
 	void SetTurn(ETurn Turn);
-	
+
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE ETurn GetCurrentTurn() const { return CurrentTurn; }
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FTurnChangedDelegate TurnChangedDelegate;
 
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FCombatActorChangedDelegate CombatActorChangedDelegate;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FCombatStartDelegate CombatStartDelegate;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Character Class Default")
 	TObjectPtr<UCharacterClassInfo> CharacterClassInfo;
 
+	FORCEINLINE int32 GetTurnPlayerIndex() const { return TurnPlayerIndex; }
+
 private:
 	ETurn CurrentTurn = ETurn::ET_NonCombat;
+
+	UPROPERTY()
+	TArray<AZCharacterBase*> CombatCharacter;
+
+	UPROPERTY()
+	TArray<AActor*> CombatActor;
+
+	int32 TurnPlayerIndex;
+
+	void SortCombatActor();
 };

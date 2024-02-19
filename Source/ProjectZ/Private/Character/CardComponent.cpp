@@ -167,26 +167,24 @@ void UCardComponent::ApplyEffectToTarget(TSubclassOf<UGameplayEffect> Effect, in
 // Active Card and apply effect
 void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand)
 {
+	AZCharacterBase* TargetCharacter = Cast<AZCharacterBase>(ZCharacter);
 	switch (Card.CardType)
 	{
 	case ECardType::ECT_UsablePassive:
+		for (const auto& InstantEffect : Card.InstantGameplayEffects)
 		{
-			AZCharacterBase* TargetCharacter = Cast<AZCharacterBase>(ZCharacter);
-			for (const auto& InstantEffect : Card.InstantGameplayEffects)
-			{
-				ApplyEffectToTarget(InstantEffect, Card.CardLevel, TargetCharacter);
-			}
-			for (const auto& DurationEffect : Card.DurationGameplayEffects)
-			{
-				ApplyEffectToTarget(DurationEffect, Card.CardLevel, TargetCharacter);
-			}
-			for (const auto& InfiniteEffect : Card.InfiniteGameplayEffects)
-			{
-				ApplyEffectToTarget(InfiniteEffect, Card.CardLevel, TargetCharacter);
-			}
-			UZAbilitySystemLibrary::PayCost(this, Card.CardCost);
-			break;
+			ApplyEffectToTarget(InstantEffect, Card.CardLevel, TargetCharacter);
 		}
+		for (const auto& DurationEffect : Card.DurationGameplayEffects)
+		{
+			ApplyEffectToTarget(DurationEffect, Card.CardLevel, TargetCharacter);
+		}
+		for (const auto& InfiniteEffect : Card.InfiniteGameplayEffects)
+		{
+			ApplyEffectToTarget(InfiniteEffect, Card.CardLevel, TargetCharacter);
+		}
+		UZAbilitySystemLibrary::PayCost(TargetCharacter, Card.CardCost);
+		break;
 
 	case ECardType::ECT_Skill:
 		ActivatingCard = Card;
@@ -202,7 +200,7 @@ void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand)
 		{
 			SetRightHandCard(Card);
 		}
-		UZAbilitySystemLibrary::PayCost(this, Card.CardCost);
+		UZAbilitySystemLibrary::PayCost(TargetCharacter, Card.CardCost);
 		break;
 
 	case ECardType::ECT_Passive:
@@ -230,7 +228,7 @@ void UCardComponent::SetRightHandCard(FCard Card, bool bIsValid)
 	{
 		Card.IsValid = false;
 	}
-	
+
 	RightHandCard = Card;
 	UpdateRightHandCardDelegate.Broadcast(Card);
 }

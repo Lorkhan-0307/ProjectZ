@@ -3,7 +3,12 @@
 
 #include "AI/BTService_FindNearestPlayer.h"
 #include "AIController.h"
+#include "NavigationPath.h"
+#include "NavigationSystem.h"
+#include "AbilitySystem/ZAbilitySystemLibrary.h"
+#include "AbilitySystem/ZAttributeSet.h"
 #include "BehaviorTree/BTFunctionLibrary.h"
+#include "Character/ZEnemy.h"
 #include "Kismet/GameplayStatics.h"
 
 void UBTService_FindNearestPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
@@ -16,6 +21,21 @@ void UBTService_FindNearestPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, u
 
 	TArray<AActor*> ActorWithTag;
 	UGameplayStatics::GetAllActorsWithTag(OwningPawn, TargetTag, ActorWithTag);
+
+	LastLocation = CurrentLocation;
+	CurrentLocation = OwningPawn->GetActorLocation();
+	const float DeltaLocation = FVector::DistXY(LastLocation, CurrentLocation) / 100.f;
+
+	AZCharacterBase* Character = Cast<AZCharacterBase>(OwningPawn);
+	const UZAttributeSet* AS = Cast<UZAttributeSet>(Character->GetAttributeSet());
+	UZAbilitySystemLibrary::PayCost(Character, DeltaLocation);
+	UBTFunctionLibrary::SetBlackboardValueAsFloat(this, CostSelector, FMath::Floor(AS->GetCost()));
+
+	if (FMath::Floor(AS->GetCost()) == 0 && Cast<AZEnemy>(Character)->bIsMyTurn)
+	{
+		Cast<AZEnemy>(Character)->bIsMyTurn = false;
+		Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->NextTurn();
+	}
 
 	float ClosestDistance = TNumericLimits<float>::Max();
 	AActor* ClosestActor = nullptr;
@@ -33,4 +53,5 @@ void UBTService_FindNearestPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	}
 	UBTFunctionLibrary::SetBlackboardValueAsObject(this, TargetToFollowSelector, ClosestActor);
 	UBTFunctionLibrary::SetBlackboardValueAsFloat(this, DistanceToTargetSelector, ClosestDistance);
+	UBTFunctionLibrary::SetBlackboardValueAsBool(this, MyTurnSelector, Cast<AZEnemy>(Character)->bIsMyTurn);
 }

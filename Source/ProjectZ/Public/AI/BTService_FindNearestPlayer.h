@@ -22,4 +22,14 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	FBlackboardKeySelector DistanceToTargetSelector;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	FBlackboardKeySelector CostSelector;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	FBlackboardKeySelector MyTurnSelector;
+
+private:
+	FVector CurrentLocation;
+	FVector LastLocation;
 };

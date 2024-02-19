@@ -9,6 +9,7 @@
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "ZEnemy.generated.h"
 
+class UAIPerceptionStimuliSourceComponent;
 class UBehaviorTree;
 class AZAIController;
 
@@ -27,7 +28,7 @@ public:
 
 	// Combat Interface
 	virtual int32 GetPlayerLevel() override;
-	
+
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
 
@@ -41,6 +42,8 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = Combat)
 	bool bHitReacting;
+	
+	bool bIsMyTurn = false;
 
 protected:
 	virtual void BeginPlay() override;
@@ -52,8 +55,10 @@ protected:
 	UPROPERTY()
 	TObjectPtr<AZAIController> ZAIController;
 
+	UPROPERTY(EditAnywhere, Category = AI)
+	TObjectPtr<UAIPerceptionStimuliSourceComponent> AIPerceptionStimuliSourceComponent;
+
 private:
 	UFUNCTION()
 	void TurnChanged(ETurn Turn);
-	
 };
