@@ -18,6 +18,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	// Generates rectangle room with floor, wall
 	UFUNCTION(BlueprintCallable) void BasicRoom();
+	UPROPERTY(EditDefaultsOnly)TSubclassOf<AActor>Door;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") int RoomX;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") int RoomY;
