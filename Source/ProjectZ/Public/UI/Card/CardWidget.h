@@ -72,7 +72,7 @@ public:
 	FCardDragStartDelegate CardDragStartDelegate;
 	FCardDragEndDelegate CardDragEndDelegate;
 
-	void InitCardStatus(FCard CardStatus);
+	void InitCardStatus(FCard CardStatus, bool bSetDelegate = true);
 
 	FORCEINLINE bool GetMouseHovered() const { return bMouseHovered; }
 
@@ -105,4 +105,10 @@ private:
 
 	UPROPERTY()
 	UCanvasPanelSlot* CanvasPanelSlot;
+
+	UFUNCTION()
+	void DestroyActivateCard();
+
+	UFUNCTION()
+	void CancelActivateCard();
 };

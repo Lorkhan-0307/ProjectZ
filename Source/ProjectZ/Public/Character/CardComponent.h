@@ -17,6 +17,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateLeftHandCardDelegate, FCard, 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateRightHandCardDelegate, FCard, RightCard);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FActivateCardDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCancelActivateCardDelegate);
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROJECTZ_API UCardComponent : public UActorComponent
 {
@@ -31,16 +34,22 @@ public:
 	void DrawCard();
 
 	// Draw Card from deck, Add Card to hand
-	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable)
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FDrawAndAddCardDelegate DrawAndAddCardDelegate;
 
 	// When change left hand card
-	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable)
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FUpdateLeftHandCardDelegate UpdateLeftHandCardDelegate;
 
 	// When change right hand card
-	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable)
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FUpdateRightHandCardDelegate UpdateRightHandCardDelegate;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FActivateCardDelegate ActivateCardDelegate;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FCancelActivateCardDelegate CancelActivateCardDelegate;
 
 	void InitializeNonCombat(AZCharacterBase* Character);
 	void InitializeCombat(AZCharacterBase* Character);
@@ -50,6 +59,7 @@ public:
 
 	// Active Card, Apply Effect to target
 	void ActiveCard(FCard Card, bool bIsLeftHand = true);
+	void CancelActivateCard();
 
 	void SetLeftHandCard(FCard Card, bool bIsValid = true);
 	void SetRightHandCard(FCard Card, bool bIsValid = true);

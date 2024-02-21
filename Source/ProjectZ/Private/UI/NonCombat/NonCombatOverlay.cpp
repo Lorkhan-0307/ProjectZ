@@ -97,24 +97,28 @@ void UNonCombatOverlay::WidgetControllerSet()
 
 void UNonCombatOverlay::UpdateLeftHandCard(FCard LeftCard)
 {
-	if (LeftCard.IsValid == false)
+	if (LeftCard.IsValid)
+	{
+		LeftHandCardWidget->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
 	{
 		LeftHandCardWidget->SetVisibility(ESlateVisibility::Hidden);
-		return;
 	}
-	LeftHandCardWidget->SetVisibility(ESlateVisibility::Visible);
-	LeftHandCardWidget->InitCardStatus(LeftCard);
+	LeftHandCardWidget->InitCardStatus(LeftCard, false);
 }
 
 void UNonCombatOverlay::UpdateRightHandCard(FCard RightCard)
 {
-	if (RightCard.IsValid == false)
+	if (RightCard.IsValid)
+	{
+		RightHandCardWidget->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
 	{
 		RightHandCardWidget->SetVisibility(ESlateVisibility::Hidden);
-		return;
 	}
-	RightHandCardWidget->SetVisibility(ESlateVisibility::Visible);
-	RightHandCardWidget->InitCardStatus(RightCard);
+	RightHandCardWidget->InitCardStatus(RightCard, false);
 }
 
 // Get Card, Create card widget
@@ -138,8 +142,8 @@ void UNonCombatOverlay::UpdateCardPosition()
 UCardWidget* UNonCombatOverlay::CreateCardWidget(FCard CardStatus)
 {
 	UCardWidget* CardWidget = CreateWidget<UCardWidget>(GetOwningPlayer(), CardWidgetClass);
-	CardWidget->InitCardStatus(CardStatus);
 	CardWidget->CardComponent = CardComponent;
+	CardWidget->InitCardStatus(CardStatus);
 
 	CardWidget->RemoveFromParent();
 	CardHandCanvas->AddChild(CardWidget);

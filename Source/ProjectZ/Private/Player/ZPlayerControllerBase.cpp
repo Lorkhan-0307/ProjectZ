@@ -38,6 +38,7 @@ void AZPlayerControllerBase::SetupInputComponent()
 	ZInputComponent->BindAction(CameraRotateAction, ETriggerEvent::Triggered, this, &AZPlayerControllerBase::CameraRotate);
 	ZInputComponent->BindAction(CameraResetAction, ETriggerEvent::Triggered, this, &AZPlayerControllerBase::CameraReset);
 	ZInputComponent->BindAction(CameraZoomAction, ETriggerEvent::Triggered, this, &AZPlayerControllerBase::CameraZoom);
+	ZInputComponent->BindAction(ESCAction, ETriggerEvent::Triggered, this, &AZPlayerControllerBase::ESC);
 }
 
 void AZPlayerControllerBase::PlayerTick(float DeltaTime)
@@ -93,6 +94,15 @@ void AZPlayerControllerBase::CameraZoom(const FInputActionValue& InputActionValu
 	CameraLocation.Z -= ZoomValue * CameraZoomSpeed;
 	SetRotateLocation();
 	SetCameraLocation();
+}
+
+void AZPlayerControllerBase::ESC()
+{
+	CardComponent = CardComponent == nullptr ? Cast<AZCharacterBase>(GetPawn())->CardComponent : CardComponent;
+	if (CardComponent && CardComponent->bActivatingCard)
+	{
+		CardComponent->CancelActivateCard();
+	}
 }
 
 void AZPlayerControllerBase::SetCameraLocation()
@@ -186,7 +196,7 @@ void AZPlayerControllerBase::AbilityInputTagReleased(FGameplayTag InputTag)
 			{
 				return;
 			}
-			
+
 			if (NavPath->PathPoints.Num() > 0)
 			{
 				AS->SetCost(AS->GetCost() - Cost);
@@ -214,8 +224,9 @@ void AZPlayerControllerBase::AbilityInputTagHeld(FGameplayTag InputTag)
 			float Distance = FVector::DistXY(GetCharacter()->GetActorLocation(), HitResult.Location) / 100.f;
 			if (Distance <= CardComponent->ActivatingCard.SkillRange)
 			{
-				GetASC()->AbilityInputTagHeld(CardComponent->ActivatingCard.CardTag);
+				GetASC()->AbilityInputTagHeld(CardComponent->ActivatingCard.CardTag); // Activate Skill Card
 				CardComponent->bActivatingCard = false;
+				CardComponent->ActivateCardDelegate.Broadcast();
 			}
 		}
 		else if (GetASC())

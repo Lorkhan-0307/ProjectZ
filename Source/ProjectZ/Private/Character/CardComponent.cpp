@@ -70,10 +70,12 @@ void UCardComponent::InitializeNonCombat(AZCharacterBase* Character)
 	InitializeCardInventory(CharacterClassInfo);
 
 	// For Test
+	/*
 	SetLeftHandCard(ConvertCardNameToFCard(FName("Axe")));
 	UpdateLeftHandCardDelegate.Broadcast(GetLeftHandCard());
 	SetRightHandCard(ConvertCardNameToFCard(FName("Sword")));
 	UpdateRightHandCardDelegate.Broadcast(GetRightHandCard());
+	*/
 }
 
 void UCardComponent::InitializeCombat(AZCharacterBase* Character)
@@ -88,10 +90,12 @@ void UCardComponent::InitializeCombat(AZCharacterBase* Character)
 	FirstDrawCard();
 
 	// For Test
+	/*
 	SetLeftHandCard(ConvertCardNameToFCard(FName("Axe")));
 	UpdateLeftHandCardDelegate.Broadcast(GetLeftHandCard());
 	SetRightHandCard(ConvertCardNameToFCard(FName("Sword")));
 	UpdateRightHandCardDelegate.Broadcast(GetRightHandCard());
+	*/
 }
 
 // Get name and return FCard
@@ -184,6 +188,7 @@ void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand)
 			ApplyEffectToTarget(InfiniteEffect, Card.CardLevel, TargetCharacter);
 		}
 		UZAbilitySystemLibrary::PayCost(TargetCharacter, Card.CardCost);
+		ActivateCardDelegate.Broadcast();
 		break;
 
 	case ECardType::ECT_Skill:
@@ -201,6 +206,7 @@ void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand)
 			SetRightHandCard(Card);
 		}
 		UZAbilitySystemLibrary::PayCost(TargetCharacter, Card.CardCost);
+		ActivateCardDelegate.Broadcast();
 		break;
 
 	case ECardType::ECT_Passive:
@@ -209,6 +215,13 @@ void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand)
 	case ECardType::ECT_CantEquip:
 		break;
 	}
+}
+
+void UCardComponent::CancelActivateCard()
+{
+	ActivatingCard.IsValid = false;
+	bActivatingCard = false;
+	CancelActivateCardDelegate.Broadcast();
 }
 
 void UCardComponent::SetLeftHandCard(FCard Card, bool bIsValid)
