@@ -21,7 +21,7 @@ enum class ETurn : uint8
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTurnChangedDelegate, ETurn, CurrentTurn);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCombatActorChangedDelegate, TArray<AActor*>&, CombatActor);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCombatActorChangedDelegate, AActor*, Actor);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCombatStartDelegate, TArray<AActor*>&, CombatActor);
 
@@ -32,6 +32,9 @@ class PROJECTZ_API AZGameModeBase : public AGameModeBase
 
 public:
 	virtual void BeginPlay() override;
+
+	UPROPERTY()
+	TArray<AActor*> CombatActor;
 
 	void CombatStart();
 	void NextTurn();
@@ -62,9 +65,6 @@ private:
 
 	UPROPERTY()
 	TArray<AZCharacterBase*> CombatCharacter;
-
-	UPROPERTY()
-	TArray<AActor*> CombatActor;
 
 	int32 TurnPlayerIndex;
 

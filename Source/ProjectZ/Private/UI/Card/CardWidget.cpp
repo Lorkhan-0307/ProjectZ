@@ -35,16 +35,7 @@ void UCardWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		if (CanvasPanelSlot->GetPosition() != DestinationPosition) SetPosition(InDeltaTime);
 	}
 
-	/*
-	if (CardStat.IsValid && GetVisibility() == ESlateVisibility::Hidden)
-	{
-		SetVisibility(ESlateVisibility::Visible);
-	}
-	else if (CardStat.IsValid == false && GetVisibility() == ESlateVisibility::Visible)
-	{
-		SetVisibility(ESlateVisibility::Hidden);
-	}
-	*/
+	TrashCard(InDeltaTime);
 }
 
 void UCardWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -76,6 +67,8 @@ FReply UCardWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const F
 void UCardWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
 {
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
+
+	if (CardStat.IsValid == false) return;
 
 	// Don't Drag Card in NonCombat Turn
 	AZGameModeBase* GameMode = Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode());
@@ -183,8 +176,15 @@ void UCardWidget::DestroyActivateCard()
 	if (!(GetVisibility() == ESlateVisibility::Hidden && CardStat.IsValid)) return;
 	CardDragEndDelegate.Broadcast(this, true);
 	if (CanvasPanelSlot == nullptr) return;
-	RemoveFromParent();
-	CollectGarbage(EObjectFlags::RF_BeginDestroyed);
+
+	const FVector2D MousePosition = UWidgetLayoutLibrary::GetMousePositionOnViewport(this) * UWidgetLayoutLibrary::GetViewportScale(this);
+	CanvasPanelSlot->SetPosition(MousePosition);
+	SetVisibility(ESlateVisibility::Visible);
+	CardStat.IsValid = false;
+	bTrashCard = true;
+	if (CardStat.CardType == ECardType::ECT_Skill) DestinationPosition = CardComponent->DiscardedCardLocation;
+	else DestinationPosition = CardComponent->CardGraveyardLocation;
+	DestinationAngle = 0.f;
 }
 
 void UCardWidget::CancelActivateCard()
@@ -197,4 +197,20 @@ void UCardWidget::CancelActivateCard()
 	if (CardStat.CardType == ECardType::ECT_Skill) return;
 	AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(GetOwningPlayerPawn());
 	PlayerCharacter->HideSkillRange();
+}
+
+void UCardWidget::TrashCard(float DeltaTime)
+{
+	if (CanvasPanelSlot == nullptr) return;
+	if (bTrashCard == false) return;
+
+	const FVector2D TrashLocation = CardStat.CardType == ECardType::ECT_Skill ? CardComponent->DiscardedCardLocation : CardComponent->CardGraveyardLocation;
+
+	//CanvasPanelSlot->SetPosition(FMath::Vector2DInterpTo(CanvasPanelSlot->GetPosition(), TrashLocation, DeltaTime, CardComponent->CardTrashSpeed));
+
+	if (CanvasPanelSlot->GetPosition() == TrashLocation)
+	{
+		RemoveFromParent();
+		CollectGarbage(EObjectFlags::RF_BeginDestroyed);
+	}
 }

@@ -6,6 +6,8 @@
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "Character/ZCharacterBase.h"
+#include "Character/ZPlayerCharacter.h"
 #include "Game/ZGameModeBase.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -28,6 +30,8 @@ void AZAIController::OnPossess(APawn* InPawn)
 
 void AZAIController::FindTarget(AActor* Actor, FAIStimulus AIStimulus)
 {
+	if (Cast<AZCharacterBase>(GetPawn())->bIsDead) return;
+	if (Cast<AZPlayerCharacter>(Actor) == nullptr) return;
 	AZGameModeBase* GameMode = Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode());
 	if (GameMode && GameMode->GetCurrentTurn() == ETurn::ET_NonCombat)
 	{

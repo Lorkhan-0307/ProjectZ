@@ -18,6 +18,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateLeftHandCardDelegate, FCard, 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateRightHandCardDelegate, FCard, RightCard);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FActivateCardDelegate);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCancelActivateCardDelegate);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -71,6 +72,15 @@ public:
 	FVector2D LeftEquipPosMax;
 	FVector2D RightEquipPosMin;
 	FVector2D RightEquipPosMax;
+
+	UPROPERTY(EditAnywhere, Category = Card)
+	float CardTrashSpeed = 2.f;
+
+	UPROPERTY(EditAnywhere, Category = Card)
+	FVector2D DiscardedCardLocation;
+
+	UPROPERTY(EditAnywhere, Category = Card)
+	FVector2D CardGraveyardLocation;
 
 	//Getter, Setter
 	UFUNCTION(BlueprintCallable)

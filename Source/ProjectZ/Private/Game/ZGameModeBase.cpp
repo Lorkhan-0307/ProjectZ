@@ -30,21 +30,15 @@ void AZGameModeBase::CombatStart()
 
 	SortCombatActor();
 	CombatStartDelegate.Broadcast(CombatActor);
-	
+
 	TurnPlayerIndex = -1;
 	NextTurn();
 }
 
 void AZGameModeBase::NextTurn()
 {
-	if (CombatActor.Num() == 1)
-	{
-		SetTurn(ETurn::ET_NonCombat);
-		return;
-	}
-	
 	TurnPlayerIndex++;
-	if (TurnPlayerIndex == CombatActor.Num())
+	if (TurnPlayerIndex >= CombatActor.Num())
 	{
 		TurnPlayerIndex = 0;
 	}
@@ -58,14 +52,17 @@ void AZGameModeBase::NextTurn()
 	{
 		SetTurn(ETurn::ET_EnemyTurn);
 		Enemy->bIsMyTurn = true;
-		UE_LOG(LogTemp,Warning,TEXT("Eemy"));
 	}
 }
 
 void AZGameModeBase::CharacterDie(AActor* DieActor)
 {
 	CombatActor.Remove(DieActor);
-	CombatActorChangedDelegate.Broadcast(CombatActor);
+	CombatActorChangedDelegate.Broadcast(DieActor);
+	if (CombatActor.Num() == 1)
+	{
+		SetTurn(ETurn::ET_NonCombat);
+	}
 }
 
 void AZGameModeBase::SetTurn(ETurn Turn)
@@ -91,5 +88,13 @@ void AZGameModeBase::SortCombatActor()
 	for (AZCharacterBase* Character : SortArray)
 	{
 		CombatActor.Add(Cast<AActor>(Character));
+	}
+
+	for (int i = 0; i < CombatActor.Num() - 1; i++)
+	{
+		if (Cast<AZCharacterBase>(CombatActor[i])->GetCombatPriority() == Cast<AZCharacterBase>(CombatActor[i + 1])->GetCombatPriority())
+		{
+			if (FMath::RandRange(0, 1)) CombatActor.Swap(i, i + 1);
+		}
 	}
 }

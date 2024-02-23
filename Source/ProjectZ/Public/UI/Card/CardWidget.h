@@ -75,6 +75,7 @@ public:
 	void InitCardStatus(FCard CardStatus, bool bSetDelegate = true);
 
 	FORCEINLINE bool GetMouseHovered() const { return bMouseHovered; }
+	FORCEINLINE FCard GetCardStat() const { return CardStat; }
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
@@ -103,6 +104,8 @@ private:
 
 	float CardHandYSize;
 
+	bool bTrashCard = false;
+
 	UPROPERTY()
 	UCanvasPanelSlot* CanvasPanelSlot;
 
@@ -111,4 +114,6 @@ private:
 
 	UFUNCTION()
 	void CancelActivateCard();
+
+	void TrashCard(float DeltaTime);
 };

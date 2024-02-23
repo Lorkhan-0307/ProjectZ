@@ -9,6 +9,7 @@
 #include "AbilitySystem/ZAbilitySystemLibrary.h"
 #include "Components/CapsuleComponent.h"
 #include "Game/ZGameModeBase.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AZCharacterBase::AZCharacterBase()
@@ -47,6 +48,7 @@ void AZCharacterBase::Die()
 	Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->CharacterDie(this);
 
 	SetLifeSpan(LifeSpan);
+	bIsDead = true;
 }
 
 // Called when the game starts or when spawned
@@ -103,6 +105,15 @@ void AZCharacterBase::AddCharacterAbility()
 void AZCharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (GetCharacterMovement()->Velocity.Size() == 0)
+	{
+		SetCanAffectNavigationGeneration(true);
+	}
+	else
+	{
+		SetCanAffectNavigationGeneration(false);
+	}
 }
 
 // Set AbilitySystemComponent
