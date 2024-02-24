@@ -69,8 +69,9 @@ void AZPlayerCharacter::InitAbilityActorInfo()
 	InitializeDefaultAttributes();
 
 	// TO DO : Make Difference by game mode
-	CardComponent->InitializeNonCombat(this);
-	CardComponent->InitializeCombat(this);
+	CardComponent->InitializeCardComponent(this);
+	//CardComponent->InitializeNonCombat(this);
+	//CardComponent->InitializeCombat(this);
 }
 
 int32 AZPlayerCharacter::GetLevel()

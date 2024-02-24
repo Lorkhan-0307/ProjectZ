@@ -35,7 +35,7 @@ void UCardWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		if (CanvasPanelSlot->GetPosition() != DestinationPosition) SetPosition(InDeltaTime);
 	}
 
-	TrashCard(InDeltaTime);
+	//TrashCard(InDeltaTime);
 }
 
 void UCardWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -167,6 +167,7 @@ void UCardWidget::InitCardStatus(FCard CardStatus, bool bSetDelegate)
 void UCardWidget::SetPosition(float DeltaTime)
 {
 	if (CanvasPanelSlot == nullptr) return;
+	if (bTrashCard) return;
 	CanvasPanelSlot->SetPosition(FMath::Vector2DInterpTo(CanvasPanelSlot->GetPosition(), DestinationPosition, DeltaTime, InterpSpeed));
 	SetRenderTransformAngle(FMath::FInterpTo(GetRenderTransform().Angle, DestinationAngle, DeltaTime, InterpSpeed));
 }
@@ -175,16 +176,29 @@ void UCardWidget::DestroyActivateCard()
 {
 	if (!(GetVisibility() == ESlateVisibility::Hidden && CardStat.IsValid)) return;
 	CardDragEndDelegate.Broadcast(this, true);
-	if (CanvasPanelSlot == nullptr) return;
 
-	const FVector2D MousePosition = UWidgetLayoutLibrary::GetMousePositionOnViewport(this) * UWidgetLayoutLibrary::GetViewportScale(this);
-	CanvasPanelSlot->SetPosition(MousePosition);
+	DestroyWidget();
+
+	/*
+	const FVector2D MousePosition = UWidgetLayoutLibrary::GetMousePositionOnViewport(this);
+	CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(this);
+	if (CanvasPanelSlot)
+	{
+		CanvasPanelSlot->SetPosition(MousePosition - CanvasPanelSlot->GetSize() / 2.f);
+		TrashCardStartPosition = CanvasPanelSlot->GetPosition();
+		CanvasPanelSlot->SetSize(CardSize);
+		SetRenderTransformAngle(0.f);
+
+		FAnchors Anchors(1.f, 1.f);
+		CanvasPanelSlot->SetAnchors(Anchors);
+		CanvasPanelSlot->SetAlignment(FVector2D(1.f, 1.f));
+		UE_LOG(LogTemp,Warning,TEXT("%s"),*CanvasPanelSlot->GetName());
+	}
 	SetVisibility(ESlateVisibility::Visible);
 	CardStat.IsValid = false;
 	bTrashCard = true;
-	if (CardStat.CardType == ECardType::ECT_Skill) DestinationPosition = CardComponent->DiscardedCardLocation;
-	else DestinationPosition = CardComponent->CardGraveyardLocation;
-	DestinationAngle = 0.f;
+	DestinationPosition = CardStat.CardType == ECardType::ECT_Skill ? CardComponent->DiscardedCardLocation : CardComponent->CardGraveyardLocation;
+	*/
 }
 
 void UCardWidget::CancelActivateCard()
@@ -194,23 +208,32 @@ void UCardWidget::CancelActivateCard()
 	SetVisibility(ESlateVisibility::Visible);
 	bMouseHovered = false;
 
-	if (CardStat.CardType == ECardType::ECT_Skill) return;
+	if (CardStat.CardType != ECardType::ECT_Skill) return;
 	AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(GetOwningPlayerPawn());
 	PlayerCharacter->HideSkillRange();
 }
 
+void UCardWidget::DestroyWidget()
+{
+	RemoveFromParent();
+	CollectGarbage(EObjectFlags::RF_BeginDestroyed);
+}
+
 void UCardWidget::TrashCard(float DeltaTime)
 {
+	CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(this);
 	if (CanvasPanelSlot == nullptr) return;
 	if (bTrashCard == false) return;
 
-	const FVector2D TrashLocation = CardStat.CardType == ECardType::ECT_Skill ? CardComponent->DiscardedCardLocation : CardComponent->CardGraveyardLocation;
+	//SetPositionInViewport(FMath::Vector2DInterpConstantTo(GetCachedGeometry().GetAbsolutePosition(), TrashLocation, DeltaTime, InterpSpeed));
+	CanvasPanelSlot->SetPosition(FMath::Vector2DInterpTo(CanvasPanelSlot->GetPosition(), DestinationPosition, DeltaTime, CardComponent->CardTrashSpeed));
 
-	//CanvasPanelSlot->SetPosition(FMath::Vector2DInterpTo(CanvasPanelSlot->GetPosition(), TrashLocation, DeltaTime, CardComponent->CardTrashSpeed));
+	const float Alpha = (TrashCardStartPosition - CanvasPanelSlot->GetPosition()).Size() / (TrashCardStartPosition - DestinationPosition).Size();
+	CanvasPanelSlot->SetSize(FMath::Lerp(CardSize, 70, Alpha));
+	UE_LOG(LogTemp, Warning, TEXT("%f %f"), CanvasPanelSlot->GetPosition().X, CanvasPanelSlot->GetPosition().Y);
 
-	if (CanvasPanelSlot->GetPosition() == TrashLocation)
+	if (CanvasPanelSlot->GetPosition() == DestinationPosition)
 	{
-		RemoveFromParent();
 		CollectGarbage(EObjectFlags::RF_BeginDestroyed);
 	}
 }

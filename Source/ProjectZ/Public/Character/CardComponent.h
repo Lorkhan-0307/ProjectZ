@@ -6,11 +6,14 @@
 #include "Components/ActorComponent.h"
 #include "Data/Card.h"
 #include "GameplayEffectTypes.h"
+#include "Game/ZGameModeBase.h"
 #include "CardComponent.generated.h"
 
 class UCharacterClassInfo;
 class AZCharacterBase;
 class AZNonCombatCharacter;
+class AZGameModeBase;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDrawAndAddCardDelegate, FCard, NewCard);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateLeftHandCardDelegate, FCard, LeftCard);
@@ -52,8 +55,7 @@ public:
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FCancelActivateCardDelegate CancelActivateCardDelegate;
 
-	void InitializeNonCombat(AZCharacterBase* Character);
-	void InitializeCombat(AZCharacterBase* Character);
+	void InitializeCardComponent(AZCharacterBase* Character);
 
 	FCard ConvertCardNameToFCard(FName CardName);
 	void InitializeCardInventory(UCharacterClassInfo* CharacterClassInfo);
@@ -81,6 +83,8 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = Card)
 	FVector2D CardGraveyardLocation;
+
+	void UseCard(FCard Card);
 
 	//Getter, Setter
 	UFUNCTION(BlueprintCallable)
@@ -116,6 +120,12 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = Card)
 	TArray<FCard> CardHand;
 
+	UPROPERTY(VisibleAnywhere, Category = Card)
+	TArray<FCard> DiscardCard;
+
+	UPROPERTY(VisibleAnywhere, Category = Card)
+	TArray<FCard> CardGraveyard;
+
 	// Number of cards in hand when start combat
 	UPROPERTY(EditAnywhere, Category = Card)
 	int32 FirstCardCount;
@@ -138,4 +148,12 @@ private:
 	void MakeCardDeck();
 
 	void ApplyEffectToTarget(TSubclassOf<UGameplayEffect> Effect, int32 CardLevel, AZCharacterBase* TargetCharacter);
+
+	UFUNCTION()
+	void TurnChanged(ETurn Turn);
+
+	ETurn CurrentTurn;
+
+	UPROPERTY()
+	AZGameModeBase* GameMode;
 };

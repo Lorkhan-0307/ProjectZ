@@ -6,6 +6,7 @@
 #include "UI/ZUserWidget.h"
 #include "NonCombatOverlay.generated.h"
 
+class AZGameModeBase;
 class UCharacterPortraitWidget;
 class UButton;
 class UCostPathLengthWidget;
@@ -33,6 +34,9 @@ protected:
 	virtual void WidgetControllerSet() override;
 
 private:
+	UPROPERTY(meta = (BindWidget))
+	UCanvasPanel* OverlayCanvasPanel;
+	
 	UPROPERTY(meta = (BindWidget))
 	UProgressBar* HealthBar;
 
@@ -97,13 +101,16 @@ private:
 	USizeBox* DiscardCardSizeBox;
 
 	UPROPERTY(meta = (BindWidget))
-	USizeBox* CardGravyardSizeBox;
+	USizeBox* CardGraveyardSizeBox;
 
 	UPROPERTY(meta = (BindWidget))
 	USizeBox* CharacterPortraitSizeBox;
 
 	UPROPERTY(meta = (BindWidget))
 	UCanvasPanel* CharacterPortraitCanvasPanel;
+
+	UPROPERTY()
+	AZGameModeBase* GameMode;
 
 	float Health;
 	float MaxHealth;

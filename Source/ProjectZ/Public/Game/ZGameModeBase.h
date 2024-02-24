@@ -39,12 +39,15 @@ public:
 	void CombatStart();
 	void NextTurn();
 	void CharacterDie(AActor* DieActor);
-	
+
 	UFUNCTION(BlueprintCallable)
 	void SetTurn(ETurn Turn);
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE ETurn GetCurrentTurn() const { return CurrentTurn; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE ETurn GetLastTurn() const { return LastTurn; }
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FTurnChangedDelegate TurnChangedDelegate;
@@ -58,10 +61,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Character Class Default")
 	TObjectPtr<UCharacterClassInfo> CharacterClassInfo;
 
+	FVector2D ScreenSize = FVector2D(1920.f, 1080.f);
+
 	FORCEINLINE int32 GetTurnPlayerIndex() const { return TurnPlayerIndex; }
 
 private:
 	ETurn CurrentTurn = ETurn::ET_NonCombat;
+	ETurn LastTurn;
 
 	UPROPERTY()
 	TArray<AZCharacterBase*> CombatCharacter;

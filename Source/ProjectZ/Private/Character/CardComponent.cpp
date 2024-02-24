@@ -27,10 +27,22 @@ UCardComponent::UCardComponent()
 	// ...
 }
 
+void UCardComponent::UseCard(FCard Card)
+{
+	if (Card.CardType == ECardType::ECT_Skill)
+	{
+		DiscardCard.Add(Card);
+	}
+	CardHand.RemoveSingle(Card);
+}
+
 // Called when the game starts
 void UCardComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GameMode = Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode());
+	GameMode->TurnChangedDelegate.AddDynamic(this, &UCardComponent::TurnChanged);
 }
 
 // Add Card to Deck
@@ -61,33 +73,14 @@ void UCardComponent::DrawCard()
 	DrawAndAddCardDelegate.Broadcast(TopCard);
 }
 
-void UCardComponent::InitializeNonCombat(AZCharacterBase* Character)
+void UCardComponent::InitializeCardComponent(AZCharacterBase* Character)
 {
 	ZCharacter = Character;
 	// For Test
 	//if (ZCharacter && ZCharacter->GetPlayerState()) Cast<AZPlayerState>(ZCharacter->GetPlayerState())->SetCharacterName(FName("JohnDoe"));
 	UCharacterClassInfo* CharacterClassInfo = UZAbilitySystemLibrary::GetCharacterClassInfo(Character);
 	InitializeCardInventory(CharacterClassInfo);
-
-	// For Test
-	/*
-	SetLeftHandCard(ConvertCardNameToFCard(FName("Axe")));
-	UpdateLeftHandCardDelegate.Broadcast(GetLeftHandCard());
-	SetRightHandCard(ConvertCardNameToFCard(FName("Sword")));
-	UpdateRightHandCardDelegate.Broadcast(GetRightHandCard());
-	*/
-}
-
-void UCardComponent::InitializeCombat(AZCharacterBase* Character)
-{
-	ZCharacter = Character;
-	// For Test
-	//if (ZCharacter && ZCharacter->GetPlayerState()) Cast<AZPlayerState>(ZCharacter->GetPlayerState())->SetCharacterName(FName("JohnDoe"));
-	//InitializeCardInventory(Cast<AZPlayerState>(ZCharacter->GetPlayerState())->GetCharacterName());
-
 	MakeCardDeck();
-
-	FirstDrawCard();
 
 	// For Test
 	/*
@@ -139,6 +132,11 @@ void UCardComponent::MakeCardDeck()
 	AddCardToDeck(FName("Sword"));
 	AddCardToDeck(FName("Axe"));
 	AddCardToDeck(FName("ThrowStone"));
+	AddCardToDeck(FName("ThrowStone"));
+	AddCardToDeck(FName("ThrowStone"));
+	AddCardToDeck(FName("ThrowStone"));
+	AddCardToDeck(FName("HealthPotion"));
+	AddCardToDeck(FName("HealthPotion"));
 	// ...
 
 	ShuffleDeck();
@@ -167,6 +165,35 @@ void UCardComponent::ApplyEffectToTarget(TSubclassOf<UGameplayEffect> Effect, in
 	*/
 }
 
+void UCardComponent::TurnChanged(ETurn Turn)
+{
+	CurrentTurn = Turn;
+	if (CurrentTurn == ETurn::ET_MoveTurn)
+	{
+		for (int i = 0; i < 5; i++)
+		{
+			DrawCard();
+		}
+	}
+	else if (CurrentTurn == ETurn::ET_EnemyTurn && (GameMode->GetLastTurn() == ETurn::ET_PlayerTurn || GameMode->GetLastTurn() == ETurn::ET_MoveTurn))
+	{
+		for (FCard Card : CardHand)
+		{
+			DiscardCard.Add(Card);
+		}
+		CardHand.Empty();
+		if (CardDeck.Num() < 5)
+		{
+			for (FCard Card : DiscardCard)
+			{
+				CardDeck.Add(Card);
+			}
+			DiscardCard.Empty();
+			ShuffleDeck();
+		}
+	}
+}
+
 
 // Active Card and apply effect
 void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand)
@@ -188,6 +215,7 @@ void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand)
 			ApplyEffectToTarget(InfiniteEffect, Card.CardLevel, TargetCharacter);
 		}
 		UZAbilitySystemLibrary::PayCost(TargetCharacter, Card.CardCost);
+		UseCard(Card);
 		ActivateCardDelegate.Broadcast();
 		break;
 

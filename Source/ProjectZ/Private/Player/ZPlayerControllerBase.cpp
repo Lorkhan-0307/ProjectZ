@@ -225,6 +225,7 @@ void AZPlayerControllerBase::AbilityInputTagHeld(FGameplayTag InputTag)
 			if (Distance <= CardComponent->ActivatingCard.SkillRange)
 			{
 				GetASC()->AbilityInputTagHeld(CardComponent->ActivatingCard.CardTag); // Activate Skill Card
+				CardComponent->UseCard(CardComponent->ActivatingCard);
 				CardComponent->bActivatingCard = false;
 				CardComponent->ActivateCardDelegate.Broadcast();
 			}

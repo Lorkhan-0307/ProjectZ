@@ -67,6 +67,7 @@ void AZGameModeBase::CharacterDie(AActor* DieActor)
 
 void AZGameModeBase::SetTurn(ETurn Turn)
 {
+	LastTurn = CurrentTurn;
 	CurrentTurn = Turn;
 	TurnChangedDelegate.Broadcast(CurrentTurn);
 }

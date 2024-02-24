@@ -74,6 +74,14 @@ public:
 
 	void InitCardStatus(FCard CardStatus, bool bSetDelegate = true);
 
+	UFUNCTION()
+	void DestroyActivateCard();
+
+	UFUNCTION()
+	void CancelActivateCard();
+	
+	void DestroyWidget();
+
 	FORCEINLINE bool GetMouseHovered() const { return bMouseHovered; }
 	FORCEINLINE FCard GetCardStat() const { return CardStat; }
 
@@ -109,11 +117,7 @@ private:
 	UPROPERTY()
 	UCanvasPanelSlot* CanvasPanelSlot;
 
-	UFUNCTION()
-	void DestroyActivateCard();
-
-	UFUNCTION()
-	void CancelActivateCard();
+	FVector2D TrashCardStartPosition;
 
 	void TrashCard(float DeltaTime);
 };
