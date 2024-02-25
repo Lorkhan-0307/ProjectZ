@@ -222,6 +222,7 @@ void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand)
 	case ECardType::ECT_Skill:
 		ActivatingCard = Card;
 		bActivatingCard = true;
+		ShowSkillCardDelegate.Broadcast(Card);
 		break;
 
 	case ECardType::ECT_CanEquip:

@@ -32,6 +32,7 @@ void AZAIController::FindTarget(AActor* Actor, FAIStimulus AIStimulus)
 {
 	if (Cast<AZCharacterBase>(GetPawn())->bIsDead) return;
 	if (Cast<AZPlayerCharacter>(Actor) == nullptr) return;
+	TargetActor = Actor;
 	AZGameModeBase* GameMode = Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode());
 	if (GameMode && GameMode->GetCurrentTurn() == ETurn::ET_NonCombat)
 	{

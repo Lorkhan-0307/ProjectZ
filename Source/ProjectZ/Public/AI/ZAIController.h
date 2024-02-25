@@ -21,14 +21,18 @@ class PROJECTZ_API AZAIController : public AAIController
 public:
 	AZAIController();
 
+	UPROPERTY()
+	AActor* TargetActor;
+
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
-	
+
 	UPROPERTY()
 	TObjectPtr<UBehaviorTreeComponent> BehaviorTreeComponent;
 
 	UPROPERTY(EditAnywhere, Category = AI)
 	TObjectPtr<UAIPerceptionComponent> AIPerceptionComponent;
+
 private:
 	UFUNCTION()
 	void FindTarget(AActor* Actor, FAIStimulus AIStimulus);

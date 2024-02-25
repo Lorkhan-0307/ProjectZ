@@ -34,6 +34,7 @@ void UNonCombatOverlay::NativeConstruct()
 	TurnText->SetVisibility(ESlateVisibility::Hidden);
 	ShowCostWidget(false);
 	ShowTurnEndButton(false);
+	HideSkillCard();
 }
 
 void UNonCombatOverlay::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -76,8 +77,6 @@ void UNonCombatOverlay::SetCardComponent(UCardComponent* CC)
 		LeftHandCardWidget->CardComponent = CardComponent;
 		RightHandCardWidget->CardComponent = CardComponent;
 
-		CardComponent->ActivateCardDelegate.AddDynamic(this, &UNonCombatOverlay::HideSkillCard);
-
 		FVector2D ScreenSize = GameMode->ScreenSize;
 		CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(DiscardCardSizeBox);
 		CardComponent->DiscardedCardLocation = CanvasPanelSlot->GetPosition() - CanvasPanelSlot->GetSize() / 2.f;
@@ -89,6 +88,9 @@ void UNonCombatOverlay::SetCardComponent(UCardComponent* CC)
 		CardComponent->CardGraveyardLocation = CanvasPanelSlot->GetPosition() - CanvasPanelSlot->GetSize() / 2.f;
 		//CardComponent->CardGraveyardLocation.X = ScreenSize.X + (CanvasPanelSlot->GetPosition().X + CanvasPanelSlot->GetSize().X / 2.f);
 		//CardComponent->CardGraveyardLocation.Y = ScreenSize.Y + (CanvasPanelSlot->GetPosition().Y + CanvasPanelSlot->GetSize().Y / 2.f);
+
+		CardComponent->ShowSkillCardDelegate.AddDynamic(this, &UNonCombatOverlay::ShowSkillCard);
+		CardComponent->ActivateCardDelegate.AddDynamic(this, &UNonCombatOverlay::HideSkillCard);
 	}
 }
 
@@ -359,11 +361,9 @@ void UNonCombatOverlay::ShowTurnEndButton(bool bShow)
 	TurnEndButton->SetVisibility(TurnEndWidgetVisibility);
 }
 
-void UNonCombatOverlay::ShowSkillCard()
+void UNonCombatOverlay::ShowSkillCard(FCard Card)
 {
-	if (CardComponent == nullptr) return;
-	if (CardComponent->bActivatingCard == false) return;
-	ShowSkillCardWidget->InitCardStatus(CardComponent->ActivatingCard, false);
+	ShowSkillCardWidget->InitCardStatus(Card, false);
 	ShowSkillCardOverlay->SetVisibility(ESlateVisibility::Visible);
 }
 

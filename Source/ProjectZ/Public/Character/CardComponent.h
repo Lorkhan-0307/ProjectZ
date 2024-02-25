@@ -14,11 +14,7 @@ class AZCharacterBase;
 class AZNonCombatCharacter;
 class AZGameModeBase;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDrawAndAddCardDelegate, FCard, NewCard);
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateLeftHandCardDelegate, FCard, LeftCard);
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateRightHandCardDelegate, FCard, RightCard);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateCardDelegate, FCard, NewCard);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FActivateCardDelegate);
 
@@ -39,21 +35,25 @@ public:
 
 	// Draw Card from deck, Add Card to hand
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
-	FDrawAndAddCardDelegate DrawAndAddCardDelegate;
+	FUpdateCardDelegate DrawAndAddCardDelegate;
 
 	// When change left hand card
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
-	FUpdateLeftHandCardDelegate UpdateLeftHandCardDelegate;
+	FUpdateCardDelegate UpdateLeftHandCardDelegate;
 
 	// When change right hand card
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
-	FUpdateRightHandCardDelegate UpdateRightHandCardDelegate;
+	FUpdateCardDelegate UpdateRightHandCardDelegate;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FUpdateCardDelegate ShowSkillCardDelegate;
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FActivateCardDelegate ActivateCardDelegate;
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FCancelActivateCardDelegate CancelActivateCardDelegate;
+	
 
 	void InitializeCardComponent(AZCharacterBase* Character);
 

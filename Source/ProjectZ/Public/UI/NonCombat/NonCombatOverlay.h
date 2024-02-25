@@ -236,7 +236,7 @@ private:
 	void ShowTurnEndButton(bool bShow);
 
 	UFUNCTION()
-	void ShowSkillCard();
+	void ShowSkillCard(FCard Card);
 
 	UFUNCTION()
 	void HideSkillCard();
@@ -253,3 +253,4 @@ private:
 	UFUNCTION()
 	void TurnEnd();
 };
+
