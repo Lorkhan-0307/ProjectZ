@@ -21,7 +21,7 @@ void UBTService_FindNearestPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	const FName TargetTag = OwningPawn->ActorHasTag(FName("Player")) ? FName("Enemy") : FName("Player");
 
 	TArray<AActor*> ActorWithTag;
-	//UGameplayStatics::GetAllActorsWithTag(OwningPawn, TargetTag, ActorWithTag);
+	UGameplayStatics::GetAllActorsWithTag(OwningPawn, TargetTag, ActorWithTag);
 
 	LastLocation = CurrentLocation;
 	CurrentLocation = OwningPawn->GetActorLocation();
@@ -38,7 +38,7 @@ void UBTService_FindNearestPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, u
 		Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->NextTurn();
 	}
 
-	/*
+
 	float ClosestDistance = TNumericLimits<float>::Max();
 	AActor* ClosestActor = nullptr;
 	for (AActor* Actor : ActorWithTag)
@@ -53,13 +53,18 @@ void UBTService_FindNearestPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, u
 			}
 		}
 	}
-	*/
+
+	/*
 	AZAIController* AIController = Cast<AZAIController>(AIOwner);
 	if (AIController && AIController->TargetActor)
 	{
 		UBTFunctionLibrary::SetBlackboardValueAsObject(this, TargetToFollowSelector, AIController->TargetActor);
 		UBTFunctionLibrary::SetBlackboardValueAsFloat(this, DistanceToTargetSelector, OwningPawn->GetDistanceTo(AIController->TargetActor));
 	}
+	*/
+
+	UBTFunctionLibrary::SetBlackboardValueAsObject(this, TargetToFollowSelector, ClosestActor);
+	UBTFunctionLibrary::SetBlackboardValueAsFloat(this, DistanceToTargetSelector, ClosestDistance);
 
 	UBTFunctionLibrary::SetBlackboardValueAsBool(this, MyTurnSelector, Cast<AZEnemy>(Character)->bIsMyTurn);
 }

@@ -35,6 +35,9 @@ void UNonCombatOverlay::NativeConstruct()
 	ShowCostWidget(false);
 	ShowTurnEndButton(false);
 	HideSkillCard();
+
+	LeftHandCardWidget->SetVisibility(ESlateVisibility::Hidden);
+	RightHandCardWidget->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UNonCombatOverlay::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

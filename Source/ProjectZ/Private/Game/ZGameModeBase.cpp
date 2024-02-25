@@ -4,6 +4,7 @@
 #include "Game/ZGameModeBase.h"
 
 #include "AbilitySystem/ZAttributeSet.h"
+#include "AI/ZAIController.h"
 #include "Character/ZCharacterBase.h"
 #include "Character/ZEnemy.h"
 #include "Character/ZPlayerCharacter.h"
