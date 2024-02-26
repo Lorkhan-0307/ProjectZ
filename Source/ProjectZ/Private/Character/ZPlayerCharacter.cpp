@@ -9,6 +9,7 @@
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
 #include "AbilitySystem/ZAbilitySystemComponent.h"
+#include "AbilitySystem/ZAttributeSet.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
@@ -43,6 +44,8 @@ void AZPlayerCharacter::PossessedBy(AController* NewController)
 	bIsPossessed = true;
 	InitAbilityActorInfo();
 	AddCharacterAbility();
+
+	Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->TurnChangedDelegate.AddDynamic(this, &AZPlayerCharacter::TurnChanged);
 }
 
 // Setup Character
@@ -66,8 +69,9 @@ void AZPlayerCharacter::InitAbilityActorInfo()
 	InitializeDefaultAttributes();
 
 	// TO DO : Make Difference by game mode
-	CardComponent->InitializeNonCombat(this);
-	CardComponent->InitializeCombat(this);
+	CardComponent->InitializeCardComponent(this);
+	//CardComponent->InitializeNonCombat(this);
+	//CardComponent->InitializeCombat(this);
 }
 
 int32 AZPlayerCharacter::GetLevel()
@@ -177,6 +181,19 @@ void AZPlayerCharacter::UpdateSplinePath()
 	SplineLength = Spline->GetSplineLength() / 100.f;
 }
 
+void AZPlayerCharacter::TurnChanged(ETurn Turn)
+{
+	if (Turn != ETurn::ET_MoveTurn) return;
+
+	UZAttributeSet* AS = Cast<UZAttributeSet>(AttributeSet);
+	if (AS)
+	{
+		AS->SetCost(AS->GetMaxCost());
+	}
+
+	GetCharacterMovement()->StopActiveMovement();
+}
+
 int32 AZPlayerCharacter::GetPathCost()
 {
 	return FMath::CeilToInt32(SplineLength);
@@ -196,4 +213,9 @@ void AZPlayerCharacter::ShowSKillRange(float Range)
 void AZPlayerCharacter::HideSkillRange()
 {
 	SkillRangeMesh->SetVisibility(false);
+}
+
+void AZPlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
 }
