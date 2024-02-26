@@ -1,12 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Room/RoomGenerate.h"
+#include "Room/Door.h"
 #include "Components/InstancedStaticMeshComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
 UStaticMesh* CubeMesh;
+ADoor* CurDoor;
 
-// Generates rectangle room with floor, wall
+// Generates rectangle room with floor, wall, door
 void ARoomGenerate::BasicRoom()
 {
 	Floor->ClearInstances();
@@ -20,8 +22,9 @@ void ARoomGenerate::BasicRoom()
 		}
 	}
 	DoorArray.Empty();
-	RoomX = FMath::RandRange(1, 10);
-	RoomY = FMath::RandRange(1, 10);
+	RoomX = FMath::RandRange(3, 8);
+	RoomY = FMath::RandRange(3, 8);
+	DoorRemainder = FMath::RandRange(0, DoorEvery-1);
 	for(int i=0; i<RoomX; i++)
 	{
 		for(int j=0; j<RoomY; j++)
@@ -30,7 +33,8 @@ void ARoomGenerate::BasicRoom()
 		}
 		if(i%DoorEvery == DoorRemainder && UKismetMathLibrary::RandomBoolWithWeightFromStream(float(DoorCount - DoorArray.Num()) / DoorCount, RoomStream))
 		{
-			DoorArray.Add(GetWorld()->SpawnActor<AActor>(Door, FTransform(FVector(i*TileX*2+100, 0, 0)+GetActorLocation())));
+			CurDoor = GetWorld()->SpawnActor<ADoor>(ADoor::StaticClass(), FTransform(FVector(i*TileX*2+100, 0, 0)+GetActorLocation()));
+			DoorArray.Add(CurDoor);
 		}
 		else
 		{
@@ -38,18 +42,34 @@ void ARoomGenerate::BasicRoom()
 		}
 		if(i%DoorEvery == DoorRemainder && UKismetMathLibrary::RandomBoolWithWeightFromStream(float(DoorCount - DoorArray.Num()) / DoorCount, RoomStream))
 		{
-			DoorArray.Add(GetWorld()->SpawnActor<AActor>(Door, FTransform(FVector(i*TileX*2+100, RoomY*TileY*2, 0)+GetActorLocation())));
+			DoorArray.Add(GetWorld()->SpawnActor<ADoor>(ADoor::StaticClass(), FTransform(FRotator(0, 180, 0), FVector(i*TileX*2+100, RoomY*TileY*2, 0)+GetActorLocation())));
 		}
 		else
 		{
 			XWall->AddInstance(FTransform(FVector(i*TileX, RoomY*TileY*20, 0)));
 		}
 	}
-	for(int i=0; i<RoomY; i++)
+	if(Starter)
+	{
+		YWall->AddInstance(FTransform(FVector(0, 0, 0)));
+	}
+	else
+	{
+		DoorArray.Add(GetWorld()->SpawnActor<ADoor>(ADoor::StaticClass(), FTransform(FRotator(0, 90, 0), FVector(0, 100, 0)+GetActorLocation())));
+	}
+	if(UKismetMathLibrary::RandomBoolWithWeightFromStream(float(DoorCount - DoorArray.Num()) / DoorCount, RoomStream))
+	{
+		DoorArray.Add(GetWorld()->SpawnActor<ADoor>(ADoor::StaticClass(), FTransform(FRotator(0, 270, 0), FVector(RoomX*TileX*2, 100, 0)+GetActorLocation())));
+	}
+	else
+	{
+		YWall->AddInstance(FTransform(FVector(RoomX*TileX*20, 0, 0)));
+	}
+	for(int i=1; i<RoomY; i++)
 	{
 		if(i%DoorEvery == DoorRemainder && UKismetMathLibrary::RandomBoolWithWeightFromStream(float(DoorCount - DoorArray.Num()) / DoorCount, RoomStream))
 		{
-			DoorArray.Add(GetWorld()->SpawnActor<AActor>(Door, FTransform(FRotator(0, 90, 0), FVector(0, i*TileY*2+100, 0)+GetActorLocation())));
+			DoorArray.Add(GetWorld()->SpawnActor<ADoor>(ADoor::StaticClass(), FTransform(FRotator(0, 90, 0), FVector(0, i*TileY*2+100, 0)+GetActorLocation())));
 		}
 		else
 		{
@@ -57,7 +77,7 @@ void ARoomGenerate::BasicRoom()
 		}
 		if(i%DoorEvery == DoorRemainder && UKismetMathLibrary::RandomBoolWithWeightFromStream(float(DoorCount - DoorArray.Num()) / DoorCount, RoomStream))
 		{
-			DoorArray.Add(GetWorld()->SpawnActor<AActor>(Door, FTransform(FRotator(0, 90, 0), FVector(RoomX*TileX*2, i*TileY*2+100, 0)+GetActorLocation())));
+			DoorArray.Add(GetWorld()->SpawnActor<ADoor>(ADoor::StaticClass(), FTransform(FRotator(0, 90, 0), FVector(RoomX*TileX*2, i*TileY*2+100, 0)+GetActorLocation())));
 		}
 		else
 		{

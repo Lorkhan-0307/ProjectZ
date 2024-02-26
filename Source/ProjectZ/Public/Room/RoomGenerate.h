@@ -19,15 +19,15 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	// Generates rectangle room with floor, wall
 	UFUNCTION(BlueprintCallable) void BasicRoom();
-	UPROPERTY(EditDefaultsOnly)TSubclassOf<AActor>Door;
+	//UPROPERTY(EditDefaultsOnly)TSubclassOf<AActor>Door;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<AActor*> DoorArray;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") int RoomX;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") int RoomY;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") int DoorCount = 5;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") int DoorCount = 3;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") int DoorEvery = 3;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") int DoorRemainder = 2;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") bool EntryDoor = true;
+	int DoorRemainder;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") bool Starter = true;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") int TileX = 100;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") int TileY = 100;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") FRandomStream RoomStream;
