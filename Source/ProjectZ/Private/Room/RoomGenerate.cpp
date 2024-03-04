@@ -8,6 +8,12 @@
 UStaticMesh* CubeMesh;
 ADoor* CurDoor;
 
+void ARoomGenerate::SetParams(bool isStarter, int number)
+{
+	Starter = isStarter;
+	RoomNo = number;
+}
+
 // Generates rectangle room with floor, wall, door
 void ARoomGenerate::BasicRoom()
 {
@@ -34,6 +40,7 @@ void ARoomGenerate::BasicRoom()
 		if(i%DoorEvery == DoorRemainder && UKismetMathLibrary::RandomBoolWithWeightFromStream(float(DoorCount - DoorArray.Num()) / DoorCount, RoomStream))
 		{
 			CurDoor = GetWorld()->SpawnActor<ADoor>(ADoor::StaticClass(), FTransform(FVector(i*TileX*2+100, 0, 0)+GetActorLocation()));
+			CurDoor->SetParams(DoorCount-1, RoomNo);
 			DoorArray.Add(CurDoor);
 		}
 		else
@@ -42,7 +49,9 @@ void ARoomGenerate::BasicRoom()
 		}
 		if(i%DoorEvery == DoorRemainder && UKismetMathLibrary::RandomBoolWithWeightFromStream(float(DoorCount - DoorArray.Num()) / DoorCount, RoomStream))
 		{
-			DoorArray.Add(GetWorld()->SpawnActor<ADoor>(ADoor::StaticClass(), FTransform(FRotator(0, 180, 0), FVector(i*TileX*2+100, RoomY*TileY*2, 0)+GetActorLocation())));
+			CurDoor = GetWorld()->SpawnActor<ADoor>(ADoor::StaticClass(), FTransform(FRotator(0, 180, 0), FVector(i*TileX*2+100, RoomY*TileY*2, 0)+GetActorLocation()));
+			CurDoor->SetParams(DoorCount-1, RoomNo);
+			DoorArray.Add(CurDoor);
 		}
 		else
 		{
@@ -55,11 +64,15 @@ void ARoomGenerate::BasicRoom()
 	}
 	else
 	{
-		DoorArray.Add(GetWorld()->SpawnActor<ADoor>(ADoor::StaticClass(), FTransform(FRotator(0, 90, 0), FVector(0, 100, 0)+GetActorLocation())));
+		CurDoor = GetWorld()->SpawnActor<ADoor>(ADoor::StaticClass(), FTransform(FRotator(0, 90, 0), FVector(0, 100, 0)+GetActorLocation()));
+		CurDoor->SetParams(DoorCount-1, RoomNo);
+		DoorArray.Add(CurDoor);
 	}
 	if(UKismetMathLibrary::RandomBoolWithWeightFromStream(float(DoorCount - DoorArray.Num()) / DoorCount, RoomStream))
 	{
-		DoorArray.Add(GetWorld()->SpawnActor<ADoor>(ADoor::StaticClass(), FTransform(FRotator(0, 270, 0), FVector(RoomX*TileX*2, 100, 0)+GetActorLocation())));
+		CurDoor = GetWorld()->SpawnActor<ADoor>(ADoor::StaticClass(), FTransform(FRotator(0, 270, 0), FVector(RoomX*TileX*2, 100, 0)+GetActorLocation()));
+		CurDoor->SetParams(DoorCount-1, RoomNo);
+		DoorArray.Add(CurDoor);
 	}
 	else
 	{
@@ -69,7 +82,9 @@ void ARoomGenerate::BasicRoom()
 	{
 		if(i%DoorEvery == DoorRemainder && UKismetMathLibrary::RandomBoolWithWeightFromStream(float(DoorCount - DoorArray.Num()) / DoorCount, RoomStream))
 		{
-			DoorArray.Add(GetWorld()->SpawnActor<ADoor>(ADoor::StaticClass(), FTransform(FRotator(0, 90, 0), FVector(0, i*TileY*2+100, 0)+GetActorLocation())));
+			CurDoor = GetWorld()->SpawnActor<ADoor>(ADoor::StaticClass(), FTransform(FRotator(0, 90, 0), FVector(0, i*TileY*2+100, 0)+GetActorLocation()));
+			CurDoor->SetParams(DoorCount-1, RoomNo);
+			DoorArray.Add(CurDoor);
 		}
 		else
 		{
@@ -77,7 +92,9 @@ void ARoomGenerate::BasicRoom()
 		}
 		if(i%DoorEvery == DoorRemainder && UKismetMathLibrary::RandomBoolWithWeightFromStream(float(DoorCount - DoorArray.Num()) / DoorCount, RoomStream))
 		{
-			DoorArray.Add(GetWorld()->SpawnActor<ADoor>(ADoor::StaticClass(), FTransform(FRotator(0, 90, 0), FVector(RoomX*TileX*2, i*TileY*2+100, 0)+GetActorLocation())));
+			CurDoor = GetWorld()->SpawnActor<ADoor>(ADoor::StaticClass(), FTransform(FRotator(0, 90, 0), FVector(RoomX*TileX*2, i*TileY*2+100, 0)+GetActorLocation()));
+			CurDoor->SetParams(DoorCount-1, RoomNo);
+			DoorArray.Add(CurDoor);
 		}
 		else
 		{
@@ -90,7 +107,7 @@ void ARoomGenerate::BasicRoom()
 ARoomGenerate::ARoomGenerate()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	//PrimaryActorTick.bCanEverTick = true;
 
 	DefaultRoot = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DefaultRoot"));
 	Floor = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("Floor"));
@@ -119,7 +136,7 @@ ARoomGenerate::ARoomGenerate()
 void ARoomGenerate::BeginPlay()
 {
 	Super::BeginPlay();
-	BasicRoom();
+	//BasicRoom();
 }
 
 // Called every frame
