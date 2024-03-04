@@ -7,6 +7,11 @@
 #include "AbilitySystem/ZAbilitySystemLibrary.h"
 #include "AbilitySystem/ZAttributeSet.h"
 #include "ZGameplayTag.h"
+#include "AI/ZAIController.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "Game/ZGameModeBase.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "ProjectZ/ProjectZ.h"
 
 AZEnemy::AZEnemy()
@@ -16,6 +21,25 @@ AZEnemy::AZEnemy()
 	AbilitySystemComponent = CreateDefaultSubobject<UZAbilitySystemComponent>("AbilitySystemComponent");
 
 	AttributeSet = CreateDefaultSubobject<UZAttributeSet>("AttributeSet");
+
+	AIPerceptionStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("AIPerceptionStimuliSourceComponent"));
+	AIPerceptionStimuliSourceComponent->bAutoRegister = true;
+	//AIPerceptionStimuliSourceComponent->regi
+}
+
+void AZEnemy::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	ZAIController = Cast<AZAIController>(NewController);
+	ZAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
+	ZAIController->RunBehaviorTree(BehaviorTree);
+	ZAIController->GetBlackboardComponent()->SetValueAsBool(FName("EnemyTurn"), false);
+	ZAIController->GetBlackboardComponent()->SetValueAsBool(FName("RangedAttacker"), false);
+	/*
+	if (CharacterClass == ECharacterClass::RangedAttackZombie)
+		ZAIController->GetBlackboardComponent()->SetValueAsBool(FName("RangedAttacker"), true);
+	*/
 }
 
 int32 AZEnemy::GetPlayerLevel()
@@ -65,6 +89,8 @@ void AZEnemy::BeginPlay()
 		OnHealthChanged.Broadcast(ZAS->GetHealth());
 		OnMaxHealthChanged.Broadcast(ZAS->GetMaxHealth());
 	}
+
+	Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->TurnChangedDelegate.AddDynamic(this, &AZEnemy::TurnChanged);
 }
 
 void AZEnemy::InitAbilityActorInfo()
@@ -73,4 +99,24 @@ void AZEnemy::InitAbilityActorInfo()
 	Cast<UZAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 
 	InitializeDefaultAttributes();
+}
+
+void AZEnemy::TurnChanged(ETurn Turn)
+{
+	if (Turn != ETurn::ET_EnemyTurn)
+	{
+		ZAIController->GetBlackboardComponent()->SetValueAsBool(FName("MyTurn"), false);
+		return;
+	}
+	
+	UZAttributeSet* AS = Cast<UZAttributeSet>(AttributeSet);
+	if (AS)
+	{
+		AS->SetCost(AS->GetMaxCost());
+	}
+	
+	if (!bIsMyTurn) return;
+	
+	ZAIController->GetBlackboardComponent()->SetValueAsFloat(FName("Cost"), AS->GetCost());
+	ZAIController->GetBlackboardComponent()->SetValueAsBool(FName("MyTurn"), true);
 }

@@ -6,16 +6,19 @@
 #include "Components/ActorComponent.h"
 #include "Data/Card.h"
 #include "GameplayEffectTypes.h"
+#include "Game/ZGameModeBase.h"
 #include "CardComponent.generated.h"
 
 class UCharacterClassInfo;
 class AZCharacterBase;
 class AZNonCombatCharacter;
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDrawAndAddCardDelegate, FCard, NewCard);
+class AZGameModeBase;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateLeftHandCardDelegate, FCard, LeftCard);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateCardDelegate, FCard, NewCard);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateRightHandCardDelegate, FCard, RightCard);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FActivateCardDelegate);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCancelActivateCardDelegate);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROJECTZ_API UCardComponent : public UActorComponent
@@ -31,25 +34,35 @@ public:
 	void DrawCard();
 
 	// Draw Card from deck, Add Card to hand
-	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable)
-	FDrawAndAddCardDelegate DrawAndAddCardDelegate;
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FUpdateCardDelegate DrawAndAddCardDelegate;
 
 	// When change left hand card
-	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable)
-	FUpdateLeftHandCardDelegate UpdateLeftHandCardDelegate;
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FUpdateCardDelegate UpdateLeftHandCardDelegate;
 
 	// When change right hand card
-	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable)
-	FUpdateRightHandCardDelegate UpdateRightHandCardDelegate;
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FUpdateCardDelegate UpdateRightHandCardDelegate;
 
-	void InitializeNonCombat(AZCharacterBase* Character);
-	void InitializeCombat(AZCharacterBase* Character);
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FUpdateCardDelegate ShowSkillCardDelegate;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FActivateCardDelegate ActivateCardDelegate;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FCancelActivateCardDelegate CancelActivateCardDelegate;
+	
+
+	void InitializeCardComponent(AZCharacterBase* Character);
 
 	FCard ConvertCardNameToFCard(FName CardName);
 	void InitializeCardInventory(UCharacterClassInfo* CharacterClassInfo);
 
 	// Active Card, Apply Effect to target
 	void ActiveCard(FCard Card, bool bIsLeftHand = true);
+	void CancelActivateCard();
 
 	void SetLeftHandCard(FCard Card, bool bIsValid = true);
 	void SetRightHandCard(FCard Card, bool bIsValid = true);
@@ -61,6 +74,17 @@ public:
 	FVector2D LeftEquipPosMax;
 	FVector2D RightEquipPosMin;
 	FVector2D RightEquipPosMax;
+
+	UPROPERTY(EditAnywhere, Category = Card)
+	float CardTrashSpeed = 2.f;
+
+	UPROPERTY(EditAnywhere, Category = Card)
+	FVector2D DiscardedCardLocation;
+
+	UPROPERTY(EditAnywhere, Category = Card)
+	FVector2D CardGraveyardLocation;
+
+	void UseCard(FCard Card);
 
 	//Getter, Setter
 	UFUNCTION(BlueprintCallable)
@@ -96,6 +120,12 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = Card)
 	TArray<FCard> CardHand;
 
+	UPROPERTY(VisibleAnywhere, Category = Card)
+	TArray<FCard> DiscardCard;
+
+	UPROPERTY(VisibleAnywhere, Category = Card)
+	TArray<FCard> CardGraveyard;
+
 	// Number of cards in hand when start combat
 	UPROPERTY(EditAnywhere, Category = Card)
 	int32 FirstCardCount;
@@ -118,4 +148,12 @@ private:
 	void MakeCardDeck();
 
 	void ApplyEffectToTarget(TSubclassOf<UGameplayEffect> Effect, int32 CardLevel, AZCharacterBase* TargetCharacter);
+
+	UFUNCTION()
+	void TurnChanged(ETurn Turn);
+
+	ETurn CurrentTurn;
+
+	UPROPERTY()
+	AZGameModeBase* GameMode;
 };

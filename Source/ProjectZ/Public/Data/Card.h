@@ -53,7 +53,7 @@ struct FCard : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float SkillRange;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
 	TArray<TSubclassOf<UGameplayEffect>> InstantGameplayEffects;
 
@@ -68,5 +68,9 @@ struct FCard : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool IsValid = true;
-};
 
+	bool operator==(const FCard& a) const
+	{
+		return CardName.EqualTo(a.CardName);
+	}
+};

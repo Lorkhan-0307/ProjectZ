@@ -17,7 +17,7 @@
 AZNonCombatCharacter::AZNonCombatCharacter()
 {
 	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = true;
+	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
@@ -28,7 +28,6 @@ AZNonCombatCharacter::AZNonCombatCharacter()
 	GetMesh()->SetCollisionObjectType(ECC_Pawn);
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
-	GetCharacterMovement()->RotationRate = FRotator(0.f, 0.f, 850.f);
 
 	TopDownCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("TopDownCamera"));
 	const FDetachmentTransformRules DetachmentTransformRules(EDetachmentRule::KeepWorld, true);

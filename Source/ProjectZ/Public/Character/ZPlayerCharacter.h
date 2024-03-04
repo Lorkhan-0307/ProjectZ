@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Character/ZCharacterBase.h"
+#include "Game/ZGameModeBase.h"
 #include "ZPlayerCharacter.generated.h"
 
 class UCostPathLengthWidget;
@@ -40,7 +41,7 @@ public:
 	void HideSkillRange();
 
 protected:
-
+	virtual void BeginPlay() override;
 private:
 	bool bIsPossessed = false;
 
@@ -61,4 +62,7 @@ private:
 	void UpdateSplinePath();
 
 	float SplineLength;
+
+	UFUNCTION()
+	void TurnChanged(ETurn Turn);
 };
