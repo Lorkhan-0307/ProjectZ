@@ -56,9 +56,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputAction> CameraZoomAction;
 
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> ESCAction;
-
 	UPROPERTY()
 	TObjectPtr<UZAbilitySystemComponent> ZAbilitySystemComponent;
 
@@ -82,7 +79,6 @@ private:
 	void CameraRotate(const FInputActionValue& InputActionValue);
 	void CameraReset();
 	void CameraZoom(const FInputActionValue& InputActionValue);
-	void ESC();
 
 	FVector CameraLocation;
 

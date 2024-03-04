@@ -34,8 +34,6 @@ void UCardWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	{
 		if (CanvasPanelSlot->GetPosition() != DestinationPosition) SetPosition(InDeltaTime);
 	}
-
-	//TrashCard(InDeltaTime);
 }
 
 void UCardWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -68,8 +66,6 @@ void UCardWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPoint
 {
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 
-	if (CardStat.IsValid == false) return;
-
 	// Don't Drag Card in NonCombat Turn
 	AZGameModeBase* GameMode = Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode());
 	ETurn CurrentTurn = GameMode->GetCurrentTurn();
@@ -96,9 +92,9 @@ void UCardWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, U
 	const FVector2D MousePosition = UWidgetLayoutLibrary::GetMousePositionOnViewport(this) * UWidgetLayoutLibrary::GetViewportScale(this);
 	UZAttributeSet* AS = Cast<UZAttributeSet>(Cast<AZCharacterBase>(GetOwningPlayerPawn())->GetAttributeSet());
 
+	bool bUnEquipCard = true;
 	if (CanvasPanelSlot == nullptr) // Equipping Card
 	{
-		bool bUnEquipCard;
 		const bool bIsLeftHandCard = GetCachedGeometry().GetAbsolutePosition().X < UWidgetLayoutLibrary::GetViewportSize(this).X / 2.f;
 		if (bIsLeftHandCard)
 		{
@@ -136,15 +132,24 @@ void UCardWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, U
 		{
 			GameMode->SetTurn(ETurn::ET_PlayerTurn);
 		}
+
+		CardDragEndDelegate.Broadcast(this, true);
+		RemoveFromParent();
+		CollectGarbage(EObjectFlags::RF_BeginDestroyed);
 	}
 	else
 	{
-		CancelActivateCard();
+		CardDragEndDelegate.Broadcast(this, false);
+		SetVisibility(ESlateVisibility::Visible);
+		bMouseHovered = false;
+
+		AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(GetOwningPlayerPawn());
+		PlayerCharacter->HideSkillRange();
 	}
 }
 
 // Initialize Card UI by FCard
-void UCardWidget::InitCardStatus(FCard CardStatus, bool bSetDelegate)
+void UCardWidget::InitCardStatus(FCard CardStatus)
 {
 	CardStat = CardStatus;
 	CardName->SetText(CardStatus.CardName);
@@ -155,85 +160,12 @@ void UCardWidget::InitCardStatus(FCard CardStatus, bool bSetDelegate)
 	DefText->SetText(FText::FromString(FString::FromInt(CardStatus.CardCost)));
 
 	CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(this);
-
-	if (CardComponent && bSetDelegate)
-	{
-		CardComponent->ActivateCardDelegate.AddDynamic(this, &UCardWidget::DestroyActivateCard);
-		CardComponent->CancelActivateCardDelegate.AddDynamic(this, &UCardWidget::CancelActivateCard);
-	}
 }
 
 // Set Position by Interpolation
 void UCardWidget::SetPosition(float DeltaTime)
 {
 	if (CanvasPanelSlot == nullptr) return;
-	if (bTrashCard) return;
 	CanvasPanelSlot->SetPosition(FMath::Vector2DInterpTo(CanvasPanelSlot->GetPosition(), DestinationPosition, DeltaTime, InterpSpeed));
 	SetRenderTransformAngle(FMath::FInterpTo(GetRenderTransform().Angle, DestinationAngle, DeltaTime, InterpSpeed));
-}
-
-void UCardWidget::DestroyActivateCard()
-{
-	if (!(GetVisibility() == ESlateVisibility::Hidden && CardStat.IsValid)) return;
-	CardDragEndDelegate.Broadcast(this, true);
-
-	DestroyWidget();
-
-	/*
-	const FVector2D MousePosition = UWidgetLayoutLibrary::GetMousePositionOnViewport(this);
-	CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(this);
-	if (CanvasPanelSlot)
-	{
-		CanvasPanelSlot->SetPosition(MousePosition - CanvasPanelSlot->GetSize() / 2.f);
-		TrashCardStartPosition = CanvasPanelSlot->GetPosition();
-		CanvasPanelSlot->SetSize(CardSize);
-		SetRenderTransformAngle(0.f);
-
-		FAnchors Anchors(1.f, 1.f);
-		CanvasPanelSlot->SetAnchors(Anchors);
-		CanvasPanelSlot->SetAlignment(FVector2D(1.f, 1.f));
-		UE_LOG(LogTemp,Warning,TEXT("%s"),*CanvasPanelSlot->GetName());
-	}
-	SetVisibility(ESlateVisibility::Visible);
-	CardStat.IsValid = false;
-	bTrashCard = true;
-	DestinationPosition = CardStat.CardType == ECardType::ECT_Skill ? CardComponent->DiscardedCardLocation : CardComponent->CardGraveyardLocation;
-	*/
-}
-
-void UCardWidget::CancelActivateCard()
-{
-	if (!(GetVisibility() == ESlateVisibility::Hidden && CardStat.IsValid)) return;
-	CardDragEndDelegate.Broadcast(this, false);
-	SetVisibility(ESlateVisibility::Visible);
-	bMouseHovered = false;
-
-	if (CardStat.CardType != ECardType::ECT_Skill) return;
-	AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(GetOwningPlayerPawn());
-	PlayerCharacter->HideSkillRange();
-}
-
-void UCardWidget::DestroyWidget()
-{
-	RemoveFromParent();
-	CollectGarbage(EObjectFlags::RF_BeginDestroyed);
-}
-
-void UCardWidget::TrashCard(float DeltaTime)
-{
-	CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(this);
-	if (CanvasPanelSlot == nullptr) return;
-	if (bTrashCard == false) return;
-
-	//SetPositionInViewport(FMath::Vector2DInterpConstantTo(GetCachedGeometry().GetAbsolutePosition(), TrashLocation, DeltaTime, InterpSpeed));
-	CanvasPanelSlot->SetPosition(FMath::Vector2DInterpTo(CanvasPanelSlot->GetPosition(), DestinationPosition, DeltaTime, CardComponent->CardTrashSpeed));
-
-	const float Alpha = (TrashCardStartPosition - CanvasPanelSlot->GetPosition()).Size() / (TrashCardStartPosition - DestinationPosition).Size();
-	CanvasPanelSlot->SetSize(FMath::Lerp(CardSize, 70, Alpha));
-	UE_LOG(LogTemp, Warning, TEXT("%f %f"), CanvasPanelSlot->GetPosition().X, CanvasPanelSlot->GetPosition().Y);
-
-	if (CanvasPanelSlot->GetPosition() == DestinationPosition)
-	{
-		CollectGarbage(EObjectFlags::RF_BeginDestroyed);
-	}
 }

@@ -72,18 +72,9 @@ public:
 	FCardDragStartDelegate CardDragStartDelegate;
 	FCardDragEndDelegate CardDragEndDelegate;
 
-	void InitCardStatus(FCard CardStatus, bool bSetDelegate = true);
-
-	UFUNCTION()
-	void DestroyActivateCard();
-
-	UFUNCTION()
-	void CancelActivateCard();
-	
-	void DestroyWidget();
+	void InitCardStatus(FCard CardStatus);
 
 	FORCEINLINE bool GetMouseHovered() const { return bMouseHovered; }
-	FORCEINLINE FCard GetCardStat() const { return CardStat; }
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
@@ -112,12 +103,6 @@ private:
 
 	float CardHandYSize;
 
-	bool bTrashCard = false;
-
 	UPROPERTY()
 	UCanvasPanelSlot* CanvasPanelSlot;
-
-	FVector2D TrashCardStartPosition;
-
-	void TrashCard(float DeltaTime);
 };

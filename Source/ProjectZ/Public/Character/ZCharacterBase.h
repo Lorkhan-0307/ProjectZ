@@ -27,8 +27,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	UCardComponent* CardComponent;
 
-	bool bIsDead = false;
-
 	UFUNCTION(BlueprintCallable)
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass) const;
 
@@ -38,10 +36,12 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	FORCEINLINE UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 	FORCEINLINE ECharacterClass GetCharacterClass() const { return CharacterClass; }
-	FORCEINLINE int32 GetCombatPriority() const { return CombatPriority; }
 
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
 	virtual void Die() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<UGameplayEffect> TestEffect;
 
 protected:
 	virtual void BeginPlay() override;
@@ -61,9 +61,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Default")
 	ECharacterClass CharacterClass = ECharacterClass::JohnDoe;
 
-	UPROPERTY(EditAnywhere, Category = "Character Class Default")
-	int32 CombatPriority;
-
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes;
 
@@ -72,9 +69,6 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
-	float LifeSpan = 5.f;
 
 	virtual void InitAbilityActorInfo();
 

@@ -3,7 +3,6 @@
 
 #include "Ui/NonCombat/NonCombatOverlay.h"
 
-#include "AbilitySystem/ZAbilitySystemLibrary.h"
 #include "UI/Combat/CostPathLengthWidget.h"
 #include "Components/SizeBox.h"
 #include "Components/CanvasPanel.h"
@@ -21,7 +20,6 @@
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 #include "Game/ZGameModeBase.h"
-#include "UI/Combat/CharacterPortraitWidget.h"
 #include "Widgets/SViewport.h"
 
 
@@ -34,10 +32,6 @@ void UNonCombatOverlay::NativeConstruct()
 	TurnText->SetVisibility(ESlateVisibility::Hidden);
 	ShowCostWidget(false);
 	ShowTurnEndButton(false);
-	HideSkillCard();
-
-	LeftHandCardWidget->SetVisibility(ESlateVisibility::Hidden);
-	RightHandCardWidget->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UNonCombatOverlay::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -79,21 +73,6 @@ void UNonCombatOverlay::SetCardComponent(UCardComponent* CC)
 
 		LeftHandCardWidget->CardComponent = CardComponent;
 		RightHandCardWidget->CardComponent = CardComponent;
-
-		FVector2D ScreenSize = GameMode->ScreenSize;
-		CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(DiscardCardSizeBox);
-		CardComponent->DiscardedCardLocation = CanvasPanelSlot->GetPosition() - CanvasPanelSlot->GetSize() / 2.f;
-		//CardComponent->DiscardedCardLocation.X = ScreenSize.X + (CanvasPanelSlot->GetPosition().X + CanvasPanelSlot->GetSize().X / 2.f);
-		//CardComponent->DiscardedCardLocation.Y = ScreenSize.Y + (CanvasPanelSlot->GetPosition().Y + CanvasPanelSlot->GetSize().Y / 2.f);
-		UE_LOG(LogTemp, Warning, TEXT("%f %f"), CardComponent->DiscardedCardLocation.X, CardComponent->DiscardedCardLocation.X);
-
-		CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(CardGraveyardSizeBox);
-		CardComponent->CardGraveyardLocation = CanvasPanelSlot->GetPosition() - CanvasPanelSlot->GetSize() / 2.f;
-		//CardComponent->CardGraveyardLocation.X = ScreenSize.X + (CanvasPanelSlot->GetPosition().X + CanvasPanelSlot->GetSize().X / 2.f);
-		//CardComponent->CardGraveyardLocation.Y = ScreenSize.Y + (CanvasPanelSlot->GetPosition().Y + CanvasPanelSlot->GetSize().Y / 2.f);
-
-		CardComponent->ShowSkillCardDelegate.AddDynamic(this, &UNonCombatOverlay::ShowSkillCard);
-		CardComponent->ActivateCardDelegate.AddDynamic(this, &UNonCombatOverlay::HideSkillCard);
 	}
 }
 
@@ -111,45 +90,31 @@ void UNonCombatOverlay::WidgetControllerSet()
 		OverlayWidgetController->OnMaxCostChanged.AddDynamic(this, &UNonCombatOverlay::OnMaxCostChanged);
 	}
 
-	GameMode = Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode());
-
-	UCanvasPanelSlot* CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(CardHandSizeBox);
-	CardSpawnPosition = FVector2D(CanvasPanelSlot->GetSize().X / 2.f, 0.f);
-
-	GameMode->TurnChangedDelegate.AddDynamic(this, &UNonCombatOverlay::TurnChanged);
+	Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->TurnChangedDelegate.AddDynamic(this, &UNonCombatOverlay::TurnChanged);
 
 	TurnEndButton->OnClicked.AddDynamic(this, &UNonCombatOverlay::TurnEnd);
-
-	CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(CharacterPortraitSizeBox);
-	CharacterPortraitCenter = CanvasPanelSlot->GetSize().X / 2.f;
-	GameMode->CombatActorChangedDelegate.AddDynamic(this, &UNonCombatOverlay::DiscardCharacterPortrait);
-	CharacterPortraitSizeBox->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UNonCombatOverlay::UpdateLeftHandCard(FCard LeftCard)
 {
-	if (LeftCard.IsValid)
-	{
-		LeftHandCardWidget->SetVisibility(ESlateVisibility::Visible);
-	}
-	else
+	if (LeftCard.IsValid == false)
 	{
 		LeftHandCardWidget->SetVisibility(ESlateVisibility::Hidden);
+		return;
 	}
-	LeftHandCardWidget->InitCardStatus(LeftCard, false);
+	LeftHandCardWidget->SetVisibility(ESlateVisibility::Visible);
+	LeftHandCardWidget->InitCardStatus(LeftCard);
 }
 
 void UNonCombatOverlay::UpdateRightHandCard(FCard RightCard)
 {
-	if (RightCard.IsValid)
-	{
-		RightHandCardWidget->SetVisibility(ESlateVisibility::Visible);
-	}
-	else
+	if (RightCard.IsValid == false)
 	{
 		RightHandCardWidget->SetVisibility(ESlateVisibility::Hidden);
+		return;
 	}
-	RightHandCardWidget->InitCardStatus(RightCard, false);
+	RightHandCardWidget->SetVisibility(ESlateVisibility::Visible);
+	RightHandCardWidget->InitCardStatus(RightCard);
 }
 
 // Get Card, Create card widget
@@ -173,8 +138,8 @@ void UNonCombatOverlay::UpdateCardPosition()
 UCardWidget* UNonCombatOverlay::CreateCardWidget(FCard CardStatus)
 {
 	UCardWidget* CardWidget = CreateWidget<UCardWidget>(GetOwningPlayer(), CardWidgetClass);
-	CardWidget->CardComponent = CardComponent;
 	CardWidget->InitCardStatus(CardStatus);
+	CardWidget->CardComponent = CardComponent;
 
 	CardWidget->RemoveFromParent();
 	CardHandCanvas->AddChild(CardWidget);
@@ -190,21 +155,21 @@ UCardWidget* UNonCombatOverlay::CreateCardWidget(FCard CardStatus)
 
 float UNonCombatOverlay::GetCardXPosition(int32 Index)
 {
-	float XPos = CardHandSizeBox->GetDesiredSize().X / 2 + GetIndexPositionFromCenter(Index, HandCard.Num()) * CardDistance - CardSize.X / 2;
+	float XPos = CardHandSizeBox->GetDesiredSize().X / 2 + GetCardIndexPositionFromCenter(Index) * CardDistance - CardSize.X / 2;
 	if (HandCard[Index]->GetMouseHovered()) XPos += MouseHoveredHeight * FMath::Sin(FMath::DegreesToRadians(GetCardAngle(Index)));
 	return XPos;
 }
 
 float UNonCombatOverlay::GetCardYPosition(int32 Index)
 {
-	float YPos = FMath::Abs(GetIndexPositionFromCenter(Index, HandCard.Num())) * ArcHeight;
+	float YPos = FMath::Abs(GetCardIndexPositionFromCenter(Index)) * ArcHeight;
 	if (HandCard[Index]->GetMouseHovered()) YPos -= MouseHoveredHeight * FMath::Cos(FMath::DegreesToRadians(GetCardAngle(Index)));
 	return YPos;
 }
 
 float UNonCombatOverlay::GetCardAngle(int32 Index)
 {
-	return GetIndexPositionFromCenter(Index, HandCard.Num()) * CardAngle;
+	return GetCardIndexPositionFromCenter(Index) * CardAngle;
 }
 
 void UNonCombatOverlay::DragStarted(UCardWidget* CardDragged)
@@ -218,21 +183,19 @@ void UNonCombatOverlay::DragEnded(UCardWidget* CardDragged, bool bIsUsed)
 	if (bIsUsed)
 	{
 		HandCard.Remove(CardDragged);
-		//CardDragged->RemoveFromParent();
-		//OverlayCanvasPanel->AddChild(CardDragged);
 	}
 }
 
 // Convert card index 0, 1, 2, 3, 4 -> -2, -1, 0, 1, 2
-float UNonCombatOverlay::GetIndexPositionFromCenter(int32 Index, int32 Size) const
+float UNonCombatOverlay::GetCardIndexPositionFromCenter(int32 Index) const
 {
-	float NewIndex = (float)Index - (((float)Size - 1.f) / 2.f);
+	float NewIndex = (float)Index - (((float)HandCard.Num() - 1.f) / 2.f);
 	if (NewIndex < 0)
 	{
 		NewIndex -= 0.5f;
 	}
 	NewIndex = FMath::RoundToFloat(NewIndex);
-	if (Size % 2 == 0)
+	if (HandCard.Num() % 2 == 0)
 	{
 		if (NewIndex < 0) NewIndex += 0.5f;
 		else
@@ -250,24 +213,6 @@ void UNonCombatOverlay::TurnChanged(ETurn Turn)
 	ShowTurnText();
 	ShowCostWidget(Turn == ETurn::ET_MoveTurn || Turn == ETurn::ET_PlayerTurn);
 	ShowTurnEndButton(Turn == ETurn::ET_MoveTurn || Turn == ETurn::ET_PlayerTurn);
-
-	if (Turn == ETurn::ET_NonCombat)
-	{
-		HideCharacterPortrait();
-	}
-	else if (CharacterPortraitSizeBox->GetVisibility() == ESlateVisibility::Hidden)
-	{
-		ShowCharacterPortrait();
-	}
-
-	if (CurrentTurn == ETurn::ET_EnemyTurn && (GameMode->GetLastTurn() == ETurn::ET_MoveTurn || GameMode->GetLastTurn() == ETurn::ET_PlayerTurn))
-	{
-		for (UCardWidget* CardWidget : HandCard)
-		{
-			CardWidget->DestroyWidget();
-		}
-		HandCard.Empty();
-	}
 }
 
 void UNonCombatOverlay::SetCardHandPosition(float DeltaTime)
@@ -299,7 +244,7 @@ void UNonCombatOverlay::ShowTurnText()
 	{
 		TurnText->SetText(FText::FromString("Player Turn"));
 	}
-	else if (CurrentTurn == ETurn::ET_EnemyTurn && (GameMode->GetLastTurn() == ETurn::ET_MoveTurn || GameMode->GetLastTurn() == ETurn::ET_PlayerTurn))
+	else if (CurrentTurn == ETurn::ET_EnemyTurn)
 	{
 		TurnText->SetText(FText::FromString("Enemy Turn"));
 	}
@@ -364,82 +309,11 @@ void UNonCombatOverlay::ShowTurnEndButton(bool bShow)
 	TurnEndButton->SetVisibility(TurnEndWidgetVisibility);
 }
 
-void UNonCombatOverlay::ShowSkillCard(FCard Card)
-{
-	ShowSkillCardWidget->InitCardStatus(Card, false);
-	ShowSkillCardOverlay->SetVisibility(ESlateVisibility::Visible);
-}
-
-void UNonCombatOverlay::HideSkillCard()
-{
-	ShowSkillCardOverlay->SetVisibility(ESlateVisibility::Hidden);
-}
-
-void UNonCombatOverlay::ShowCharacterPortrait()
-{
-	CharacterPortraitSizeBox->SetVisibility(ESlateVisibility::Visible);
-
-	PortraitWidgets.Empty();
-	for (AActor* CombatActor : GameMode->CombatActor)
-	{
-		UCharacterPortraitWidget* CharacterPortraitWidget = CreateWidget<UCharacterPortraitWidget>(GetOwningPlayer(), CharacterPortraitWidgetClass);
-		CharacterPortraitWidget->RemoveFromParent();
-		CharacterPortraitCanvasPanel->AddChild(CharacterPortraitWidget);
-		CharacterPortraitWidget->InitPortrait(CombatActor);
-
-		UCanvasPanelSlot* CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(CharacterPortraitWidget);
-		CanvasPanelSlot->SetSize(FVector2D(100.f, 150.f));
-		CanvasPanelSlot->SetPosition(FVector2D(CharacterPortraitCenter, 0.f));
-
-		PortraitWidgets.Add(CharacterPortraitWidget);
-		CharacterPortraitWidget->AddToViewport();
-		UpdateCharacterPortrait();
-	}
-}
-
-void UNonCombatOverlay::HideCharacterPortrait()
-{
-	CharacterPortraitSizeBox->SetVisibility(ESlateVisibility::Hidden);
-	for (UCharacterPortraitWidget* CharacterPortraitWidget : PortraitWidgets)
-	{
-		CharacterPortraitWidget->DestroyWidget();
-	}
-	PortraitWidgets.Empty();
-}
-
-void UNonCombatOverlay::UpdateCharacterPortrait()
-{
-	for (int i = 0; i < PortraitWidgets.Num(); i++)
-	{
-		UCanvasPanelSlot* CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(PortraitWidgets[i]);
-		PortraitWidgets[i]->DestinationLocation = FVector2D(GetIndexPositionFromCenter(i, PortraitWidgets.Num()) * CanvasPanelSlot->GetSize().X + CharacterPortraitCenter, 0.f);
-		UE_LOG(LogTemp, Warning, TEXT("%d %f %d %f"), i, GetIndexPositionFromCenter(i, PortraitWidgets.Num()), PortraitWidgets.Num(), PortraitWidgets[i]->DestinationLocation.X);
-	}
-}
-
-void UNonCombatOverlay::DiscardCharacterPortrait(AActor* Actor)
-{
-	//UCharacterPortraitWidget* DiscardWidget;
-	for (int i = 0; i < PortraitWidgets.Num(); i++)
-	{
-		if (PortraitWidgets[i]->CharacterActor == Actor)
-		{
-			//DiscardWidget = PortraitWidget;
-			PortraitWidgets[i]->DestroyWidget();
-			PortraitWidgets.RemoveAt(i);
-			i--;
-		}
-	}
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *Actor->GetActorNameOrLabel())
-	UpdateCharacterPortrait();
-}
-
 
 void UNonCombatOverlay::TurnEnd()
 {
-	Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->NextTurn();
-	//Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->SetTurn(ETurn::ET_EnemyTurn);
-	//CurrentTurn = ETurn::ET_EnemyTurn;
+	Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->SetTurn(ETurn::ET_EnemyTurn);
+	CurrentTurn = ETurn::ET_EnemyTurn;
 }
 
 float UNonCombatOverlay::GetHealthCheckingBarPos()

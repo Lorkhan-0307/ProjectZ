@@ -13,7 +13,6 @@
 #include "AbilitySystemComponent.h"
 #include "ZAbilityType.h"
 #include "AbilitySystem/ZAttributeSet.h"
-#include "Character/ZCharacterBase.h"
 
 UOverlayWidgetController* UZAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
 {
@@ -111,16 +110,21 @@ void UZAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& Effe
 	}
 }
 
-bool UZAbilitySystemLibrary::PayCost(AZCharacterBase* Character, float Cost)
+bool UZAbilitySystemLibrary::PayCost(const UObject* WorldContextObject, int32 Cost)
 {
-	UZAttributeSet* AS = Cast<UZAttributeSet>(Character->GetAttributeSet());
-	if (AS && AS->GetCost() >= Cost)
+	if (APlayerController* PC = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
 	{
-		AS->SetCost(AS->GetCost() - Cost);
-		return true;
+		AZPlayerState* PS = PC->GetPlayerState<AZPlayerState>();
+		UZAttributeSet* AS = Cast<UZAttributeSet>(PS->GetAttributeSet());
+		if (AS->GetCost() >= Cost)
+		{
+			AS->SetCost(AS->GetCost() - Cost);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
-	else
-	{
-		return false;
-	}
+	return false;
 }

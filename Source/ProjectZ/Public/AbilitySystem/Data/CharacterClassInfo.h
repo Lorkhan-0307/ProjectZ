@@ -26,9 +26,6 @@ struct FCharacterClassDefaultInfo
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FName> DefaultCards;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UTexture2D* CharacterPortrait;
 };
 
 UCLASS()
