@@ -136,7 +136,7 @@ ARoomGenerate::ARoomGenerate()
 void ARoomGenerate::BeginPlay()
 {
 	Super::BeginPlay();
-	//BasicRoom();
+	BasicRoom();
 }
 
 // Called every frame
