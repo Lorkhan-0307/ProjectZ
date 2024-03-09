@@ -29,7 +29,6 @@ protected:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Component") UStaticMeshComponent* DefaultRoot;
-	UPROPERTY(EditAnywhere, Category = "Component") UStaticMeshComponent* Upper;
 	UPROPERTY(EditAnywhere, Category = "Component") UStaticMeshComponent* Right;
 	UPROPERTY(EditAnywhere, Category = "Component") UStaticMeshComponent* Left;
 
