@@ -35,7 +35,7 @@ void AZEnemy::PossessedBy(AController* NewController)
 	ZAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
 	ZAIController->RunBehaviorTree(BehaviorTree);
 	ZAIController->GetBlackboardComponent()->SetValueAsBool(FName("EnemyTurn"), false);
-	ZAIController->GetBlackboardComponent()->SetValueAsBool(FName("RangedAttacker"), false);
+	ZAIController->GetBlackboardComponent()->SetValueAsBool(FName("RangedAttacker"), bRangeAttacker);
 	/*
 	if (CharacterClass == ECharacterClass::RangedAttackZombie)
 		ZAIController->GetBlackboardComponent()->SetValueAsBool(FName("RangedAttacker"), true);
@@ -108,15 +108,15 @@ void AZEnemy::TurnChanged(ETurn Turn)
 		ZAIController->GetBlackboardComponent()->SetValueAsBool(FName("MyTurn"), false);
 		return;
 	}
-	
+
 	UZAttributeSet* AS = Cast<UZAttributeSet>(AttributeSet);
 	if (AS)
 	{
 		AS->SetCost(AS->GetMaxCost());
 	}
-	
+
 	if (!bIsMyTurn) return;
-	
+
 	ZAIController->GetBlackboardComponent()->SetValueAsFloat(FName("Cost"), AS->GetCost());
 	ZAIController->GetBlackboardComponent()->SetValueAsBool(FName("MyTurn"), true);
 }

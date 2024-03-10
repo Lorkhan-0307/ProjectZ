@@ -63,4 +63,7 @@ protected:
 private:
 	UFUNCTION()
 	void TurnChanged(ETurn Turn);
+
+	UPROPERTY(EditAnywhere)
+	bool bRangeAttacker = false;
 };
