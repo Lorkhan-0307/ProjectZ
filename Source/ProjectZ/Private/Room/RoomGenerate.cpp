@@ -145,4 +145,3 @@ void ARoomGenerate::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
-

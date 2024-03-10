@@ -6,6 +6,8 @@
 #include "UI/ZUserWidget.h"
 #include "NonCombatOverlay.generated.h"
 
+class AZGameModeBase;
+class UCharacterPortraitWidget;
 class UButton;
 class UCostPathLengthWidget;
 class UTextBlock;
@@ -33,6 +35,9 @@ protected:
 
 private:
 	UPROPERTY(meta = (BindWidget))
+	UCanvasPanel* OverlayCanvasPanel;
+	
+	UPROPERTY(meta = (BindWidget))
 	UProgressBar* HealthBar;
 
 	UPROPERTY(meta = (BindWidget))
@@ -46,7 +51,7 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UOverlay* CostOverlay;
-	
+
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* CostText;
 
@@ -55,6 +60,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UCardWidget> CardWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UCharacterPortraitWidget> CharacterPortraitWidgetClass;
 
 	//UPROPERTY(meta = (BindWidget))
 	//UCardHandWidget* CardHandWidget;
@@ -78,10 +86,31 @@ private:
 	UCanvasPanel* CardHandCanvas;
 
 	UPROPERTY(meta = (BindWidget))
+	UOverlay* ShowSkillCardOverlay;
+
+	UPROPERTY(meta = (BindWidget))
+	UCardWidget* ShowSkillCardWidget;
+
+	UPROPERTY(meta = (BindWidget))
 	UTextBlock* TurnText;
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* TurnEndButton;
+
+	UPROPERTY(meta = (BindWidget))
+	USizeBox* DiscardCardSizeBox;
+
+	UPROPERTY(meta = (BindWidget))
+	USizeBox* CardGraveyardSizeBox;
+
+	UPROPERTY(meta = (BindWidget))
+	USizeBox* CharacterPortraitSizeBox;
+
+	UPROPERTY(meta = (BindWidget))
+	UCanvasPanel* CharacterPortraitCanvasPanel;
+
+	UPROPERTY()
+	AZGameModeBase* GameMode;
 
 	float Health;
 	float MaxHealth;
@@ -116,6 +145,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = Card)
 	FVector2D CardSize = FVector2D(200, 300);
 
+	UPROPERTY(EditAnywhere, Category = Card)
+	FVector2D ShowSKillCardLocation = FVector2D(1500.f, 300.f);
+
 	// Health, Mentality
 	UFUNCTION()
 	virtual void OnHealthChanged(float NewValue);
@@ -146,10 +178,10 @@ private:
 	UFUNCTION()
 	void UpdateRightHandCard(FCard RightCard);
 
-	float GetCardIndexPositionFromCenter(int32 Index) const;
+	float GetIndexPositionFromCenter(int32 Index, int32 Size) const;
 
 	UPROPERTY(EditAnywhere, Category = Card)
-	FVector2D CardSpawnPosition = FVector2D(1800.f,0.f);
+	FVector2D CardSpawnPosition = FVector2D(1800.f, 0.f);
 
 	UFUNCTION(BlueprintCallable)
 	void AddCardToHand(FCard NewCard);
@@ -180,6 +212,9 @@ private:
 
 	bool bCardHandPositionSet = false;
 
+	UPROPERTY()
+	TArray<UCharacterPortraitWidget*> PortraitWidgets;
+
 	UPROPERTY(EditAnywhere, Category = Card)
 	float CardHandInterpSpeed = 1.f;
 
@@ -199,6 +234,21 @@ private:
 	void ShowCostWidget(bool bShow);
 
 	void ShowTurnEndButton(bool bShow);
+
+	UFUNCTION()
+	void ShowSkillCard(FCard Card);
+
+	UFUNCTION()
+	void HideSkillCard();
+
+	float CharacterPortraitCenter;
+	
+	void ShowCharacterPortrait();
+	void HideCharacterPortrait();
+	void UpdateCharacterPortrait();
+
+	UFUNCTION()
+	void DiscardCharacterPortrait(AActor* Actor);
 
 	UFUNCTION()
 	void TurnEnd();

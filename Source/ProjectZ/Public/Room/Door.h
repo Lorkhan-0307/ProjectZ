@@ -10,7 +10,7 @@ UCLASS()
 class PROJECTZ_API ADoor : public AActor
 {
 	GENERATED_BODY()
-	
+
 public:	
 	// Sets default values for this actor's properties
 	ADoor();
@@ -19,7 +19,7 @@ public:
 
 	UFUNCTION(BlueprintCallable) void SetParams(int Count, int number);
 	UFUNCTION(BlueprintCallable) void SpawnRoom();
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Room Settings") int DoorCount = 1;
 	int RoomNo = 0;
 
@@ -29,7 +29,6 @@ protected:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Component") UStaticMeshComponent* DefaultRoot;
-	UPROPERTY(EditAnywhere, Category = "Component") UStaticMeshComponent* Upper;
 	UPROPERTY(EditAnywhere, Category = "Component") UStaticMeshComponent* Right;
 	UPROPERTY(EditAnywhere, Category = "Component") UStaticMeshComponent* Left;
 
