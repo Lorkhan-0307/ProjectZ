@@ -29,6 +29,8 @@ public:
 
 	bool bIsDead = false;
 
+	bool bIsMyTurn = false;
+
 	UFUNCTION(BlueprintCallable)
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass) const;
 

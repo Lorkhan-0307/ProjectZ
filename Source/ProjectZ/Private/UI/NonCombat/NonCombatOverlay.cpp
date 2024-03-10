@@ -22,6 +22,7 @@
 #include "Components/TextBlock.h"
 #include "Game/ZGameModeBase.h"
 #include "UI/Combat/CharacterPortraitWidget.h"
+#include "UI/Combat/TurnChangeWidget.h"
 #include "Widgets/SViewport.h"
 
 
@@ -31,7 +32,6 @@ void UNonCombatOverlay::NativeConstruct()
 
 	HealthCheckingBar->SetVisibility(ESlateVisibility::Visible);
 	MentalityCheckingBar->SetVisibility(ESlateVisibility::Visible);
-	TurnText->SetVisibility(ESlateVisibility::Hidden);
 	ShowCostWidget(false);
 	ShowTurnEndButton(false);
 	HideSkillCard();
@@ -44,6 +44,10 @@ void UNonCombatOverlay::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 	UpdateCardPosition();
+	if (TurnChangeWidget && TurnChangeWidget->GetVisibility() == ESlateVisibility::Visible)
+	{
+		return;
+	}
 	SetCardHandPosition(InDeltaTime);
 	SetCostPathLengthWidgetPosition();
 }
@@ -94,6 +98,7 @@ void UNonCombatOverlay::SetCardComponent(UCardComponent* CC)
 
 		CardComponent->ShowSkillCardDelegate.AddDynamic(this, &UNonCombatOverlay::ShowSkillCard);
 		CardComponent->ActivateCardDelegate.AddDynamic(this, &UNonCombatOverlay::HideSkillCard);
+		CardComponent->CancelActivateCardDelegate.AddDynamic(this, &UNonCombatOverlay::HideSkillCard);
 	}
 }
 
@@ -247,7 +252,16 @@ void UNonCombatOverlay::TurnChanged(ETurn Turn)
 {
 	CurrentTurn = Turn;
 	bCardHandPositionSet = false;
-	ShowTurnText();
+
+	if (TurnChangeWidget == nullptr)
+	{
+		TurnChangeWidget = CreateWidget<UTurnChangeWidget>(GetOwningPlayer(), TurnChangeWidgetClass);
+		TurnChangeWidget->CharacterPortraitDelegate.AddDynamic(this, &UNonCombatOverlay::ShowCharacterPortrait);
+		TurnChangeWidget->AddToViewport();
+	}
+
+	TurnChangeWidget->SetText();
+
 	ShowCostWidget(Turn == ETurn::ET_MoveTurn || Turn == ETurn::ET_PlayerTurn);
 	ShowTurnEndButton(Turn == ETurn::ET_MoveTurn || Turn == ETurn::ET_PlayerTurn);
 
@@ -255,10 +269,12 @@ void UNonCombatOverlay::TurnChanged(ETurn Turn)
 	{
 		HideCharacterPortrait();
 	}
+	/*
 	else if (CharacterPortraitSizeBox->GetVisibility() == ESlateVisibility::Hidden)
 	{
 		ShowCharacterPortrait();
 	}
+	*/
 
 	if (CurrentTurn == ETurn::ET_EnemyTurn && (GameMode->GetLastTurn() == ETurn::ET_MoveTurn || GameMode->GetLastTurn() == ETurn::ET_PlayerTurn))
 	{
@@ -291,29 +307,6 @@ void UNonCombatOverlay::SetCardHandPosition(float DeltaTime)
 	{
 		bCardHandPositionSet = true;
 	}
-}
-
-void UNonCombatOverlay::ShowTurnText()
-{
-	if (CurrentTurn == ETurn::ET_MoveTurn)
-	{
-		TurnText->SetText(FText::FromString("Player Turn"));
-	}
-	else if (CurrentTurn == ETurn::ET_EnemyTurn && (GameMode->GetLastTurn() == ETurn::ET_MoveTurn || GameMode->GetLastTurn() == ETurn::ET_PlayerTurn))
-	{
-		TurnText->SetText(FText::FromString("Enemy Turn"));
-	}
-	else
-	{
-		return;
-	}
-	TurnText->SetVisibility(ESlateVisibility::Visible);
-	GetWorld()->GetTimerManager().SetTimer(TurnTextTimer, this, &UNonCombatOverlay::HideTurnText, TurnTextDisplayTime, false);
-}
-
-void UNonCombatOverlay::HideTurnText()
-{
-	TurnText->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UNonCombatOverlay::SetCostPathLengthWidgetPosition()

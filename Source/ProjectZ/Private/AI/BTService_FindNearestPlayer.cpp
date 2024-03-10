@@ -67,4 +67,5 @@ void UBTService_FindNearestPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	UBTFunctionLibrary::SetBlackboardValueAsFloat(this, DistanceToTargetSelector, ClosestDistance);
 
 	UBTFunctionLibrary::SetBlackboardValueAsBool(this, MyTurnSelector, Cast<AZEnemy>(Character)->bIsMyTurn);
+	UBTFunctionLibrary::SetBlackboardValueAsBool(this, CanMoveSelector, Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->bCanMove);
 }

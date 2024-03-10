@@ -169,7 +169,7 @@ void AZPlayerControllerBase::AbilityInputTagReleased(FGameplayTag InputTag)
 		return;
 	}
 
-	AZGameModeBase* GameMode = Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode());
+	GameMode = Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode());
 	const ETurn CurrentTurn = GameMode->GetCurrentTurn();
 	if (!(CurrentTurn == ETurn::ET_NonCombat || CurrentTurn == ETurn::ET_MoveTurn))
 	{
@@ -192,7 +192,7 @@ void AZPlayerControllerBase::AbilityInputTagReleased(FGameplayTag InputTag)
 			const int32 Cost = FMath::CeilToInt(Spline->GetSplineLength() / 100.f);
 			UZAttributeSet* AS = Cast<UZAttributeSet>(GetPlayerState<AZPlayerState>()->GetAttributeSet());
 
-			if (CurrentTurn == ETurn::ET_MoveTurn && Cost > AS->GetCost())
+			if ((CurrentTurn == ETurn::ET_MoveTurn && Cost > AS->GetCost()) || !GameMode->bCanMove)
 			{
 				return;
 			}

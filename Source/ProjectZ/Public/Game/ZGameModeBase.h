@@ -43,6 +43,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetTurn(ETurn Turn);
 
+	FORCEINLINE void SetLastTurn(ETurn Turn) { LastTurn = Turn; }
+
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE ETurn GetCurrentTurn() const { return CurrentTurn; }
 
@@ -64,6 +66,11 @@ public:
 	FVector2D ScreenSize = FVector2D(1920.f, 1080.f);
 
 	FORCEINLINE int32 GetTurnPlayerIndex() const { return TurnPlayerIndex; }
+
+	UPROPERTY()
+	AActor* TurnActor;
+
+	bool bCanMove = true;
 
 private:
 	ETurn CurrentTurn = ETurn::ET_NonCombat;
