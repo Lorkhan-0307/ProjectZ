@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Data/CharacterClassInfo.h"
 #include "ZAbilitySystemLibrary.generated.h"
 
 class AZCharacterBase;
@@ -26,7 +27,7 @@ public:
 	static void InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* ASC);
 
 	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|CharacterClassDefaults")
-	static void GiveStartupAbility(const UObject* WorldContextObject, UAbilitySystemComponent* ASC);
+	static void GiveStartupAbility(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ECharacterClass CharacterClass);
 
 	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|CharacterClassDefaults")
 	static UCharacterClassInfo* GetCharacterClassInfo(const UObject* WorldContextObject);
@@ -45,4 +46,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static bool PayCost(AZCharacterBase* Character, float Cost);
+
+	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayMechanics")
+	static void GetLivePlayersWithinRadius(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius, const FVector& SphereOrigin);
 };

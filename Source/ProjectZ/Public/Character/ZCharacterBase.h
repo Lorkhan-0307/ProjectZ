@@ -27,12 +27,16 @@ public:
 	UPROPERTY(EditAnywhere)
 	UCardComponent* CardComponent;
 
-	bool bIsDead = false;
-
 	bool bIsMyTurn = false;
 
 	UFUNCTION(BlueprintCallable)
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass) const;
+
+	// Combat Interface
+	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
+	virtual void Die() override;
+	virtual bool IsDead_Implementation() const override;
+	virtual AActor* GetAvatar_Implementation() override;
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE UCardComponent* GetCardComponent() const { return CardComponent; }
@@ -42,15 +46,14 @@ public:
 	FORCEINLINE ECharacterClass GetCharacterClass() const { return CharacterClass; }
 	FORCEINLINE int32 GetCombatPriority() const { return CombatPriority; }
 
-	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
-	virtual void Die() override;
-
 protected:
 	virtual void BeginPlay() override;
 	virtual int32 GetLevel();
 
 	virtual FVector GetCombatSocketLocation() override;
 
+	bool bIsDead = false;
+	
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 

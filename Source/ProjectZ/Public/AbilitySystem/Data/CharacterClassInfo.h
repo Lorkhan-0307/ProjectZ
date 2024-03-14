@@ -24,11 +24,14 @@ struct FCharacterClassDefaultInfo
 	UPROPERTY(EditDefaultsOnly, Category = "Class Default")
 	TSubclassOf<UGameplayEffect> PrimaryAttribute;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Class Default")
 	TArray<FName> DefaultCards;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Class Default")
 	UTexture2D* CharacterPortrait;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Class Default")
+	TArray<TSubclassOf<UGameplayAbility>> StartupAbility;
 };
 
 UCLASS()

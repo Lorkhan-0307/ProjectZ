@@ -35,11 +35,15 @@ public:
 
 	FGameplayTag InputTag_RMB;
 	FGameplayTag InputTag_LMB;
+	
 	//FGameplayTag Event_Montage_ThrowingStone;
+	FGameplayTag Event_Montage_Attack_Melee;
 
 	FGameplayTag Damage;
 	FGameplayTag Damage_Fire;
 	FGameplayTag Damage_Physical;
+
+	FGameplayTag Ability_Attack;
 
 	TMap<FGameplayTag, FGameplayTag> DamageTypeToResistance;
 

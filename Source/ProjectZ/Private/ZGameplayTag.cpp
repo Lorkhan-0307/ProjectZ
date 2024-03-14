@@ -44,9 +44,16 @@ void FZGameplayTag::InitializeNativeGameplayTags()
 	// Map of DamageType to Resistance
 	GameplayTag.DamageTypeToResistance.Add(GameplayTag.Damage_Fire, GameplayTag.Attributes_Resistance_Fire);
 	GameplayTag.DamageTypeToResistance.Add(GameplayTag.Damage_Physical, GameplayTag.Attributes_Resistance_Physical);
-	// Effect
 
+	// Effect
 	GameplayTag.Effect_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Effect.HitReact"), FString("Tag granted when Hit React"));
 
+	// Ability
+	GameplayTag.Ability_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Attack"));
+
+	// Card
 	GameplayTag.Card_SKill_ThrowStone = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.ThrowStone"));
+
+	// Event
+	GameplayTag.Event_Montage_Attack_Melee = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Event.Montage.Attack.Melee"));
 }

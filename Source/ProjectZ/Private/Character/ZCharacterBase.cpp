@@ -51,6 +51,16 @@ void AZCharacterBase::Die()
 	bIsDead = true;
 }
 
+bool AZCharacterBase::IsDead_Implementation() const
+{
+	return bIsDead;
+}
+
+AActor* AZCharacterBase::GetAvatar_Implementation()
+{
+	return this;
+}
+
 // Called when the game starts or when spawned
 void AZCharacterBase::BeginPlay()
 {
