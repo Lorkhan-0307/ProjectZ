@@ -6,6 +6,7 @@
 #include "UI/ZUserWidget.h"
 #include "NonCombatOverlay.generated.h"
 
+class UTurnChangeWidget;
 class AZGameModeBase;
 class UCharacterPortraitWidget;
 class UButton;
@@ -64,6 +65,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UCharacterPortraitWidget> CharacterPortraitWidgetClass;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UTurnChangeWidget> TurnChangeWidgetClass;
+
 	//UPROPERTY(meta = (BindWidget))
 	//UCardHandWidget* CardHandWidget;
 
@@ -92,9 +96,6 @@ private:
 	UCardWidget* ShowSkillCardWidget;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* TurnText;
-
-	UPROPERTY(meta = (BindWidget))
 	UButton* TurnEndButton;
 
 	UPROPERTY(meta = (BindWidget))
@@ -108,6 +109,9 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UCanvasPanel* CharacterPortraitCanvasPanel;
+
+	UPROPERTY()
+	UTurnChangeWidget* TurnChangeWidget;
 
 	UPROPERTY()
 	AZGameModeBase* GameMode;
@@ -218,17 +222,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = Card)
 	float CardHandInterpSpeed = 1.f;
 
-	UFUNCTION(BlueprintCallable)
-	void ShowTurnText();
-
-	UFUNCTION()
-	void HideTurnText();
-
-	FTimerHandle TurnTextTimer;
-
-	UPROPERTY(EditAnywhere)
-	float TurnTextDisplayTime = 3.f;
-
 	void SetCostPathLengthWidgetPosition();
 
 	void ShowCostWidget(bool bShow);
@@ -242,8 +235,10 @@ private:
 	void HideSkillCard();
 
 	float CharacterPortraitCenter;
-	
+
+	UFUNCTION()
 	void ShowCharacterPortrait();
+	
 	void HideCharacterPortrait();
 	void UpdateCharacterPortrait();
 

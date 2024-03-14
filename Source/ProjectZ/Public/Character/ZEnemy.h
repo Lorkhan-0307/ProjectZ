@@ -43,8 +43,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = Combat)
 	bool bHitReacting;
 
-	bool bIsMyTurn = false;
-
 	bool bTargetSet = false;
 
 	FORCEINLINE AZAIController* GetAIController() const { return ZAIController; }
@@ -65,4 +63,7 @@ protected:
 private:
 	UFUNCTION()
 	void TurnChanged(ETurn Turn);
+
+	UPROPERTY(EditAnywhere)
+	bool bRangeAttacker = false;
 };

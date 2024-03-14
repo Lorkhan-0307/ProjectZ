@@ -44,7 +44,7 @@ void AZGameModeBase::NextTurn()
 		TurnPlayerIndex = 0;
 	}
 
-	AActor* TurnActor = CombatActor[TurnPlayerIndex];
+	TurnActor = CombatActor[TurnPlayerIndex];
 	if (AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(TurnActor))
 	{
 		SetTurn(ETurn::ET_MoveTurn);

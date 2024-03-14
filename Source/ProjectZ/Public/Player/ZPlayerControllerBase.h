@@ -8,6 +8,7 @@
 #include "InputActionValue.h"
 #include "ZPlayerControllerBase.generated.h"
 
+class AZGameModeBase;
 class IEnemyInterface;
 class UZInputConfig;
 class UZInputComponent;
@@ -41,6 +42,9 @@ protected:
 	UZInputComponent* ZInputComponent;
 
 private:
+	UPROPERTY()
+	AZGameModeBase* GameMode;
+	
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	TObjectPtr<UZInputConfig> InputConfig;
 

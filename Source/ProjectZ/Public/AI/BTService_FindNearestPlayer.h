@@ -29,6 +29,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	FBlackboardKeySelector MyTurnSelector;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	FBlackboardKeySelector CanMoveSelector;
+
 private:
 	FVector CurrentLocation;
 	FVector LastLocation;
