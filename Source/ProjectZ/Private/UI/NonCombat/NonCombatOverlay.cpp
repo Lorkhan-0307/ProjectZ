@@ -43,6 +43,10 @@ void UNonCombatOverlay::NativeConstruct()
 void UNonCombatOverlay::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	SetHPPercent(InDeltaTime);
+	SetMPPercent(InDeltaTime);
+
 	UpdateCardPosition();
 	if (TurnChangeWidget && TurnChangeWidget->GetVisibility() == ESlateVisibility::Visible)
 	{
@@ -464,28 +468,40 @@ void UNonCombatOverlay::SetMentalityCheckingBarPos()
 void UNonCombatOverlay::OnHealthChanged(float NewValue)
 {
 	Health = NewValue;
-	if (MaxHealth != 0) HealthBar->SetPercent(Health / MaxHealth);
-	SetHealthCheckingBarPos();
+	//if (MaxHealth != 0) HealthBar->SetPercent(Health / MaxHealth);
+	//SetHealthCheckingBarPos();
 }
 
 void UNonCombatOverlay::OnMaxHealthChanged(float NewValue)
 {
 	MaxHealth = NewValue;
-	if (MaxHealth != 0) HealthBar->SetPercent(Health / MaxHealth);
-	SetHealthCheckingBarPos();
+	//if (MaxHealth != 0) HealthBar->SetPercent(Health / MaxHealth);
+	//SetHealthCheckingBarPos();
 }
 
 void UNonCombatOverlay::OnMentalityChanged(float NewValue)
 {
 	Mentality = NewValue;
-	if (MaxMentality != 0) MentalityBar->SetPercent(Mentality / MaxMentality);
-	SetMentalityCheckingBarPos();
+	//if (MaxMentality != 0) MentalityBar->SetPercent(Mentality / MaxMentality);
+	//SetMentalityCheckingBarPos();
 }
 
 void UNonCombatOverlay::OnMaxMentalityChanged(float NewValue)
 {
 	MaxMentality = NewValue;
-	if (MaxMentality != 0) MentalityBar->SetPercent(Mentality / MaxMentality);
+	//if (MaxMentality != 0) MentalityBar->SetPercent(Mentality / MaxMentality);
+	//SetMentalityCheckingBarPos();
+}
+
+void UNonCombatOverlay::SetHPPercent(float DeltaTime)
+{
+	if (MaxHealth != 0) HealthBar->SetPercent(FMath::FInterpConstantTo(HealthBar->GetPercent(), Health / MaxHealth, DeltaTime, ProgressBarInterpSpeed));
+	SetHealthCheckingBarPos();
+}
+
+void UNonCombatOverlay::SetMPPercent(float DeltaTime)
+{
+	if (MaxMentality != 0) MentalityBar->SetPercent(FMath::FInterpConstantTo(MentalityBar->GetPercent(), Mentality / MaxMentality, DeltaTime, ProgressBarInterpSpeed));
 	SetMentalityCheckingBarPos();
 }
 
