@@ -108,6 +108,10 @@ void AZEnemy::InitAbilityActorInfo()
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	Cast<UZAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 
+	UCharacterClassInfo* CharacterClassInfo = UZAbilitySystemLibrary::GetCharacterClassInfo(this);
+	FCharacterClassDefaultInfo ClassDefaultInfo = CharacterClassInfo->GetClassDefaultInfo(CharacterClass);
+	bRangeAttacker = ClassDefaultInfo.bRangeAttacker;
+
 	InitializeDefaultAttributes();
 }
 

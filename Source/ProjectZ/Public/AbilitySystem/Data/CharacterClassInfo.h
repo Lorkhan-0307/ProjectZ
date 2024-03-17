@@ -13,7 +13,8 @@ UENUM(BlueprintType)
 enum class ECharacterClass : uint8
 {
 	JohnDoe,
-	Zombie
+	MeleeZombie,
+	RangeZombie
 };
 
 USTRUCT(BlueprintType)
@@ -32,6 +33,12 @@ struct FCharacterClassDefaultInfo
 
 	UPROPERTY(EditDefaultsOnly, Category = "Class Default")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbility;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	int32 CombatPriority;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	bool bRangeAttacker;
 };
 
 UCLASS()
