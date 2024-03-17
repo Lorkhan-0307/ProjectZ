@@ -37,7 +37,6 @@ public:
 	FGameplayTag InputTag_LMB;
 	
 	//FGameplayTag Event_Montage_ThrowingStone;
-	FGameplayTag Event_Montage_Attack_Melee;
 
 	FGameplayTag Damage;
 	FGameplayTag Damage_Fire;
@@ -45,6 +44,10 @@ public:
 
 	FGameplayTag Ability_Attack;
 
+	FGameplayTag Montage_Attack_Weapon;
+	FGameplayTag Montage_Attack_RightHand;
+	FGameplayTag Montage_Attack_LeftHand;
+	
 	TMap<FGameplayTag, FGameplayTag> DamageTypeToResistance;
 
 	FGameplayTag Effect_HitReact;

@@ -19,7 +19,7 @@ void UZProjectileAbility::SpawnProjectile(const FVector& ProjectileTargetLocatio
 {
 	if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo()))
 	{
-		const FVector SocketLocation = CombatInterface->GetCombatSocketLocation();
+		const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo(), FZGameplayTag::Get().Montage_Attack_Weapon);
 		FTransform SpawnTransform;
 
 		// TO DO : Make Weapon and get socket, Set Projectile Rotation

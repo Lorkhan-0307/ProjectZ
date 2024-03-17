@@ -54,6 +54,8 @@ void FZGameplayTag::InitializeNativeGameplayTags()
 	// Card
 	GameplayTag.Card_SKill_ThrowStone = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.ThrowStone"));
 
-	// Event
-	GameplayTag.Event_Montage_Attack_Melee = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Event.Montage.Attack.Melee"));
+	// Montage
+	GameplayTag.Montage_Attack_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.Weapon"));
+	GameplayTag.Montage_Attack_RightHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.RightHand"));
+	GameplayTag.Montage_Attack_LeftHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.LeftHand"));
 }

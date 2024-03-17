@@ -5,6 +5,7 @@
 #include "Character/CardComponent.h"
 #include "AbilitySystemComponent.h"
 #include "GameplayEffectTypes.h"
+#include "ZGameplayTag.h"
 #include "AbilitySystem/ZAbilitySystemComponent.h"
 #include "AbilitySystem/ZAbilitySystemLibrary.h"
 #include "Components/CapsuleComponent.h"
@@ -27,6 +28,27 @@ AZCharacterBase::AZCharacterBase()
 UAnimMontage* AZCharacterBase::GetHitReactMontage_Implementation()
 {
 	return HitReactMontage;
+}
+
+FVector AZCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
+{
+	const FZGameplayTag& GameplayTags = FZGameplayTag::Get();
+	if (MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_Weapon))
+	{
+		// return Weapon->GetSocketLocation(WeaponSocketName);
+		return FVector();
+	}
+	if (MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_LeftHand))
+	{
+		// return GetMesh->GetSocketLocation(LeftHandSocketName);
+		return FVector();
+	}
+	if (MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_RightHand))
+	{
+		// return GetMesh->GetSocketLocation(RightHandSocketName);
+		return FVector();
+	}
+	return FVector();
 }
 
 void AZCharacterBase::Die()
@@ -61,6 +83,11 @@ AActor* AZCharacterBase::GetAvatar_Implementation()
 	return this;
 }
 
+TArray<FTaggedMontage> AZCharacterBase::GetAttackMontages_Implementation()
+{
+	return AttackMontages;
+}
+
 // Called when the game starts or when spawned
 void AZCharacterBase::BeginPlay()
 {
@@ -70,13 +97,6 @@ void AZCharacterBase::BeginPlay()
 int32 AZCharacterBase::GetLevel()
 {
 	return Level;
-}
-
-FVector AZCharacterBase::GetCombatSocketLocation()
-{
-	// When weapon system created, get weapon socket
-	//return Weapon->GetSocketLocation(WeaponSocketName);
-	return FVector();
 }
 
 void AZCharacterBase::InitAbilityActorInfo()

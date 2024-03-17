@@ -34,9 +34,14 @@ public:
 
 	// Combat Interface
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
+	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
 	virtual void Die() override;
 	virtual bool IsDead_Implementation() const override;
 	virtual AActor* GetAvatar_Implementation() override;
+	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() override;
+
+	UPROPERTY(EditAnywhere, Category = Combat)
+	TArray<FTaggedMontage> AttackMontages;
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE UCardComponent* GetCardComponent() const { return CardComponent; }
@@ -49,8 +54,6 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual int32 GetLevel();
-
-	virtual FVector GetCombatSocketLocation() override;
 
 	bool bIsDead = false;
 	
