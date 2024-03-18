@@ -35,7 +35,7 @@ void UBTService_FindNearestPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	if (FMath::Floor(AS->GetCost()) == 0 && Cast<AZEnemy>(Character)->bIsMyTurn)
 	{
 		Cast<AZEnemy>(Character)->bIsMyTurn = false;
-		Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->NextTurn();
+		Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->TurnEnd();
 	}
 
 

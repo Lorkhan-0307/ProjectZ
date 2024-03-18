@@ -33,26 +33,18 @@ void AZGameModeBase::CombatStart()
 	CombatStartDelegate.Broadcast(CombatActor);
 
 	TurnPlayerIndex = -1;
-	NextTurn();
+	TurnEnd();
 }
 
-void AZGameModeBase::NextTurn()
+void AZGameModeBase::TurnEnd()
 {
-	TurnPlayerIndex++;
-	if (TurnPlayerIndex >= CombatActor.Num())
+	if (CurrentTurn == ETurn::ET_EnemyTurn)
 	{
-		TurnPlayerIndex = 0;
+		GetWorld()->GetTimerManager().SetTimer(TurnEndTimer, this, &AZGameModeBase::NextTurn, TurnEndTime, false);
 	}
-
-	TurnActor = CombatActor[TurnPlayerIndex];
-	if (AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(TurnActor))
+	else
 	{
-		SetTurn(ETurn::ET_MoveTurn);
-	}
-	else if (AZEnemy* Enemy = Cast<AZEnemy>(TurnActor))
-	{
-		SetTurn(ETurn::ET_EnemyTurn);
-		Enemy->bIsMyTurn = true;
+		NextTurn();
 	}
 }
 
@@ -98,5 +90,25 @@ void AZGameModeBase::SortCombatActor()
 		{
 			if (FMath::RandRange(0, 1)) CombatActor.Swap(i, i + 1);
 		}
+	}
+}
+
+void AZGameModeBase::NextTurn()
+{
+	TurnPlayerIndex++;
+	if (TurnPlayerIndex >= CombatActor.Num())
+	{
+		TurnPlayerIndex = 0;
+	}
+
+	TurnActor = CombatActor[TurnPlayerIndex];
+	if (AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(TurnActor))
+	{
+		SetTurn(ETurn::ET_MoveTurn);
+	}
+	else if (AZEnemy* Enemy = Cast<AZEnemy>(TurnActor))
+	{
+		SetTurn(ETurn::ET_EnemyTurn);
+		Enemy->bIsMyTurn = true;
 	}
 }

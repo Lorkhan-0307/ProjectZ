@@ -434,7 +434,7 @@ void UNonCombatOverlay::DiscardCharacterPortrait(AActor* Actor)
 
 void UNonCombatOverlay::TurnEnd()
 {
-	Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->NextTurn();
+	Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->TurnEnd();
 	//Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->SetTurn(ETurn::ET_EnemyTurn);
 	//CurrentTurn = ETurn::ET_EnemyTurn;
 }
