@@ -2,6 +2,10 @@
 
 #pragma once
 
+#include <iostream>
+#include <vector>
+#include <cstdlib>
+#include <ctime>
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "FloorGenerate.generated.h"
@@ -28,7 +32,8 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, Category = "Component") UStaticMeshComponent* DefaultRoot;
 	UPROPERTY(EditAnywhere, Category = "Component") UInstancedStaticMeshComponent* Tile;
-	UPROPERTY(EditAnywhere, Category = "Component") UInstancedStaticMeshComponent* Wall;
+	UPROPERTY(EditAnywhere, Category = "Component") UInstancedStaticMeshComponent* XWall;
+    UPROPERTY(EditAnywhere, Category = "Component") UInstancedStaticMeshComponent* YWall;
 };
 
 struct Room {
