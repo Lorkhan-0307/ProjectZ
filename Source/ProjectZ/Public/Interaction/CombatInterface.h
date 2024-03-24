@@ -8,6 +8,7 @@
 #include "CombatInterface.generated.h"
 
 class UAnimMontage;
+struct FGameplayEffectSpec;
 
 USTRUCT(BlueprintType)
 struct FTaggedMontage
@@ -19,6 +20,26 @@ struct FTaggedMontage
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FGameplayTag MontageTag;
+};
+
+USTRUCT(BlueprintType)
+struct FDebuff
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FGameplayTag DebuffType;
+
+	UPROPERTY()
+	float DebuffDamage;
+
+	UPROPERTY()
+	int32 DebuffDuration;
+
+	UPROPERTY()
+	int32 DebuffStack;
+
+	FGameplayEffectSpec* DebuffEffectSpec;
 };
 
 // This class does not need to be modified.
@@ -55,4 +76,12 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	TArray<FTaggedMontage> GetAttackMontages();
+	
+	TArray<FDebuff> Debuffs;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void AddDebuff(FDebuff Debuff);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void RemoveDebuff(FGameplayTag RemoveDebuffType);
 };

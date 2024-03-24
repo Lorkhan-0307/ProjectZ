@@ -88,6 +88,33 @@ TArray<FTaggedMontage> AZCharacterBase::GetAttackMontages_Implementation()
 	return AttackMontages;
 }
 
+void AZCharacterBase::AddDebuff_Implementation(FDebuff Debuff)
+{
+	for (FDebuff& NowDebuff : Debuffs)
+	{
+		if (NowDebuff.DebuffType.MatchesTagExact(Debuff.DebuffType))
+		{
+			NowDebuff.DebuffStack += Debuff.DebuffStack;
+			NowDebuff.DebuffDuration = Debuff.DebuffDuration;
+			return;
+		}
+	}
+	Debuffs.Add(Debuff);
+}
+
+void AZCharacterBase::RemoveDebuff_Implementation(FGameplayTag RemoveDebuffType)
+{
+	for (FDebuff& NowDebuff : Debuffs)
+	{
+		if (NowDebuff.DebuffType.MatchesTagExact(RemoveDebuffType))
+		{
+			NowDebuff.DebuffDuration = 0;
+			NowDebuff.DebuffStack = 0;
+			return;
+		}
+	}
+}
+
 // Called when the game starts or when spawned
 void AZCharacterBase::BeginPlay()
 {

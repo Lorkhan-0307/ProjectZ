@@ -9,13 +9,29 @@
 void UZDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 {
 	FGameplayEffectSpecHandle DamageSpecHandle = MakeOutgoingGameplayEffectSpec(DamageEffectClass);
-	for (TTuple<FGameplayTag, FScalableFloat> Pair : DamageType)
-	{
-		const float DamageMagnitude = Pair.Value.GetValueAtLevel(1);
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageSpecHandle, Pair.Key, DamageMagnitude);
-	}
+
+	const float DamageMagnitude = Damage.GetValueAtLevel(1);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageSpecHandle, DamageType, DamageMagnitude);
 
 	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*DamageSpecHandle.Data.Get(), UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
+}
+
+FDamageEffectParams UZDamageGameplayAbility::MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor) const
+{
+	FDamageEffectParams Params;
+	Params.WorldContextObject = GetAvatarActorFromActorInfo();
+	Params.DamageGameplayEffectClass = DamageEffectClass;
+	Params.SourceAbilitySystemComponent = GetAbilitySystemComponentFromActorInfo();
+	Params.TargetAbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+	Params.BaseDamage = Damage.GetValueAtLevel(GetAbilityLevel());
+	Params.AbilityLevel = GetAbilityLevel();
+	Params.DamageType = DamageType;
+	Params.DebuffTypes = DebuffTypes;
+	Params.DebuffChance = DebuffChance;
+	Params.DebuffDamage = DebuffDamage;
+	Params.DebuffDuration = DebuffDuration;
+	Params.DebuffStack = DebuffStack;
+	return Params;
 }
 
 FTaggedMontage UZDamageGameplayAbility::GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const

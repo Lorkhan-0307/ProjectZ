@@ -55,6 +55,11 @@ void UZAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackD
 	FEffectProperties Props;
 	SetEffectProperties(Data, Props);
 
+	if (Props.TargetCharacter->Implements<UCombatInterface>() && ICombatInterface::Execute_IsDead(Props.TargetCharacter))
+	{
+		return;
+	}
+
 	// Clamping real Attributes
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
@@ -66,40 +71,98 @@ void UZAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackD
 	}
 	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
 	{
-		const float LocalIncomingDamage = GetIncomingDamage();
-		SetIncomingDamage(0.f);
-		if (LocalIncomingDamage > 0)
+		HandleIncomingDamage(Props);
+	}
+}
+
+void UZAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
+{
+	const float LocalIncomingDamage = GetIncomingDamage();
+	SetIncomingDamage(0.f);
+	if (LocalIncomingDamage > 0)
+	{
+		const float NewHealth = GetHealth() - LocalIncomingDamage;
+		SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
+
+		const bool bFatal = NewHealth <= 0.f;
+		if (bFatal)
 		{
-			const float NewHealth = GetHealth() - LocalIncomingDamage;
-			SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
-
-			const bool bFatal = NewHealth <= 0.f;
-			if (bFatal)
+			ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor);
+			if (CombatInterface)
 			{
-				ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor);
-				if (CombatInterface)
-				{
-					CombatInterface->Die();
-				}
-			}
-			else
-			{
-				FGameplayTagContainer TagContainer;
-				TagContainer.AddTag(FZGameplayTag::Get().Effect_HitReact);
-				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
-			}
-
-			const bool bDodge = UZAbilitySystemLibrary::IsDodged(Props.EffectContextHandle);
-			const bool bCriticalHit = UZAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
-			if (bDodge)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Dodge"));
-			}
-			if (bCriticalHit)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Critical"));
+				CombatInterface->Die();
 			}
 		}
+		else
+		{
+			FGameplayTagContainer TagContainer;
+			TagContainer.AddTag(FZGameplayTag::Get().Effect_HitReact);
+			Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+		}
+
+		const bool bDodge = UZAbilitySystemLibrary::IsDodged(Props.EffectContextHandle);
+		const bool bCriticalHit = UZAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
+
+		if (UZAbilitySystemLibrary::IsSuccessfulDebuff(Props.EffectContextHandle))
+		{
+			Debuff(Props);
+		}
+	}
+}
+
+void UZAttributeSet::Debuff(const FEffectProperties& Props)
+{
+	const FZGameplayTag& GameplayTag = FZGameplayTag::Get();
+	FGameplayEffectContextHandle EffectContext = Props.SourceASC->MakeEffectContext();
+	EffectContext.AddSourceObject(Props.SourceAvatarActor);
+
+	const FGameplayTag DamageType = UZAbilitySystemLibrary::GetDamageType(Props.EffectContextHandle);
+	const float DebuffDamage = UZAbilitySystemLibrary::GetDebuffDamage(Props.EffectContextHandle);
+	const int32 DebuffDuration = UZAbilitySystemLibrary::GetDebuffDuration(Props.EffectContextHandle);
+	const TArray<FGameplayTag> DebuffTypes = UZAbilitySystemLibrary::GetDebuffTypes(Props.EffectContextHandle);
+	const int32 DebuffStack = UZAbilitySystemLibrary::GetDebuffStack(Props.EffectContextHandle);
+
+	FString DebuffName = FString::Printf(TEXT("DynamicDebuff_%s"), *DamageType.ToString());
+
+	UGameplayEffect* Effect = NewObject<UGameplayEffect>(GetTransientPackage(), FName(DebuffName));
+
+	Effect->DurationPolicy = EGameplayEffectDurationType::Instant;
+
+	for (FGameplayTag DebuffTag : DebuffTypes)
+	{
+		Effect->InheritableOwnedTagsContainer.AddTag(DebuffTag);
+	}
+
+	Effect->StackingType = EGameplayEffectStackingType::AggregateBySource;
+	//Effect->StackLimitCount = 1;
+
+	const int32 Index = Effect->Modifiers.Num();
+	Effect->Modifiers.Add(FGameplayModifierInfo());
+	FGameplayModifierInfo& ModifierInfo = Effect->Modifiers[Index];
+
+	ModifierInfo.ModifierMagnitude = FScalableFloat(DebuffDamage);
+	ModifierInfo.ModifierOp = EGameplayModOp::Additive;
+	ModifierInfo.Attribute = UZAttributeSet::GetIncomingDamageAttribute();
+
+	FGameplayEffectSpec* MutableSpec = new FGameplayEffectSpec(Effect, EffectContext, 1.f);
+	if (MutableSpec)
+	{
+		FZGameplayEffectContext* ZContext = static_cast<FZGameplayEffectContext*>(EffectContext.Get());
+		TSharedPtr<FGameplayTag> DebuffDamageType = MakeShareable(new FGameplayTag(DamageType));
+		ZContext->SetDamageType(DebuffDamageType);
+
+		Props.TargetASC->ApplyGameplayEffectSpecToSelf(*MutableSpec);
+	}
+
+	for (const FGameplayTag& DebuffType : DebuffTypes)
+	{
+		FDebuff NewDebuff;
+		NewDebuff.DebuffDamage = DebuffDamage;
+		NewDebuff.DebuffDuration = DebuffDuration;
+		NewDebuff.DebuffStack = DebuffStack;
+		NewDebuff.DebuffType = DebuffType;
+		NewDebuff.DebuffEffectSpec = MutableSpec;
+		ICombatInterface::Execute_AddDebuff(Props.TargetCharacter, NewDebuff);
 	}
 }
 

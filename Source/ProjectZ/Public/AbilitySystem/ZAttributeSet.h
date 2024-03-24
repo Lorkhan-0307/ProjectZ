@@ -157,5 +157,7 @@ public:
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, IncomingDamage)
 
 private:
+	void HandleIncomingDamage(const FEffectProperties& Props);
+	void Debuff(const FEffectProperties& Props);
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
 };

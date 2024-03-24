@@ -27,9 +27,6 @@ public:
 	FGameplayTag Attributes_Secondary_CriticalHitDamage;
 	FGameplayTag Attributes_Secondary_CriticalHitResistance;
 
-	FGameplayTag Attributes_Resistance_Fire;
-	FGameplayTag Attributes_Resistance_Physical;
-
 	// For Test
 	FGameplayTag InputTag_T;
 
@@ -41,6 +38,20 @@ public:
 	FGameplayTag Damage;
 	FGameplayTag Damage_Fire;
 	FGameplayTag Damage_Physical;
+
+	FGameplayTag Attributes_Resistance_Fire;
+	FGameplayTag Attributes_Resistance_Physical;
+
+	FGameplayTag Debuff_Bleed;
+	FGameplayTag Debuff_Stun;
+	FGameplayTag Debuff_Slow;
+
+	FGameplayTag Debuff_Chance;
+	FGameplayTag Debuff_Damage;
+	FGameplayTag Debuff_Duration;
+	FGameplayTag Debuff_Stack;
+
+	TArray<FGameplayTag> Debuffs;
 
 	FGameplayTag Ability_Attack;
 

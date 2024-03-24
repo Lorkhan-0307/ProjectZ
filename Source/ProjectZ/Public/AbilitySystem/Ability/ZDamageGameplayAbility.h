@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ZAbilityType.h"
 #include "AbilitySystem/Ability/ZGameplayAbility.h"
 #include "Interaction/CombatInterface.h"
 #include "ZDamageGameplayAbility.generated.h"
@@ -19,12 +20,34 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CauseDamage(AActor* TargetActor);
 
+	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr) const;
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = Damage)
-	TMap<FGameplayTag, FScalableFloat> DamageType;
+	FGameplayTag DamageType;
+
+	UPROPERTY(EditDefaultsOnly, Category = Damage)
+	FScalableFloat Damage;
+
+	UPROPERTY(EditDefaultsOnly, Category = Debuff)
+	TArray<FGameplayTag> DebuffTypes;
+
+	UPROPERTY(EditDefaultsOnly, Category = Debuff)
+	float DebuffChance = 20.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = Debuff)
+	float DebuffDamage = 5.f;
+
+	// By Turn
+	UPROPERTY(EditDefaultsOnly, Category = Debuff)
+	int32 DebuffDuration = 1;
+
+	UPROPERTY(EditDefaultsOnly, Category = Debuff)
+	int32 DebuffStack = 1;
+
 
 	UFUNCTION(BlueprintPure)
 	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const;

@@ -39,6 +39,8 @@ public:
 	virtual bool IsDead_Implementation() const override;
 	virtual AActor* GetAvatar_Implementation() override;
 	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() override;
+	virtual void AddDebuff_Implementation(FDebuff Debuff) override;
+	virtual void RemoveDebuff_Implementation(FGameplayTag RemoveDebuffType) override;
 
 	UPROPERTY(EditAnywhere, Category = Combat)
 	TArray<FTaggedMontage> AttackMontages;

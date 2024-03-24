@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ZAbilityType.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Data/CharacterClassInfo.h"
 #include "ZAbilitySystemLibrary.generated.h"
@@ -38,15 +39,54 @@ public:
 	UFUNCTION(BlueprintPure, Category = "ZAbilitySystemLibrary|GameplayEffects")
 	static bool IsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle);
 
+	UFUNCTION(BlueprintPure, Category = "ZAbilitySystemLibrary|GameplayEffects")
+	static bool IsSuccessfulDebuff(const FGameplayEffectContextHandle& EffectContextHandle);
+
+	UFUNCTION(BlueprintPure, Category = "ZAbilitySystemLibrary|GameplayEffects")
+	static float GetDebuffDamage(const FGameplayEffectContextHandle& EffectContextHandle);
+
+	UFUNCTION(BlueprintPure, Category = "ZAbilitySystemLibrary|GameplayEffects")
+	static int32 GetDebuffDuration(const FGameplayEffectContextHandle& EffectContextHandle);
+
+	UFUNCTION(BlueprintPure, Category = "ZAbilitySystemLibrary|GameplayEffects")
+	static FGameplayTag GetDamageType(const FGameplayEffectContextHandle& EffectContextHandle);
+
+	UFUNCTION(BlueprintPure, Category = "ZAbilitySystemLibrary|GameplayEffects")
+	static TArray<FGameplayTag> GetDebuffTypes(const FGameplayEffectContextHandle& EffectContextHandle);
+	
+	UFUNCTION(BlueprintPure, Category = "ZAbilitySystemLibrary|GameplayEffects")
+	static int32 GetDebuffStack(const FGameplayEffectContextHandle& EffectContextHandle);
+
 	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayEffects")
 	static void SetIsDodged(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool bInIsDodged);
 
 	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayEffects")
 	static void SetIsCriticalHit(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool bInIsCriticalHit);
 
+	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayEffects")
+	static void SetIsSuccessfulDebuff(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool bInSuccessfulDebuff);
+
+	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayEffects")
+	static void SetDebuffDamage(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, float InDebuffDamage);
+
+	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayEffects")
+	static void SetDebuffDuration(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, int32 InDebuffDuration);
+
+	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayEffects")
+	static void SetDamageType(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, const FGameplayTag& InDamageType);
+
+	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayEffects")
+	static void SetDebuffTypes(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, const TArray<FGameplayTag>& InDebuffTypes);
+	
+	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayEffects")
+	static void SetDebuffStack(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, int32 InDebuffStack);
+
 	UFUNCTION(BlueprintCallable)
 	static bool PayCost(AZCharacterBase* Character, float Cost);
 
 	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayMechanics")
 	static void GetLivePlayersWithinRadius(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius, const FVector& SphereOrigin);
+
+	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|DamageEffect")
+	static FGameplayEffectContextHandle ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams);
 };

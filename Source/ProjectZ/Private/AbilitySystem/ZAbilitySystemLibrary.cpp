@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/ZAbilitySystemLibrary.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayEffectTypes.h"
 #include "Game/ZGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
@@ -12,6 +13,7 @@
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "AbilitySystemComponent.h"
 #include "ZAbilityType.h"
+#include "ZGameplayTag.h"
 #include "AbilitySystem/ZAttributeSet.h"
 #include "Character/ZCharacterBase.h"
 
@@ -105,6 +107,63 @@ bool UZAbilitySystemLibrary::IsCriticalHit(const FGameplayEffectContextHandle& E
 	return false;
 }
 
+bool UZAbilitySystemLibrary::IsSuccessfulDebuff(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FZGameplayEffectContext* ZEffectContext = static_cast<const FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return ZEffectContext->IsSuccessfulDebuff();
+	}
+	return false;
+}
+
+float UZAbilitySystemLibrary::GetDebuffDamage(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FZGameplayEffectContext* ZEffectContext = static_cast<const FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return ZEffectContext->GetDebuffDamage();
+	}
+	return 0.f;
+}
+
+int32 UZAbilitySystemLibrary::GetDebuffDuration(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FZGameplayEffectContext* ZEffectContext = static_cast<const FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return ZEffectContext->GetDebuffDuration();
+	}
+	return 0;
+}
+
+FGameplayTag UZAbilitySystemLibrary::GetDamageType(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FZGameplayEffectContext* ZEffectContext = static_cast<const FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		if (ZEffectContext->GetDamageType().IsValid())
+		{
+			return *ZEffectContext->GetDamageType();
+		}
+	}
+	return FGameplayTag();
+}
+
+TArray<FGameplayTag> UZAbilitySystemLibrary::GetDebuffTypes(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FZGameplayEffectContext* ZEffectContext = static_cast<const FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return ZEffectContext->GetDebuffTypes();
+	}
+	return TArray<FGameplayTag>();
+}
+
+int32 UZAbilitySystemLibrary::GetDebuffStack(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FZGameplayEffectContext* ZEffectContext = static_cast<const FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return ZEffectContext->GetDebuffStack();
+	}
+	return 0;
+}
+
 void UZAbilitySystemLibrary::SetIsDodged(FGameplayEffectContextHandle& EffectContextHandle, bool bInIsDodged)
 {
 	if (FZGameplayEffectContext* ZEffectContext = static_cast<FZGameplayEffectContext*>(EffectContextHandle.Get()))
@@ -118,6 +177,55 @@ void UZAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& Effe
 	if (FZGameplayEffectContext* ZEffectContext = static_cast<FZGameplayEffectContext*>(EffectContextHandle.Get()))
 	{
 		ZEffectContext->SetIsCriticalHit(bInIsCriticalHit);
+	}
+}
+
+void UZAbilitySystemLibrary::SetIsSuccessfulDebuff(FGameplayEffectContextHandle& EffectContextHandle, bool bInSuccessfulDebuff)
+{
+	if (FZGameplayEffectContext* ZEffectContext = static_cast<FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		ZEffectContext->SetIsSuccessfulDebuff(bInSuccessfulDebuff);
+	}
+}
+
+void UZAbilitySystemLibrary::SetDebuffDamage(FGameplayEffectContextHandle& EffectContextHandle, float InDebuffDamage)
+{
+	if (FZGameplayEffectContext* ZEffectContext = static_cast<FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		ZEffectContext->SetDebuffDamage(InDebuffDamage);
+	}
+}
+
+void UZAbilitySystemLibrary::SetDebuffDuration(FGameplayEffectContextHandle& EffectContextHandle, int32 InDebuffDuration)
+{
+	if (FZGameplayEffectContext* ZEffectContext = static_cast<FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		ZEffectContext->SetDebuffDuration(InDebuffDuration);
+	}
+}
+
+void UZAbilitySystemLibrary::SetDamageType(FGameplayEffectContextHandle& EffectContextHandle, const FGameplayTag& InDamageType)
+{
+	if (FZGameplayEffectContext* ZEffectContext = static_cast<FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		const TSharedPtr<FGameplayTag> DamageType = MakeShared<FGameplayTag>(InDamageType);
+		ZEffectContext->SetDamageType(DamageType);
+	}
+}
+
+void UZAbilitySystemLibrary::SetDebuffTypes(FGameplayEffectContextHandle& EffectContextHandle, const TArray<FGameplayTag>& InDebuffTypes)
+{
+	if (FZGameplayEffectContext* ZEffectContext = static_cast<FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		ZEffectContext->SetDebuffTypes(InDebuffTypes);
+	}
+}
+
+void UZAbilitySystemLibrary::SetDebuffStack(FGameplayEffectContextHandle& EffectContextHandle, int32 InDebuffStack)
+{
+	if (FZGameplayEffectContext* ZEffectContext = static_cast<FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		ZEffectContext->SetDebuffStack(InDebuffStack);
 	}
 }
 
@@ -152,4 +260,27 @@ void UZAbilitySystemLibrary::GetLivePlayersWithinRadius(const UObject* WorldCont
 			}
 		}
 	}
+}
+
+FGameplayEffectContextHandle UZAbilitySystemLibrary::ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams)
+{
+	const FZGameplayTag& GameplayTag = FZGameplayTag::Get();
+	const AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
+
+	FGameplayEffectContextHandle EffectContextHandle = DamageEffectParams.SourceAbilitySystemComponent->MakeEffectContext();
+	EffectContextHandle.AddSourceObject(SourceAvatarActor);
+	const FGameplayEffectSpecHandle SpecHandle = DamageEffectParams.SourceAbilitySystemComponent->MakeOutgoingSpec(DamageEffectParams.DamageGameplayEffectClass, DamageEffectParams.AbilityLevel, EffectContextHandle);
+
+	for (FGameplayTag DebuffTag : DamageEffectParams.DebuffTypes)
+	{
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DebuffTag, 1);
+	}
+
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageEffectParams.DamageType, DamageEffectParams.BaseDamage);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTag.Debuff_Chance, DamageEffectParams.DebuffChance);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTag.Debuff_Damage, DamageEffectParams.DebuffDamage);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTag.Debuff_Duration, DamageEffectParams.DebuffDuration);
+
+	DamageEffectParams.TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data);
+	return EffectContextHandle;
 }

@@ -3,6 +3,7 @@
 
 #include "Game/ZGameModeBase.h"
 
+#include "ZGameplayTag.h"
 #include "AbilitySystem/ZAttributeSet.h"
 #include "AI/ZAIController.h"
 #include "Character/ZCharacterBase.h"
@@ -10,6 +11,7 @@
 #include "Character/ZPlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/ZPlayerState.h"
+#include "Interaction/CombatInterface.h"
 
 void AZGameModeBase::BeginPlay()
 {
@@ -102,6 +104,14 @@ void AZGameModeBase::NextTurn()
 	}
 
 	TurnActor = CombatActor[TurnPlayerIndex];
+	for (FDebuff& Debuff : Cast<ICombatInterface>(TurnActor)->Debuffs)
+	{
+		if (Debuff.DebuffType.MatchesTagExact(FZGameplayTag::Get().Debuff_Stun) && Debuff.DebuffDuration > 0)
+		{
+			Debuff.DebuffDuration--;
+		}
+	}
+
 	if (AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(TurnActor))
 	{
 		SetTurn(ETurn::ET_MoveTurn);

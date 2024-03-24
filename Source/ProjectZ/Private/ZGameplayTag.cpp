@@ -45,6 +45,21 @@ void FZGameplayTag::InitializeNativeGameplayTags()
 	GameplayTag.DamageTypeToResistance.Add(GameplayTag.Damage_Fire, GameplayTag.Attributes_Resistance_Fire);
 	GameplayTag.DamageTypeToResistance.Add(GameplayTag.Damage_Physical, GameplayTag.Attributes_Resistance_Physical);
 
+	// Debuff
+	GameplayTag.Debuff_Bleed = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Bleed"));
+	GameplayTag.Debuff_Stun = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Stun"));
+	GameplayTag.Debuff_Slow = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Slow"));
+
+	GameplayTag.Debuff_Chance = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Chance"));
+	GameplayTag.Debuff_Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Damage"));
+	GameplayTag.Debuff_Duration = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Duration"));
+	GameplayTag.Debuff_Stack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Stack"));
+
+	// Array of Debuffs
+	GameplayTag.Debuffs.Add(GameplayTag.Debuff_Bleed);
+	GameplayTag.Debuffs.Add(GameplayTag.Debuff_Slow);
+	GameplayTag.Debuffs.Add(GameplayTag.Debuff_Stun);
+
 	// Effect
 	GameplayTag.Effect_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Effect.HitReact"), FString("Tag granted when Hit React"));
 
