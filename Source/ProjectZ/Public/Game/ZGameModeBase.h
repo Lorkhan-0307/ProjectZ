@@ -87,6 +87,7 @@ private:
 	FTimerHandle TurnEndTimer;
 
 	void SortCombatActor();
+	void TurnEndWithTime();
 
 	UFUNCTION()
 	void NextTurn();

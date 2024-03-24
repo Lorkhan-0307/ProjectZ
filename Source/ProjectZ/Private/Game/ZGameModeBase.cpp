@@ -42,7 +42,7 @@ void AZGameModeBase::TurnEnd()
 {
 	if (CurrentTurn == ETurn::ET_EnemyTurn)
 	{
-		GetWorld()->GetTimerManager().SetTimer(TurnEndTimer, this, &AZGameModeBase::NextTurn, TurnEndTime, false);
+		TurnEndWithTime();
 	}
 	else
 	{
@@ -95,6 +95,11 @@ void AZGameModeBase::SortCombatActor()
 	}
 }
 
+void AZGameModeBase::TurnEndWithTime()
+{
+	GetWorld()->GetTimerManager().SetTimer(TurnEndTimer, this, &AZGameModeBase::NextTurn, TurnEndTime, false);
+}
+
 void AZGameModeBase::NextTurn()
 {
 	TurnPlayerIndex++;
@@ -104,11 +109,14 @@ void AZGameModeBase::NextTurn()
 	}
 
 	TurnActor = CombatActor[TurnPlayerIndex];
+
+	bool bIsStun = false;
 	for (FDebuff& Debuff : Cast<ICombatInterface>(TurnActor)->Debuffs)
 	{
 		if (Debuff.DebuffType.MatchesTagExact(FZGameplayTag::Get().Debuff_Stun) && Debuff.DebuffDuration > 0)
 		{
 			Debuff.DebuffDuration--;
+			bIsStun = true;
 		}
 	}
 
@@ -119,6 +127,10 @@ void AZGameModeBase::NextTurn()
 	else if (AZEnemy* Enemy = Cast<AZEnemy>(TurnActor))
 	{
 		SetTurn(ETurn::ET_EnemyTurn);
-		Enemy->bIsMyTurn = true;
+		Enemy->bIsMyTurn = !bIsStun;
+		if (bIsStun)
+		{
+			TurnEndWithTime();			
+		}
 	}
 }
