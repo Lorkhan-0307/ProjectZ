@@ -146,13 +146,13 @@ FGameplayTag UZAbilitySystemLibrary::GetDamageType(const FGameplayEffectContextH
 	return FGameplayTag();
 }
 
-TArray<FGameplayTag> UZAbilitySystemLibrary::GetDebuffTypes(const FGameplayEffectContextHandle& EffectContextHandle)
+FGameplayTag UZAbilitySystemLibrary::GetDebuffType(const FGameplayEffectContextHandle& EffectContextHandle)
 {
 	if (const FZGameplayEffectContext* ZEffectContext = static_cast<const FZGameplayEffectContext*>(EffectContextHandle.Get()))
 	{
-		return ZEffectContext->GetDebuffTypes();
+		return ZEffectContext->GetDebuffType();
 	}
-	return TArray<FGameplayTag>();
+	return FGameplayTag();
 }
 
 int32 UZAbilitySystemLibrary::GetDebuffStack(const FGameplayEffectContextHandle& EffectContextHandle)
@@ -213,11 +213,11 @@ void UZAbilitySystemLibrary::SetDamageType(FGameplayEffectContextHandle& EffectC
 	}
 }
 
-void UZAbilitySystemLibrary::SetDebuffTypes(FGameplayEffectContextHandle& EffectContextHandle, const TArray<FGameplayTag>& InDebuffTypes)
+void UZAbilitySystemLibrary::SetDebuffType(FGameplayEffectContextHandle& EffectContextHandle, const FGameplayTag& InDebuffTypes)
 {
 	if (FZGameplayEffectContext* ZEffectContext = static_cast<FZGameplayEffectContext*>(EffectContextHandle.Get()))
 	{
-		ZEffectContext->SetDebuffTypes(InDebuffTypes);
+		ZEffectContext->SetDebuffType(InDebuffTypes);
 	}
 }
 
@@ -271,11 +271,7 @@ FGameplayEffectContextHandle UZAbilitySystemLibrary::ApplyDamageEffect(const FDa
 	EffectContextHandle.AddSourceObject(SourceAvatarActor);
 	const FGameplayEffectSpecHandle SpecHandle = DamageEffectParams.SourceAbilitySystemComponent->MakeOutgoingSpec(DamageEffectParams.DamageGameplayEffectClass, DamageEffectParams.AbilityLevel, EffectContextHandle);
 
-	for (FGameplayTag DebuffTag : DamageEffectParams.DebuffTypes)
-	{
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DebuffTag, 1);
-	}
-
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageEffectParams.DebuffType, 1);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageEffectParams.DamageType, DamageEffectParams.BaseDamage);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTag.Debuff_Chance, DamageEffectParams.DebuffChance);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTag.Debuff_Damage, DamageEffectParams.DebuffDamage);

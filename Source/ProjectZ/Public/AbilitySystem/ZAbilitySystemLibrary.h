@@ -52,7 +52,7 @@ public:
 	static FGameplayTag GetDamageType(const FGameplayEffectContextHandle& EffectContextHandle);
 
 	UFUNCTION(BlueprintPure, Category = "ZAbilitySystemLibrary|GameplayEffects")
-	static TArray<FGameplayTag> GetDebuffTypes(const FGameplayEffectContextHandle& EffectContextHandle);
+	static FGameplayTag GetDebuffType(const FGameplayEffectContextHandle& EffectContextHandle);
 	
 	UFUNCTION(BlueprintPure, Category = "ZAbilitySystemLibrary|GameplayEffects")
 	static int32 GetDebuffStack(const FGameplayEffectContextHandle& EffectContextHandle);
@@ -76,7 +76,7 @@ public:
 	static void SetDamageType(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, const FGameplayTag& InDamageType);
 
 	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayEffects")
-	static void SetDebuffTypes(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, const TArray<FGameplayTag>& InDebuffTypes);
+	static void SetDebuffType(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, const FGameplayTag& InDebuffType);
 	
 	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayEffects")
 	static void SetDebuffStack(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, int32 InDebuffStack);

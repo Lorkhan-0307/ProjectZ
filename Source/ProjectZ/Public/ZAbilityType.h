@@ -36,7 +36,7 @@ struct FDamageEffectParams
 	FGameplayTag DamageType = FGameplayTag();
 
 	UPROPERTY()
-	TArray<FGameplayTag> DebuffTypes;
+	FGameplayTag DebuffType = FGameplayTag();
 
 	UPROPERTY()
 	float DebuffChance = 0.f;
@@ -63,7 +63,7 @@ public:
 	bool IsSuccessfulDebuff() const { return bIsSuccessfulDebuff; }
 	float GetDebuffDamage() const { return DebuffDamage; }
 	int32 GetDebuffDuration() const { return DebuffDuration; }
-	TArray<FGameplayTag> GetDebuffTypes() const { return DebuffTypes; }
+	FGameplayTag GetDebuffType() const { return DebuffType; }
 	TSharedPtr<FGameplayTag> GetDamageType() const { return DamageType; }
 	int32 GetDebuffStack() const { return DebuffStack; }
 
@@ -72,7 +72,7 @@ public:
 	void SetIsSuccessfulDebuff(bool bInIsDebuff) { bIsSuccessfulDebuff = bInIsDebuff; }
 	void SetDebuffDamage(float InDamage) { DebuffDamage = InDamage; }
 	void SetDebuffDuration(int32 InDuration) { DebuffDuration = InDuration; }
-	void SetDebuffTypes(TArray<FGameplayTag> InDebuffTypes) { DebuffTypes = InDebuffTypes; }
+	void SetDebuffType(FGameplayTag InDebuffType) { DebuffType = InDebuffType; }
 	void SetDamageType(TSharedPtr<FGameplayTag> InDamageType) { DamageType = InDamageType; }
 	void SetDebuffStack(int32 InDebuffStack) { DebuffStack = InDebuffStack; }
 
@@ -117,7 +117,7 @@ protected:
 	TSharedPtr<FGameplayTag> DamageType;
 
 	UPROPERTY()
-	TArray<FGameplayTag> DebuffTypes;
+	FGameplayTag DebuffType;
 
 	UPROPERTY()
 	int32 DebuffStack = 0;

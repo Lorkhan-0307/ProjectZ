@@ -3,6 +3,7 @@
 
 #include "Game/ZGameModeBase.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "ZGameplayTag.h"
 #include "AbilitySystem/ZAttributeSet.h"
 #include "AI/ZAIController.h"
@@ -117,6 +118,15 @@ void AZGameModeBase::NextTurn()
 		{
 			Debuff.DebuffDuration--;
 			bIsStun = true;
+			/*
+			if (Debuff.DebuffDuration == 0)
+			{
+				UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TurnActor);
+				FGameplayTagContainer TagContainer;
+				TagContainer.AddTag(Debuff.DebuffType);
+				TargetASC->RemoveActiveEffectsWithGrantedTags(TagContainer);
+			}
+			*/
 		}
 	}
 
@@ -130,7 +140,7 @@ void AZGameModeBase::NextTurn()
 		Enemy->bIsMyTurn = !bIsStun;
 		if (bIsStun)
 		{
-			TurnEndWithTime();			
+			TurnEndWithTime();
 		}
 	}
 }

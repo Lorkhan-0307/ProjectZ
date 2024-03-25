@@ -26,7 +26,7 @@ FDamageEffectParams UZDamageGameplayAbility::MakeDamageEffectParamsFromClassDefa
 	Params.BaseDamage = Damage.GetValueAtLevel(GetAbilityLevel());
 	Params.AbilityLevel = GetAbilityLevel();
 	Params.DamageType = DamageType;
-	Params.DebuffTypes = DebuffTypes;
+	Params.DebuffType = DebuffType;
 	Params.DebuffChance = DebuffChance;
 	Params.DebuffDamage = DebuffDamage;
 	Params.DebuffDuration = DebuffDuration;

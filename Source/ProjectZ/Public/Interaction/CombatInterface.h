@@ -7,8 +7,12 @@
 #include "UObject/Interface.h"
 #include "CombatInterface.generated.h"
 
+class UAbilitySystemComponent;
 class UAnimMontage;
 struct FGameplayEffectSpec;
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnASCRegistered, UAbilitySystemComponent*)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDeath, AActor*, DeadActor);
 
 USTRUCT(BlueprintType)
 struct FTaggedMontage
@@ -84,4 +88,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void RemoveDebuff(FGameplayTag RemoveDebuffType);
+
+	virtual FOnASCRegistered GetOnASCRegisterdDelegate() = 0;
+	virtual FOnDeath GetOnDeathDelegate() = 0;
 };

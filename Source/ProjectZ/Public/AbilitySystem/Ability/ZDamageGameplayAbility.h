@@ -33,7 +33,7 @@ protected:
 	FScalableFloat Damage;
 
 	UPROPERTY(EditDefaultsOnly, Category = Debuff)
-	TArray<FGameplayTag> DebuffTypes;
+	FGameplayTag DebuffType;
 
 	UPROPERTY(EditDefaultsOnly, Category = Debuff)
 	float DebuffChance = 20.f;

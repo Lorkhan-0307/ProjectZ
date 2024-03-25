@@ -119,19 +119,15 @@ void UZAttributeSet::Debuff(const FEffectProperties& Props)
 	const FGameplayTag DamageType = UZAbilitySystemLibrary::GetDamageType(Props.EffectContextHandle);
 	const float DebuffDamage = UZAbilitySystemLibrary::GetDebuffDamage(Props.EffectContextHandle);
 	const int32 DebuffDuration = UZAbilitySystemLibrary::GetDebuffDuration(Props.EffectContextHandle);
-	const TArray<FGameplayTag> DebuffTypes = UZAbilitySystemLibrary::GetDebuffTypes(Props.EffectContextHandle);
+	const FGameplayTag DebuffType = UZAbilitySystemLibrary::GetDebuffType(Props.EffectContextHandle);
 	const int32 DebuffStack = UZAbilitySystemLibrary::GetDebuffStack(Props.EffectContextHandle);
 
 	FString DebuffName = FString::Printf(TEXT("DynamicDebuff_%s"), *DamageType.ToString());
 
 	UGameplayEffect* Effect = NewObject<UGameplayEffect>(GetTransientPackage(), FName(DebuffName));
 
-	Effect->DurationPolicy = EGameplayEffectDurationType::Instant;
-
-	for (FGameplayTag DebuffTag : DebuffTypes)
-	{
-		Effect->InheritableOwnedTagsContainer.AddTag(DebuffTag);
-	}
+	Effect->DurationPolicy = EGameplayEffectDurationType::Infinite;
+	Effect->InheritableOwnedTagsContainer.AddTag(DebuffType);
 
 	Effect->StackingType = EGameplayEffectStackingType::AggregateBySource;
 	//Effect->StackLimitCount = 1;
@@ -153,17 +149,14 @@ void UZAttributeSet::Debuff(const FEffectProperties& Props)
 
 		Props.TargetASC->ApplyGameplayEffectSpecToSelf(*MutableSpec);
 	}
-
-	for (const FGameplayTag& DebuffType : DebuffTypes)
-	{
-		FDebuff NewDebuff;
-		NewDebuff.DebuffDamage = DebuffDamage;
-		NewDebuff.DebuffDuration = DebuffDuration;
-		NewDebuff.DebuffStack = DebuffStack;
-		NewDebuff.DebuffType = DebuffType;
-		NewDebuff.DebuffEffectSpec = MutableSpec;
-		ICombatInterface::Execute_AddDebuff(Props.TargetCharacter, NewDebuff);
-	}
+	
+	FDebuff NewDebuff;
+	NewDebuff.DebuffDamage = DebuffDamage;
+	NewDebuff.DebuffDuration = DebuffDuration;
+	NewDebuff.DebuffStack = DebuffStack;
+	NewDebuff.DebuffType = DebuffType;
+	NewDebuff.DebuffEffectSpec = MutableSpec;
+	ICombatInterface::Execute_AddDebuff(Props.TargetCharacter, NewDebuff);
 }
 
 void UZAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const

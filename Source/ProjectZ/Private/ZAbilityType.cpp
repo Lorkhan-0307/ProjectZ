@@ -58,12 +58,16 @@ bool FZGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bool&
 		{
 			RepBits |= 1 << 12;
 		}
-		if (DebuffTypes.Num() > 0)
+		if (DebuffType.IsValid())
 		{
 			RepBits |= 1 << 13;
 		}
+		if (DebuffStack > 0)
+		{
+			RepBits |= 1 << 14;
+		}
 
-		Ar.SerializeBits(&RepBits, 13);
+		Ar.SerializeBits(&RepBits, 15);
 
 		if (RepBits & (1 << 0))
 		{
@@ -138,7 +142,11 @@ bool FZGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bool&
 		}
 		if (RepBits & (1 << 13))
 		{
-			SafeNetSerializeTArray_Default<31>(Ar, DebuffTypes);
+			Ar << DebuffType;
+		}
+		if (RepBits & (1 << 14))
+		{
+			Ar << DebuffStack;
 		}
 	}
 

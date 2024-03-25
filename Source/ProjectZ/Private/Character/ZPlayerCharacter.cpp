@@ -58,6 +58,7 @@ void AZPlayerCharacter::InitAbilityActorInfo()
 	Cast<UZAbilitySystemComponent>(ZPlayerState->GetAbilitySystemComponent())->AbilityActorInfoSet();
 	AbilitySystemComponent = ZPlayerState->GetAbilitySystemComponent();
 	AttributeSet = ZPlayerState->GetAttributeSet();
+	OnASCRegisteredDelegate.Broadcast(AbilitySystemComponent);
 
 	if (AZPlayerControllerBase* ZPlayerController = Cast<AZPlayerControllerBase>(GetController()))
 	{

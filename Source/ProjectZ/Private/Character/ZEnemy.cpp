@@ -113,6 +113,7 @@ void AZEnemy::InitAbilityActorInfo()
 	bRangeAttacker = ClassDefaultInfo.bRangeAttacker;
 
 	InitializeDefaultAttributes();
+	OnASCRegisteredDelegate.Broadcast(AbilitySystemComponent);
 }
 
 void AZEnemy::TurnChanged(ETurn Turn)

@@ -9,6 +9,7 @@
 #include "Interaction/CombatInterface.h"
 #include "ZCharacterBase.generated.h"
 
+class UDebuffNiagaraComponent;
 class UGameplayAbility;
 class UGameplayEffect;
 class UAbilitySystemComponent;
@@ -41,6 +42,11 @@ public:
 	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() override;
 	virtual void AddDebuff_Implementation(FDebuff Debuff) override;
 	virtual void RemoveDebuff_Implementation(FGameplayTag RemoveDebuffType) override;
+	virtual FOnASCRegistered GetOnASCRegisterdDelegate() override;
+	virtual FOnDeath GetOnDeathDelegate() override;
+
+	FOnASCRegistered OnASCRegisteredDelegate;
+	FOnDeath OnDeathDelegate;
 
 	UPROPERTY(EditAnywhere, Category = Combat)
 	TArray<FTaggedMontage> AttackMontages;
@@ -85,6 +91,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	float LifeSpan = 5.f;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UDebuffNiagaraComponent> BleedDebuffComponent;
 
 	virtual void InitAbilityActorInfo();
 

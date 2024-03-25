@@ -8,6 +8,7 @@
 #include "ZGameplayTag.h"
 #include "AbilitySystem/ZAbilitySystemComponent.h"
 #include "AbilitySystem/ZAbilitySystemLibrary.h"
+#include "AbilitySystem/Debuff/DebuffNiagaraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Game/ZGameModeBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -23,6 +24,10 @@ AZCharacterBase::AZCharacterBase()
 	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetMesh()->SetGenerateOverlapEvents(true);
+
+	BleedDebuffComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>("BleedDebuffComponent");
+	BleedDebuffComponent->SetupAttachment(GetRootComponent());
+	BleedDebuffComponent->DebuffTag = FZGameplayTag::Get().Debuff_Bleed;
 }
 
 UAnimMontage* AZCharacterBase::GetHitReactMontage_Implementation()
@@ -71,6 +76,7 @@ void AZCharacterBase::Die()
 
 	SetLifeSpan(LifeSpan);
 	bIsDead = true;
+	OnDeathDelegate.Broadcast(this);
 }
 
 bool AZCharacterBase::IsDead_Implementation() const
@@ -113,6 +119,16 @@ void AZCharacterBase::RemoveDebuff_Implementation(FGameplayTag RemoveDebuffType)
 			return;
 		}
 	}
+}
+
+FOnASCRegistered AZCharacterBase::GetOnASCRegisterdDelegate()
+{
+	return OnASCRegisteredDelegate;
+}
+
+FOnDeath AZCharacterBase::GetOnDeathDelegate()
+{
+	return OnDeathDelegate;
 }
 
 // Called when the game starts or when spawned

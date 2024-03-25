@@ -88,20 +88,18 @@ void UExecCalcDamage::Execute_Implementation(const FGameplayEffectCustomExecutio
 	// Debuff
 	const FZGameplayTag& GameplayTag = FZGameplayTag::Get();
 	FGameplayEffectContextHandle ContextHandle = Spec.GetContext();
-	TArray<FGameplayTag> DebuffTypes;
 
-	for (FGameplayTag DebuffTag : GameplayTag.Debuffs)
+	for (FGameplayTag DebuffType : GameplayTag.Debuffs)
 	{
-		const FGameplayTag& DebuffType = DebuffTag;
 		const bool bDebuffIsSet = Spec.GetSetByCallerMagnitude(DebuffType, false, -1.f) > -0.5f; // .5 padding for floating point imprecision
 		if (bDebuffIsSet)
 		{
 			const float SourceDebuffChance = Spec.GetSetByCallerMagnitude(GameplayTag.Debuff_Chance, false, -1.f);
 			const bool bDebuff = FMath::RandRange(1, 100) < SourceDebuffChance;
-			UE_LOG(LogTemp, Warning, TEXT("%s %f"), *DebuffTag.ToString(), SourceDebuffChance);
 			if (bDebuff)
 			{
 				UZAbilitySystemLibrary::SetIsSuccessfulDebuff(ContextHandle, true);
+				UZAbilitySystemLibrary::SetDebuffType(ContextHandle, DebuffType);
 				//UZAbilitySystemLibrary::SetDamageType(ContextHandle,DamageType);
 
 				const float DebuffDamage = Spec.GetSetByCallerMagnitude(GameplayTag.Debuff_Damage, false, -1.f);
@@ -111,12 +109,9 @@ void UExecCalcDamage::Execute_Implementation(const FGameplayEffectCustomExecutio
 				UZAbilitySystemLibrary::SetDebuffDamage(ContextHandle, DebuffDamage);
 				UZAbilitySystemLibrary::SetDebuffDuration(ContextHandle, DebuffDuration);
 				UZAbilitySystemLibrary::SetDebuffStack(ContextHandle, DebuffStack);
-
-				DebuffTypes.Add(DebuffType);
 			}
 		}
 	}
-	UZAbilitySystemLibrary::SetDebuffTypes(ContextHandle, DebuffTypes);
 
 	// Get Damage Set by Caller Magnitude
 	float Damage = 0.f;
