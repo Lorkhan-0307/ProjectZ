@@ -21,8 +21,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
     UFUNCTION(BlueprintCallable) void BasicRoom();
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Floor Settings") int floorWidth=50;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Floor Settings") int floorHeight=20;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Floor Settings") int floorWidth=40;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Floor Settings") int floorHeight=25;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Floor Settings") int numRooms=9;
 
 protected:

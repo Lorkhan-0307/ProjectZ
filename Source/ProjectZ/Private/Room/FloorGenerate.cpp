@@ -50,10 +50,10 @@ AFloorGenerate::AFloorGenerate()
     Tile->SetWorldScale3D(FVector(1, 1, 0.1));
     Tile->SetRelativeLocation(FVector(100, 100, 0));
     XWall->SetStaticMesh(CubeMesh3);
-    XWall->SetWorldScale3D(FVector(1, 0.1, 2));
+    XWall->SetWorldScale3D(FVector(1, 0.1, 2.5));
     XWall->SetRelativeLocation(FVector(0, 0, 100));
 	YWall->SetStaticMesh(CubeMesh3);
-	YWall->SetWorldScale3D(FVector(0.1, 1, 2));
+	YWall->SetWorldScale3D(FVector(0.1, 1, 2.5));
 	YWall->SetRelativeLocation(FVector(0, 0, 100));
 }
 
