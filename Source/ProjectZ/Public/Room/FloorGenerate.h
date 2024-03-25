@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include <iostream>
 #include <vector>
 #include <cstdlib>
 #include <ctime>
@@ -21,6 +20,11 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
     UFUNCTION(BlueprintCallable) void BasicRoom();
+    UFUNCTION(BlueprintCallable) void SetDoor(TSubclassOf<class UObject> Door);
+    UPROPERTY(EditAnywhere, BlueprintReadOnly) TSubclassOf<class UObject> AttachedDoor;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<AActor*> DoorArray;
+    void CreateDoor(float x, float y);
+    
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Floor Settings") int floorWidth=40;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Floor Settings") int floorHeight=25;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Floor Settings") int numRooms=9;
@@ -121,13 +125,6 @@ public:
                     floorPlan[j][i] = '0' + room.number;
                 }
             }
-        }
-
-        for (const auto& row : floorPlan) {
-            for (char c : row) {
-                std::cout << c;
-            }
-            std::cout << std::endl;
         }
     }
     std::vector<std::vector<char>> makePlan() const
