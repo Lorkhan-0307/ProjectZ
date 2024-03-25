@@ -35,14 +35,21 @@ void AFloorGenerate::BasicRoom()
 			if(floorPlan[i][j] != '.')
 			{
 				Tile->AddInstance(FTransform(FVector(i*100,j*100,0)));
-				CreateDoor(i*100+50, j*100+50);
 				if(i==0) YWall->AddInstance(FTransform(FVector(100, 500+j*1000, 0)));
 				if(i==floorHeight-1) YWall->AddInstance(FTransform(FVector(floorHeight*100, 1500+j*1000, 0)));
 				if(j==0) XWall->AddInstance(FTransform(FVector(i*100, 0, 0)));
 				if(j==floorWidth-1) XWall->AddInstance(FTransform(FVector(1500+i*1000, floorWidth*100,0)));
 			}
-			if(i && floorPlan[i][j] != floorPlan[i-1][j]) YWall->AddInstance(FTransform(FVector(500+i*1000, 100+j*100, 0)));
-			if(j && floorPlan[i][j] != floorPlan[i][j-1]) XWall->AddInstance(FTransform(FVector(100+i*100, 500+j*1000, 0)));
+			if(i && floorPlan[i][j] != floorPlan[i-1][j])
+			{
+				if(floorPlan[i][j] != '.' && floorPlan[i-1][j] != '.') CreateDoor(i*100+50, j*100+50, true);
+				else YWall->AddInstance(FTransform(FVector(500+i*1000, 100+j*100, 0)));
+			}
+			if(j && floorPlan[i][j] != floorPlan[i][j-1])
+			{
+				if(floorPlan[i][j] != '.' && floorPlan[i][j-1] != '.') CreateDoor(i*100+50, j*100+50, false);
+				else XWall->AddInstance(FTransform(FVector(100+i*100, 500+j*1000, 0)));
+			}
 		}
 	}
 }
@@ -78,9 +85,16 @@ void AFloorGenerate::SetDoor(TSubclassOf<UObject> Door)
 	AttachedDoor = Door;
 }
 
-void AFloorGenerate::CreateDoor(float x, float y)
+void AFloorGenerate::CreateDoor(float x, float y, bool isVertical)
 {
-	CurrentDoor = GetWorld()->SpawnActor<AActor>(AttachedDoor, FTransform(FVector(x, y, 0)+GetActorLocation()));
+	if(isVertical)
+	{
+		CurrentDoor = GetWorld()->SpawnActor<AActor>(AttachedDoor, FTransform(FRotator(0, 90, 0), FVector(x, y, 0)+GetActorLocation()));
+	}
+	else
+	{
+		CurrentDoor = GetWorld()->SpawnActor<AActor>(AttachedDoor, FTransform(FVector(x, y, 0)+GetActorLocation()));
+	}
 	DoorArray.Add(CurrentDoor);
 }
 

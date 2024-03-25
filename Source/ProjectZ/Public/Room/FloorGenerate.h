@@ -23,7 +23,7 @@ public:
     UFUNCTION(BlueprintCallable) void SetDoor(TSubclassOf<class UObject> Door);
     UPROPERTY(EditAnywhere, BlueprintReadOnly) TSubclassOf<class UObject> AttachedDoor;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<AActor*> DoorArray;
-    void CreateDoor(float x, float y);
+    void CreateDoor(float x, float y, bool isVertical);
     
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Floor Settings") int floorWidth=40;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Floor Settings") int floorHeight=25;
