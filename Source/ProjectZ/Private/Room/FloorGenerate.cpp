@@ -24,7 +24,7 @@ void AFloorGenerate::BasicRoom()
 	// Random Generate Floor Plans
 	Floor floor(floorWidth, floorHeight);
 	floor.generateRooms(numRooms);
-	std::vector<std::vector<char>> floorPlan(floorHeight, std::vector<char>(floorWidth, '.'));
+	std::vector<std::vector<int>> floorPlan(floorHeight, std::vector<int>(floorWidth, -1));
 	floorPlan = floor.makePlan();
 	
 	// Materialize Floor From Floor Plans
@@ -32,7 +32,7 @@ void AFloorGenerate::BasicRoom()
 	{
 		for(int j=0;j<floorWidth;j++)
 		{
-			if(floorPlan[i][j] != '.')
+			if(floorPlan[i][j] != -1)
 			{
 				Tile->AddInstance(FTransform(FVector(i*100,j*100,0)));
 				if(i==0) YWall->AddInstance(FTransform(FVector(100, 500+j*1000, 0)));
@@ -42,13 +42,13 @@ void AFloorGenerate::BasicRoom()
 			}
 			if(i && floorPlan[i][j] != floorPlan[i-1][j])
 			{
-				if(floorPlan[i][j] != '.' && floorPlan[i-1][j] != '.') CreateDoor(i*100+50, j*100+50, true);
-				else YWall->AddInstance(FTransform(FVector(500+i*1000, 100+j*100, 0)));
+				if(floorPlan[i][j] != -1 && floorPlan[i-1][j] != -1) CreateDoor(i*120+60, j*120+60, true);
+				else YWall->AddInstance(FTransform(FVector(600+i*1200, 100+j*100, 0)));
 			}
 			if(j && floorPlan[i][j] != floorPlan[i][j-1])
 			{
-				if(floorPlan[i][j] != '.' && floorPlan[i][j-1] != '.') CreateDoor(i*100+50, j*100+50, false);
-				else XWall->AddInstance(FTransform(FVector(100+i*100, 500+j*1000, 0)));
+				if(floorPlan[i][j] != -1 && floorPlan[i][j-1] != -1) CreateDoor(i*120+60, j*120+60, false);
+				else XWall->AddInstance(FTransform(FVector(100+i*100, 600+j*1200, 0)));
 			}
 		}
 	}
@@ -69,14 +69,14 @@ AFloorGenerate::AFloorGenerate()
     XWall->SetupAttachment(GetRootComponent());
 	YWall->SetupAttachment(GetRootComponent());
     Tile->SetStaticMesh(CubeMesh3);
-    Tile->SetWorldScale3D(FVector(1, 1, 0.1));
-    Tile->SetRelativeLocation(FVector(100, 100, 0));
+    Tile->SetWorldScale3D(FVector(1.2, 1.2, 0.1));
+    Tile->SetRelativeLocation(FVector(120, 120, 0));
     XWall->SetStaticMesh(CubeMesh3);
-    XWall->SetWorldScale3D(FVector(1, 0.1, 2.5));
-    XWall->SetRelativeLocation(FVector(0, 0, 100));
+    XWall->SetWorldScale3D(FVector(1.2, 0.1, 2.5));
+    XWall->SetRelativeLocation(FVector(0, 0, 120));
 	YWall->SetStaticMesh(CubeMesh3);
-	YWall->SetWorldScale3D(FVector(0.1, 1, 2.5));
-	YWall->SetRelativeLocation(FVector(0, 0, 100));
+	YWall->SetWorldScale3D(FVector(0.1, 1.2, 2.5));
+	YWall->SetRelativeLocation(FVector(0, 0, 120));
 	AttachedDoor = nullptr;
 }
 
@@ -89,11 +89,11 @@ void AFloorGenerate::CreateDoor(float x, float y, bool isVertical)
 {
 	if(isVertical)
 	{
-		CurrentDoor = GetWorld()->SpawnActor<AActor>(AttachedDoor, FTransform(FRotator(0, 90, 0), FVector(x, y, 0)+GetActorLocation()));
+		CurrentDoor = GetWorld()->SpawnActor<AActor>(AttachedDoor, FTransform(FRotator(0, 90, 0), FVector(x, y, 10)+GetActorLocation()));
 	}
 	else
 	{
-		CurrentDoor = GetWorld()->SpawnActor<AActor>(AttachedDoor, FTransform(FVector(x, y, 0)+GetActorLocation()));
+		CurrentDoor = GetWorld()->SpawnActor<AActor>(AttachedDoor, FTransform(FVector(x, y, 10)+GetActorLocation()));
 	}
 	DoorArray.Add(CurrentDoor);
 }

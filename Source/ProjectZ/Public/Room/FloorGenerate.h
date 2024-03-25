@@ -116,26 +116,26 @@ public:
         }
     }
     void printFloor() const {
-        std::vector<std::vector<char>> floorPlan(height, std::vector<char>(width, '.'));
+        std::vector<std::vector<int>> floorPlan(height, std::vector<int>(width, -1));
 
         // Print floor plan
         for (const auto& room : rooms) {
             for (int i = room.x; i < room.x + room.width; ++i) {
                 for (int j = room.y; j < room.y + room.height; ++j) {
-                    floorPlan[j][i] = '0' + room.number;
+                    floorPlan[j][i] = room.number;
                 }
             }
         }
     }
-    std::vector<std::vector<char>> makePlan() const
+    std::vector<std::vector<int>> makePlan() const
     {
-        std::vector<std::vector<char>> floorPlan(height, std::vector<char>(width, '.'));
+        std::vector<std::vector<int>> floorPlan(height, std::vector<int>(width, -1));
 
         // Print floor plan
         for (const auto& room : rooms) {
             for (int i = room.x; i < room.x + room.width; ++i) {
                 for (int j = room.y; j < room.y + room.height; ++j) {
-                    floorPlan[j][i] = '0' + room.number;
+                    floorPlan[j][i] = room.number;
                 }
             }
         }
