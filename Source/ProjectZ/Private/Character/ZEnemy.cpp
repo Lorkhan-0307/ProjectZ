@@ -66,11 +66,21 @@ void AZEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 	bHitReacting = NewCount > 0;
 }
 
+void AZEnemy::SetCombatTarget_Implementation(AActor* InCombatTarget)
+{
+	CombatTarget = InCombatTarget;
+}
+
+AActor* AZEnemy::GetCombatTarget_Implementation() const
+{
+	return CombatTarget;
+}
+
 void AZEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	InitAbilityActorInfo();
-	UZAbilitySystemLibrary::GiveStartupAbility(this, AbilitySystemComponent);
+	UZAbilitySystemLibrary::GiveStartupAbility(this, AbilitySystemComponent, CharacterClass);
 
 	if (const UZAttributeSet* ZAS = Cast<UZAttributeSet>(AttributeSet))
 	{
@@ -97,6 +107,10 @@ void AZEnemy::InitAbilityActorInfo()
 {
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	Cast<UZAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
+
+	UCharacterClassInfo* CharacterClassInfo = UZAbilitySystemLibrary::GetCharacterClassInfo(this);
+	FCharacterClassDefaultInfo ClassDefaultInfo = CharacterClassInfo->GetClassDefaultInfo(CharacterClass);
+	bRangeAttacker = ClassDefaultInfo.bRangeAttacker;
 
 	InitializeDefaultAttributes();
 }

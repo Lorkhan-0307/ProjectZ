@@ -37,7 +37,7 @@ protected:
 private:
 	UPROPERTY(meta = (BindWidget))
 	UCanvasPanel* OverlayCanvasPanel;
-	
+
 	UPROPERTY(meta = (BindWidget))
 	UProgressBar* HealthBar;
 
@@ -123,6 +123,9 @@ private:
 	float Cost;
 	float MaxCost;
 
+	UPROPERTY(EditAnywhere, Category = ProgressBar)
+	float ProgressBarInterpSpeed = 1.f;
+
 	UPROPERTY(VisibleAnywhere, Category = Card)
 	TArray<UCardWidget*> HandCard;
 
@@ -164,6 +167,9 @@ private:
 
 	UFUNCTION()
 	virtual void OnMaxMentalityChanged(float NewValue);
+
+	void SetHPPercent(float DeltaTime);
+	void SetMPPercent(float DeltaTime);
 
 	UFUNCTION()
 	void OnCostChanged(float NewValue);
@@ -238,7 +244,7 @@ private:
 
 	UFUNCTION()
 	void ShowCharacterPortrait();
-	
+
 	void HideCharacterPortrait();
 	void UpdateCharacterPortrait();
 
@@ -248,4 +254,3 @@ private:
 	UFUNCTION()
 	void TurnEnd();
 };
-

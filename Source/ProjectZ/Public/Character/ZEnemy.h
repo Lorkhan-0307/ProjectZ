@@ -45,6 +45,12 @@ public:
 
 	bool bTargetSet = false;
 
+	UPROPERTY(BlueprintReadWrite, Category = Combat)
+	TObjectPtr<AActor> CombatTarget;
+
+	virtual void SetCombatTarget_Implementation(AActor* InCombatTarget) override;
+	virtual AActor* GetCombatTarget_Implementation() const override;
+
 	FORCEINLINE AZAIController* GetAIController() const { return ZAIController; }
 
 protected:

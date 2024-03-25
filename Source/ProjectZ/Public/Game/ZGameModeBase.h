@@ -37,7 +37,7 @@ public:
 	TArray<AActor*> CombatActor;
 
 	void CombatStart();
-	void NextTurn();
+	void TurnEnd();
 	void CharacterDie(AActor* DieActor);
 
 	UFUNCTION(BlueprintCallable)
@@ -72,6 +72,9 @@ public:
 
 	bool bCanMove = true;
 
+	UPROPERTY(EditAnywhere)
+	float TurnEndTime = 2.f;
+
 private:
 	ETurn CurrentTurn = ETurn::ET_NonCombat;
 	ETurn LastTurn;
@@ -81,5 +84,10 @@ private:
 
 	int32 TurnPlayerIndex;
 
+	FTimerHandle TurnEndTimer;
+
 	void SortCombatActor();
+
+	UFUNCTION()
+	void NextTurn();
 };

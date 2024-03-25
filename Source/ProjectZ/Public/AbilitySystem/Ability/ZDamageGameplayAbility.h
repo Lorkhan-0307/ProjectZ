@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Ability/ZGameplayAbility.h"
+#include "Interaction/CombatInterface.h"
 #include "ZDamageGameplayAbility.generated.h"
 
 /**
@@ -14,10 +15,17 @@ class PROJECTZ_API UZDamageGameplayAbility : public UZGameplayAbility
 {
 	GENERATED_BODY()
 
+public:
+	UFUNCTION(BlueprintCallable)
+	void CauseDamage(AActor* TargetActor);
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = Damage)
-	TMap<FGameplayTag,FScalableFloat> DamageType;
+	TMap<FGameplayTag, FScalableFloat> DamageType;
+
+	UFUNCTION(BlueprintPure)
+	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const;
 };
