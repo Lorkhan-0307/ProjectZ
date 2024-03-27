@@ -146,8 +146,6 @@ void UZAttributeSet::Debuff(const FEffectProperties& Props)
 		FZGameplayEffectContext* ZContext = static_cast<FZGameplayEffectContext*>(EffectContext.Get());
 		TSharedPtr<FGameplayTag> DebuffDamageType = MakeShareable(new FGameplayTag(DamageType));
 		ZContext->SetDamageType(DebuffDamageType);
-
-		Props.TargetASC->ApplyGameplayEffectSpecToSelf(*MutableSpec);
 	}
 	
 	FDebuff NewDebuff;

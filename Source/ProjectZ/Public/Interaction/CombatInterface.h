@@ -91,4 +91,10 @@ public:
 
 	virtual FOnASCRegistered GetOnASCRegisterdDelegate() = 0;
 	virtual FOnDeath GetOnDeathDelegate() = 0;
+
+	bool bIsMyTurn = false;
+
+	bool bIsStuned = false;
+
+	int32 StunImmunityCount;
 };

@@ -32,7 +32,7 @@ void UBTService_FindNearestPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	UZAbilitySystemLibrary::PayCost(Character, DeltaLocation);
 	UBTFunctionLibrary::SetBlackboardValueAsFloat(this, CostSelector, FMath::Floor(AS->GetCost()));
 
-	if (FMath::Floor(AS->GetCost()) == 0 && Cast<AZEnemy>(Character)->bIsMyTurn)
+	if (Cast<AZEnemy>(Character)->bIsMyTurn && (FMath::Floor(AS->GetCost()) == 0 || Cast<AZEnemy>(Character)->bIsStuned))
 	{
 		Cast<AZEnemy>(Character)->bIsMyTurn = false;
 		Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->TurnEnd();

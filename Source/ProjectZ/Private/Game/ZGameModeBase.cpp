@@ -35,7 +35,7 @@ void AZGameModeBase::CombatStart()
 	SortCombatActor();
 	CombatStartDelegate.Broadcast(CombatActor);
 
-	TurnPlayerIndex = -1;
+	TurnPlayerIndex = CombatActor.Num() - 1;
 	TurnEnd();
 }
 
@@ -103,6 +103,8 @@ void AZGameModeBase::TurnEndWithTime()
 
 void AZGameModeBase::NextTurn()
 {
+	Cast<AZCharacterBase>(CombatActor[TurnPlayerIndex])->bIsMyTurn = false;
+
 	TurnPlayerIndex++;
 	if (TurnPlayerIndex >= CombatActor.Num())
 	{
@@ -111,24 +113,30 @@ void AZGameModeBase::NextTurn()
 
 	TurnActor = CombatActor[TurnPlayerIndex];
 
-	bool bIsStun = false;
-	for (FDebuff& Debuff : Cast<ICombatInterface>(TurnActor)->Debuffs)
+	ICombatInterface* CombatInterface = Cast<ICombatInterface>(TurnActor);
+	CombatInterface->bIsMyTurn = true;
+	CombatInterface->bIsStuned = false;
+	if (CombatInterface)
 	{
-		if (Debuff.DebuffType.MatchesTagExact(FZGameplayTag::Get().Debuff_Stun) && Debuff.DebuffDuration > 0)
+		for (FDebuff& Debuff : CombatInterface->Debuffs)
 		{
-			Debuff.DebuffDuration--;
-			bIsStun = true;
-			/*
-			if (Debuff.DebuffDuration == 0)
+			if (Debuff.DebuffType.MatchesTagExact(FZGameplayTag::Get().Debuff_Stun) && Debuff.DebuffDuration > 0)
 			{
-				UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TurnActor);
-				FGameplayTagContainer TagContainer;
-				TagContainer.AddTag(Debuff.DebuffType);
-				TargetASC->RemoveActiveEffectsWithGrantedTags(TagContainer);
+				Debuff.DebuffDuration--;
+				CombatInterface->bIsStuned = true;
+				CombatInterface->StunImmunityCount = 3;
+
+				if (Debuff.DebuffDuration == 0)
+				{
+					UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TurnActor);
+					FGameplayTagContainer TagContainer;
+					TagContainer.AddTag(Debuff.DebuffType);
+					TargetASC->RemoveActiveEffectsWithGrantedTags(TagContainer);
+				}
 			}
-			*/
 		}
 	}
+	CombatInterface->StunImmunityCount--;
 
 	if (AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(TurnActor))
 	{
@@ -137,10 +145,5 @@ void AZGameModeBase::NextTurn()
 	else if (AZEnemy* Enemy = Cast<AZEnemy>(TurnActor))
 	{
 		SetTurn(ETurn::ET_EnemyTurn);
-		Enemy->bIsMyTurn = !bIsStun;
-		if (bIsStun)
-		{
-			TurnEndWithTime();
-		}
 	}
 }
