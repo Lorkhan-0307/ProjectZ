@@ -84,36 +84,35 @@ void UZAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 {
 	const float LocalIncomingDamage = GetIncomingDamage();
 	SetIncomingDamage(0.f);
-	if (LocalIncomingDamage > 0)
+	const float NewHealth = GetHealth() - LocalIncomingDamage;
+	SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
+
+	const bool bFatal = NewHealth <= 0.f;
+	if (bFatal)
 	{
-		const float NewHealth = GetHealth() - LocalIncomingDamage;
-		SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
-
-		const bool bFatal = NewHealth <= 0.f;
-		if (bFatal)
+		ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor);
+		if (CombatInterface)
 		{
-			ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor);
-			if (CombatInterface)
-			{
-				CombatInterface->Die();
-			}
+			CombatInterface->Die();
 		}
-		else
-		{
-			FGameplayTagContainer TagContainer;
-			TagContainer.AddTag(FZGameplayTag::Get().Effect_HitReact);
-			Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
-		}
+	}
+	else
+	{
+		FGameplayTagContainer TagContainer;
+		TagContainer.AddTag(FZGameplayTag::Get().Effect_HitReact);
+		Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+	}
 
-		const bool bDodge = UZAbilitySystemLibrary::IsDodged(Props.EffectContextHandle);
-		const bool bCriticalHit = UZAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
+	SetDefence(0.f);
 
-		ShowFloatingText(Props, LocalIncomingDamage);
+	const bool bDodge = UZAbilitySystemLibrary::IsDodged(Props.EffectContextHandle);
+	const bool bCriticalHit = UZAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
 
-		if (UZAbilitySystemLibrary::IsSuccessfulDebuff(Props.EffectContextHandle))
-		{
-			Debuff(Props);
-		}
+	ShowFloatingText(Props, LocalIncomingDamage);
+
+	if (UZAbilitySystemLibrary::IsSuccessfulDebuff(Props.EffectContextHandle))
+	{
+		Debuff(Props);
 	}
 }
 

@@ -7,6 +7,7 @@
 
 class UZGameplayAbility;
 class UGameplayEffect;
+class UGameplayAbility;
 
 UENUM(BlueprintType)
 enum class ECardType : uint8
@@ -69,6 +70,9 @@ struct FCard : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Card Ability")
 	FGameplayTag CardTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Card Ability")
+	TSubclassOf<UGameplayAbility> CardAbility;
 	
 	bool IsValid = true;
 

@@ -205,7 +205,7 @@ void UExecCalcDamage::Execute_Implementation(const FGameplayEffectCustomExecutio
 	TargetDefence = FMath::Max<float>(TargetDefence, 0.f);
 
 	Damage -= TargetDefence;
-	Damage = FMath::Max<float>(TargetDefence, 0.f);
+	Damage = FMath::Max<float>(Damage, 0.f);
 
 	// Apply Damage
 	const FGameplayModifierEvaluatedData EvaluatedData(UZAttributeSet::GetIncomingDamageAttribute(), EGameplayModOp::Additive, Damage);

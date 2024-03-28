@@ -96,17 +96,19 @@ void UCardWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, U
 	const FVector2D MousePosition = UWidgetLayoutLibrary::GetMousePositionOnViewport(this) * UWidgetLayoutLibrary::GetViewportScale(this);
 	UZAttributeSet* AS = Cast<UZAttributeSet>(Cast<AZCharacterBase>(GetOwningPlayerPawn())->GetAttributeSet());
 
+	bool CanEquip = CardStat.CardType == ECardType::ECT_OneHandWeapon || CardStat.CardType == ECardType::ECT_TwoHandWeapon;
+
 	if (CanvasPanelSlot == nullptr) // Equipping Card
 	{
 		bool bUnEquipCard;
 		const bool bIsLeftHandCard = GetCachedGeometry().GetAbsolutePosition().X < UWidgetLayoutLibrary::GetViewportSize(this).X / 2.f;
 		if (bIsLeftHandCard)
 		{
-			bUnEquipCard = !(CardComponent->LeftEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->LeftEquipPosMax) && CardStat.CardType == ECardType::ECT_CanEquip);
+			bUnEquipCard = !(CardComponent->LeftEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->LeftEquipPosMax) && CanEquip);
 		}
 		else
 		{
-			bUnEquipCard = !(CardComponent->RightEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->RightEquipPosMax) && CardStat.CardType == ECardType::ECT_CanEquip);
+			bUnEquipCard = !(CardComponent->RightEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->RightEquipPosMax) && CanEquip);
 		}
 		bUnEquipCard = bUnEquipCard && CardStat.CardCost < AS->GetCost();
 
@@ -124,13 +126,13 @@ void UCardWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, U
 
 
 	bool bUseCard = MousePosition.Y < CardComponent->GetPlayCardHeight() && (CardStat.CardType == ECardType::ECT_Skill || CardStat.CardType == ECardType::ECT_UsablePassive); // Use Card
-	bUseCard = bUseCard || (CardComponent->LeftEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->LeftEquipPosMax) && CardStat.CardType == ECardType::ECT_CanEquip); // Equip Card Left
-	bUseCard = bUseCard || (CardComponent->RightEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->RightEquipPosMax) && CardStat.CardType == ECardType::ECT_CanEquip); // Equip Card Right
+	bUseCard = bUseCard || (CardComponent->LeftEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->LeftEquipPosMax) && CanEquip); // Equip Card Left
+	bUseCard = bUseCard || (CardComponent->RightEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->RightEquipPosMax) && CanEquip); // Equip Card Right
 	bUseCard = bUseCard && CardStat.CardCost < AS->GetCost();
 
 	if (bUseCard) // Use Card
 	{
-		CardComponent->ActiveCard(CardStat, (CardComponent->LeftEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->LeftEquipPosMax) && CardStat.CardType == ECardType::ECT_CanEquip));
+		CardComponent->ActiveCard(CardStat, (CardComponent->LeftEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->LeftEquipPosMax) && CanEquip));
 		AZGameModeBase* GameMode = Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode());
 		if (GameMode->GetCurrentTurn() == ETurn::ET_MoveTurn)
 		{

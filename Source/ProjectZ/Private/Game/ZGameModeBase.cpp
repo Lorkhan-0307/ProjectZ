@@ -35,6 +35,8 @@ void AZGameModeBase::CombatStart()
 	SortCombatActor();
 	CombatStartDelegate.Broadcast(CombatActor);
 
+	Cast<ICombatInterface>(CombatActor[0])->bIsMyTurn = true;
+
 	TurnPlayerIndex = CombatActor.Num() - 1;
 	TurnEnd();
 }
@@ -116,6 +118,16 @@ void AZGameModeBase::NextTurn()
 	ICombatInterface* CombatInterface = Cast<ICombatInterface>(TurnActor);
 	CombatInterface->bIsMyTurn = true;
 	CombatInterface->bIsStuned = false;
+
+	if (AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(TurnActor))
+	{
+		SetTurn(ETurn::ET_MoveTurn);
+	}
+	else if (AZEnemy* Enemy = Cast<AZEnemy>(TurnActor))
+	{
+		SetTurn(ETurn::ET_EnemyTurn);
+	}
+	
 	if (CombatInterface)
 	{
 		for (FDebuff& Debuff : CombatInterface->Debuffs)
@@ -137,13 +149,4 @@ void AZGameModeBase::NextTurn()
 		}
 	}
 	CombatInterface->StunImmunityCount--;
-
-	if (AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(TurnActor))
-	{
-		SetTurn(ETurn::ET_MoveTurn);
-	}
-	else if (AZEnemy* Enemy = Cast<AZEnemy>(TurnActor))
-	{
-		SetTurn(ETurn::ET_EnemyTurn);
-	}
 }

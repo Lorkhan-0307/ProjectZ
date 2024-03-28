@@ -27,6 +27,9 @@ protected:
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = Damage)
+	FGameplayTag CardType;
+
+	UPROPERTY(EditDefaultsOnly, Category = Damage)
 	FGameplayTag DamageType;
 
 	UPROPERTY(EditDefaultsOnly, Category = Damage)
@@ -51,4 +54,7 @@ protected:
 
 	UFUNCTION(BlueprintPure)
 	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const;
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void CardEffect();
 };

@@ -46,10 +46,23 @@ void UCardComponent::BeginPlay()
 	GameMode->TurnChangedDelegate.AddDynamic(this, &UCardComponent::TurnChanged);
 }
 
+void UCardComponent::AddCardToInventory(FName NewCardName)
+{
+	const FCard NewCard = ConvertCardNameToFCard(NewCardName);
+	if (NewCard.CardAbility)
+	{
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(NewCard.CardAbility, 1);
+		AbilitySpec.DynamicAbilityTags.AddTag(NewCard.CardTag);
+		ZCharacter->GetAbilitySystemComponent()->GiveAbility(NewCard.CardAbility);
+	}
+	CardInventory.Push(NewCard);
+}
+
 // Add Card to Deck
 void UCardComponent::AddCardToDeck(FName NewCardName)
 {
-	CardDeck.Push(ConvertCardNameToFCard(NewCardName));
+	const FCard NewCard = ConvertCardNameToFCard(NewCardName);
+	CardDeck.Push(NewCard);
 	DeckSize++;
 }
 
@@ -81,7 +94,6 @@ void UCardComponent::InitializeCardComponent(AZCharacterBase* Character)
 	//if (ZCharacter && ZCharacter->GetPlayerState()) Cast<AZPlayerState>(ZCharacter->GetPlayerState())->SetCharacterName(FName("JohnDoe"));
 	UCharacterClassInfo* CharacterClassInfo = UZAbilitySystemLibrary::GetCharacterClassInfo(Character);
 	InitializeCardInventory(CharacterClassInfo);
-	MakeCardDeck();
 
 	// For Test
 	/*
@@ -118,6 +130,19 @@ void UCardComponent::ShuffleDeck()
 // Begin combat, make deck at inventory without passive cards
 void UCardComponent::MakeCardDeck()
 {
+	// For Test
+	AddCardToInventory(FName("HealthPotion"));
+	AddCardToInventory(FName("KitchenKnife"));
+	AddCardToInventory(FName("Sword"));
+	AddCardToInventory(FName("Axe"));
+	AddCardToInventory(FName("ThrowStone"));
+	AddCardToInventory(FName("ThrowStone"));
+	AddCardToInventory(FName("ThrowStone"));
+	AddCardToInventory(FName("ThrowStone"));
+	AddCardToInventory(FName("HealthPotion"));
+	AddCardToInventory(FName("HealthPotion"));
+	// ...
+
 	CardDeck.Empty();
 	for (const FCard& Card : CardInventory)
 	{
@@ -127,18 +152,6 @@ void UCardComponent::MakeCardDeck()
 		}
 	}
 
-	// For Test
-	AddCardToDeck(FName("HealthPotion"));
-	AddCardToDeck(FName("KitchenKnife"));
-	AddCardToDeck(FName("Sword"));
-	AddCardToDeck(FName("Axe"));
-	AddCardToDeck(FName("ThrowStone"));
-	AddCardToDeck(FName("ThrowStone"));
-	AddCardToDeck(FName("ThrowStone"));
-	AddCardToDeck(FName("ThrowStone"));
-	AddCardToDeck(FName("HealthPotion"));
-	AddCardToDeck(FName("HealthPotion"));
-	// ...
 
 	ShuffleDeck();
 }
@@ -169,6 +182,11 @@ void UCardComponent::ApplyEffectToTarget(TSubclassOf<UGameplayEffect> Effect, in
 void UCardComponent::TurnChanged(ETurn Turn)
 {
 	CurrentTurn = Turn;
+	if (GameMode->GetLastTurn() == ETurn::ET_NonCombat && Turn != ETurn::ET_NonCombat)
+	{
+		MakeCardDeck();
+	}
+
 	if (CurrentTurn == ETurn::ET_MoveTurn)
 	{
 		for (int i = 0; i < 5; i++)
@@ -200,9 +218,9 @@ void UCardComponent::TurnChanged(ETurn Turn)
 void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand)
 {
 	AZCharacterBase* TargetCharacter = Cast<AZCharacterBase>(ZCharacter);
+	FGameplayTagContainer TagContainer;
 	switch (Card.CardType)
 	{
-	case ECardType::ECT_Buff:
 	case ECardType::ECT_UsablePassive:
 		for (const auto& InstantEffect : Card.InstantGameplayEffects)
 		{
@@ -225,6 +243,14 @@ void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand)
 		ActivatingCard = Card;
 		bActivatingCard = true;
 		ShowSkillCardDelegate.Broadcast(Card);
+		break;
+
+	case ECardType::ECT_Buff:
+		ActivatingCard = Card;
+		TagContainer.AddTag(Card.CardTag);
+		ZCharacter->GetAbilitySystemComponent()->TryActivateAbilitiesByTag(TagContainer);
+		UZAbilitySystemLibrary::PayCost(TargetCharacter, Card.CardCost);
+		UseCard(Card);
 		break;
 
 	case ECardType::ECT_OneHandWeapon:

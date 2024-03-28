@@ -30,6 +30,7 @@ void UCharacterPortraitWidget::InitPortrait(AActor* Actor)
 	else TestText->SetText(FText::FromString(FString::Printf(TEXT("%s"), *Actor->GetActorNameOrLabel())));
 
 	Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->TurnChangedDelegate.AddDynamic(this, &UCharacterPortraitWidget::TurnChanged);
+	TurnChanged(ETurn::ET_NonCombat);
 }
 
 void UCharacterPortraitWidget::DestroyWidget()

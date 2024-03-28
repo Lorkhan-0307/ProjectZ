@@ -101,6 +101,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	// Change function name AddCard -> AddCardToDeck
+	void AddCardToInventory(FName NewCardName);
 	void AddCardToDeck(FName NewCard);
 	void DeleteCard(FName DeleteCard);
 
