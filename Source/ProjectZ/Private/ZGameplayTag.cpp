@@ -49,6 +49,7 @@ void FZGameplayTag::InitializeNativeGameplayTags()
 	GameplayTag.Debuff_Bleed = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Bleed"));
 	GameplayTag.Debuff_Stun = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Stun"));
 	GameplayTag.Debuff_Slow = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Slow"));
+	GameplayTag.Debuff_KnockBack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.KnockBack"));
 
 	GameplayTag.Debuff_Chance = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Chance"));
 	GameplayTag.Debuff_Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Damage"));
@@ -67,10 +68,20 @@ void FZGameplayTag::InitializeNativeGameplayTags()
 	GameplayTag.Ability_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Attack"));
 
 	// Card
+	GameplayTag.Card_Weapon_OneHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Weapon.OneHand"));
+	GameplayTag.Card_Weapon_TwoHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Weapon.TwoHand"));
+	
 	GameplayTag.Card_SKill_ThrowStone = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.ThrowStone"));
+	GameplayTag.Card_Skill_Swing = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.Swing"));
+	GameplayTag.Card_Skill_Blocking = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.Blocking"));
+	GameplayTag.Card_Skill_Smash = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.Smash"));
+	GameplayTag.Card_Skill_Frenzy = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.Frenzy"));
+	GameplayTag.Card_Skill_Gather = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.Gather"));
+	
 
 	// Montage
 	GameplayTag.Montage_Attack_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.Weapon"));
 	GameplayTag.Montage_Attack_RightHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.RightHand"));
 	GameplayTag.Montage_Attack_LeftHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.LeftHand"));
+	
 }

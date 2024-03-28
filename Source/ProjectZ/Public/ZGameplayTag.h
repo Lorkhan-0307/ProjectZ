@@ -45,6 +45,7 @@ public:
 	FGameplayTag Debuff_Bleed;
 	FGameplayTag Debuff_Stun;
 	FGameplayTag Debuff_Slow;
+	FGameplayTag Debuff_KnockBack;
 
 	FGameplayTag Debuff_Chance;
 	FGameplayTag Debuff_Damage;
@@ -62,8 +63,16 @@ public:
 	TMap<FGameplayTag, FGameplayTag> DamageTypeToResistance;
 
 	FGameplayTag Effect_HitReact;
-
+	
+	FGameplayTag Card_Weapon_OneHand;
+	FGameplayTag Card_Weapon_TwoHand;
 	FGameplayTag Card_SKill_ThrowStone;
+	FGameplayTag Card_Skill_Swing;
+	FGameplayTag Card_Skill_Blocking;
+	FGameplayTag Card_Skill_Smash;
+	FGameplayTag Card_Skill_Frenzy;
+	FGameplayTag Card_Skill_Gather;
+
 private:
 	static FZGameplayTag GameplayTag;
 };

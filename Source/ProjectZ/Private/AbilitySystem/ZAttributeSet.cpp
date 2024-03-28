@@ -8,6 +8,8 @@
 #include "ZGameplayTag.h"
 #include "AbilitySystem/ZAbilitySystemLibrary.h"
 #include "Interaction/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
+#include "Player/ZPlayerControllerBase.h"
 
 UZAttributeSet::UZAttributeSet()
 {
@@ -103,6 +105,8 @@ void UZAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 		const bool bDodge = UZAbilitySystemLibrary::IsDodged(Props.EffectContextHandle);
 		const bool bCriticalHit = UZAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
 
+		ShowFloatingText(Props, LocalIncomingDamage);
+
 		if (UZAbilitySystemLibrary::IsSuccessfulDebuff(Props.EffectContextHandle))
 		{
 			Debuff(Props);
@@ -147,7 +151,7 @@ void UZAttributeSet::Debuff(const FEffectProperties& Props)
 		TSharedPtr<FGameplayTag> DebuffDamageType = MakeShareable(new FGameplayTag(DamageType));
 		ZContext->SetDamageType(DebuffDamageType);
 	}
-	
+
 	FDebuff NewDebuff;
 	NewDebuff.DebuffDamage = DebuffDamage;
 	NewDebuff.DebuffDuration = DebuffDuration;
@@ -155,6 +159,17 @@ void UZAttributeSet::Debuff(const FEffectProperties& Props)
 	NewDebuff.DebuffType = DebuffType;
 	NewDebuff.DebuffEffectSpec = MutableSpec;
 	ICombatInterface::Execute_AddDebuff(Props.TargetCharacter, NewDebuff);
+}
+
+void UZAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage) const
+{
+	if (Props.SourceCharacter != Props.TargetCharacter)
+	{
+		if (AZPlayerControllerBase* PC = Cast<AZPlayerControllerBase>(UGameplayStatics::GetPlayerController(Props.SourceCharacter, 0)))
+		{
+			PC->ShowDamageNumber(Damage, Props.TargetCharacter);
+		}
+	}
 }
 
 void UZAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const

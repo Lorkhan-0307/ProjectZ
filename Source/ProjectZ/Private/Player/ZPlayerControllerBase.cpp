@@ -21,6 +21,7 @@
 #include "Input/ZInputComponent.h"
 #include "Interaction/EnemyInterface.h"
 #include "Player/ZPlayerState.h"
+#include "UI/Combat/DamageTextComponent.h"
 
 AZPlayerControllerBase::AZPlayerControllerBase()
 {
@@ -39,6 +40,19 @@ void AZPlayerControllerBase::SetupInputComponent()
 	ZInputComponent->BindAction(CameraResetAction, ETriggerEvent::Triggered, this, &AZPlayerControllerBase::CameraReset);
 	ZInputComponent->BindAction(CameraZoomAction, ETriggerEvent::Triggered, this, &AZPlayerControllerBase::CameraZoom);
 	ZInputComponent->BindAction(ESCAction, ETriggerEvent::Triggered, this, &AZPlayerControllerBase::ESC);
+}
+
+void AZPlayerControllerBase::ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter)
+{
+	if (IsValid(TargetCharacter) && DamageTextComponentClass)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("!!%f!!"),DamageAmount);
+		UDamageTextComponent* DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass);
+		DamageText->RegisterComponent();
+		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+		DamageText->SetDamageText(DamageAmount);
+	}
 }
 
 void AZPlayerControllerBase::PlayerTick(float DeltaTime)
