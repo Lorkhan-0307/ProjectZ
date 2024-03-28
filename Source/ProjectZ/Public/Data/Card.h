@@ -11,11 +11,15 @@ class UGameplayEffect;
 UENUM(BlueprintType)
 enum class ECardType : uint8
 {
-	ECT_Passive,
-	ECT_UsablePassive,
-	ECT_CanEquip,
-	ECT_CantEquip,
-	ECT_Skill
+	ECT_Passive UMETA(DisplayName = "Passive"),
+	ECT_UsablePassive UMETA(DisplayName = "UsablePassive"),
+	ECT_OneHandWeapon UMETA(DisplayName = "OneHandWeapon"),
+	ECT_TwoHandWeapon UMETA(DisplayName = "TwoHandWeapon"),
+	ECT_CantEquip UMETA(DisplayName = "CantEquip"),
+	ECT_Skill UMETA(DisplayName = "Skill"),
+	ECT_Buff UMETA(DisplayName = "Buff"),
+
+	ECT_Max
 };
 
 
@@ -65,8 +69,7 @@ struct FCard : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Card Ability")
 	FGameplayTag CardTag;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	
 	bool IsValid = true;
 
 	bool operator==(const FCard& a) const

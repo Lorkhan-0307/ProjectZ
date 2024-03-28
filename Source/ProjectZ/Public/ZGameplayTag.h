@@ -27,6 +27,9 @@ public:
 	FGameplayTag Attributes_Secondary_CriticalHitDamage;
 	FGameplayTag Attributes_Secondary_CriticalHitResistance;
 
+	FGameplayTag Attributes_Card_WeaponAtk;
+	FGameplayTag Attributes_Card_Defence;
+
 	// For Test
 	FGameplayTag InputTag_T;
 
@@ -42,6 +45,7 @@ public:
 	FGameplayTag Attributes_Resistance_Fire;
 	FGameplayTag Attributes_Resistance_Physical;
 
+	// Debuff
 	FGameplayTag Debuff_Bleed;
 	FGameplayTag Debuff_Stun;
 	FGameplayTag Debuff_Slow;
@@ -63,9 +67,13 @@ public:
 	TMap<FGameplayTag, FGameplayTag> DamageTypeToResistance;
 
 	FGameplayTag Effect_HitReact;
+
+	// Card
+	FGameplayTag Card_Level;
 	
 	FGameplayTag Card_Weapon_OneHand;
 	FGameplayTag Card_Weapon_TwoHand;
+	
 	FGameplayTag Card_SKill_ThrowStone;
 	FGameplayTag Card_Skill_Swing;
 	FGameplayTag Card_Skill_Blocking;

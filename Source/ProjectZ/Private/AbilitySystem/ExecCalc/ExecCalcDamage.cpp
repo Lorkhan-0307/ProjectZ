@@ -23,6 +23,9 @@ struct ZDamageStatic
 	DECLARE_ATTRIBUTE_CAPTUREDEF(FireResistance)
 	DECLARE_ATTRIBUTE_CAPTUREDEF(PhysicalResistance)
 
+	DECLARE_ATTRIBUTE_CAPTUREDEF(WeaponAtk)
+	DECLARE_ATTRIBUTE_CAPTUREDEF(Defence)
+
 	TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition> TagsToCaptureDef;
 
 	ZDamageStatic()
@@ -37,6 +40,9 @@ struct ZDamageStatic
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UZAttributeSet, FireResistance, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UZAttributeSet, PhysicalResistance, Target, false);
 
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UZAttributeSet, WeaponAtk, Source, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UZAttributeSet, Defence, Target, false);
+
 		const FZGameplayTag& Tags = FZGameplayTag::Get();
 		TagsToCaptureDef.Add(Tags.Attributes_Secondary_Armor, ArmorDef);
 		TagsToCaptureDef.Add(Tags.Attributes_Secondary_ArmorPenetration, ArmorPenetrationDef);
@@ -47,6 +53,9 @@ struct ZDamageStatic
 
 		TagsToCaptureDef.Add(Tags.Attributes_Resistance_Fire, FireResistanceDef);
 		TagsToCaptureDef.Add(Tags.Attributes_Resistance_Physical, PhysicalResistanceDef);
+
+		TagsToCaptureDef.Add(Tags.Attributes_Card_WeaponAtk, WeaponAtkDef);
+		TagsToCaptureDef.Add(Tags.Attributes_Card_Defence, DefenceDef);
 	}
 };
 
@@ -67,6 +76,9 @@ UExecCalcDamage::UExecCalcDamage()
 
 	RelevantAttributesToCapture.Add(DamageStatic().FireResistanceDef);
 	RelevantAttributesToCapture.Add(DamageStatic().PhysicalResistanceDef);
+
+	RelevantAttributesToCapture.Add(DamageStatic().WeaponAtkDef);
+	RelevantAttributesToCapture.Add(DamageStatic().DefenceDef);
 }
 
 void UExecCalcDamage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
@@ -186,6 +198,14 @@ void UExecCalcDamage::Execute_Implementation(const FGameplayEffectCustomExecutio
 	UZAbilitySystemLibrary::SetIsCriticalHit(EffectContextHandle, bCriticalHit);
 
 	Damage = bCriticalHit ? SourceCriticalHitDamage * Damage : Damage;
+
+	// Defence
+	float TargetDefence = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatic().DefenceDef, EvaluationParameters, TargetDefence);
+	TargetDefence = FMath::Max<float>(TargetDefence, 0.f);
+
+	Damage -= TargetDefence;
+	Damage = FMath::Max<float>(TargetDefence, 0.f);
 
 	// Apply Damage
 	const FGameplayModifierEvaluatedData EvaluatedData(UZAttributeSet::GetIncomingDamageAttribute(), EGameplayModOp::Additive, Damage);

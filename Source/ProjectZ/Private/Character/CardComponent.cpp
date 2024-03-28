@@ -12,6 +12,7 @@
 #include "Player/ZPlayerState.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "ZGameplayTag.h"
 #include "AbilitySystem/ZAbilitySystemComponent.h"
 #include "AbilitySystem/ZAbilitySystemLibrary.h"
 #include "AbilitySystem/ZAttributeSet.h"
@@ -201,6 +202,7 @@ void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand)
 	AZCharacterBase* TargetCharacter = Cast<AZCharacterBase>(ZCharacter);
 	switch (Card.CardType)
 	{
+	case ECardType::ECT_Buff:
 	case ECardType::ECT_UsablePassive:
 		for (const auto& InstantEffect : Card.InstantGameplayEffects)
 		{
@@ -225,7 +227,7 @@ void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand)
 		ShowSkillCardDelegate.Broadcast(Card);
 		break;
 
-	case ECardType::ECT_CanEquip:
+	case ECardType::ECT_OneHandWeapon:
 		if (bIsLeftHand)
 		{
 			SetLeftHandCard(Card);
@@ -234,6 +236,15 @@ void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand)
 		{
 			SetRightHandCard(Card);
 		}
+		Cast<AZCharacterBase>(GetOwner())->GetAbilitySystemComponent()->AddLooseGameplayTag(FZGameplayTag::Get().Card_Weapon_OneHand);
+		UZAbilitySystemLibrary::PayCost(TargetCharacter, Card.CardCost);
+		ActivateCardDelegate.Broadcast();
+		break;
+
+	case ECardType::ECT_TwoHandWeapon:
+		SetLeftHandCard(Card);
+		SetRightHandCard(Card);
+		Cast<AZCharacterBase>(GetOwner())->GetAbilitySystemComponent()->AddLooseGameplayTag(FZGameplayTag::Get().Card_Weapon_TwoHand);
 		UZAbilitySystemLibrary::PayCost(TargetCharacter, Card.CardCost);
 		ActivateCardDelegate.Broadcast();
 		break;

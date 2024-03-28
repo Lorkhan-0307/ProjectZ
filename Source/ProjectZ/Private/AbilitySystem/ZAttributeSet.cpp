@@ -32,6 +32,9 @@ UZAttributeSet::UZAttributeSet()
 
 	TagToAttribute.Add(GameplayTag.Attributes_Resistance_Fire, GetFireResistanceAttribute);
 	TagToAttribute.Add(GameplayTag.Attributes_Resistance_Physical, GetPhysicalResistanceAttribute);
+
+	TagToAttribute.Add(GameplayTag.Attributes_Card_WeaponAtk, GetWeaponAtkAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Card_Defence, GetDefenceAttribute);
 }
 
 // Clamp Attributes

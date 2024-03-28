@@ -151,6 +151,15 @@ public:
 	FGameplayAttributeData PhysicalResistance;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, PhysicalResistance)
 
+	// Card
+	UPROPERTY(BlueprintReadOnly, Category = "Card")
+	FGameplayAttributeData WeaponAtk;
+	ATTRIBUTE_ACCESSORS(UZAttributeSet, WeaponAtk)
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Card")
+	FGameplayAttributeData Defence;
+	ATTRIBUTE_ACCESSORS(UZAttributeSet, Defence)
+
 	// Meta Attributes
 	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
 	FGameplayAttributeData IncomingDamage;
