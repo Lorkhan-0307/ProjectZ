@@ -9,6 +9,7 @@
 #include "NavigationSystem.h"
 #include "ZGameplayTag.h"
 #include "AbilitySystem/ZAbilitySystemComponent.h"
+#include "AbilitySystem/ZAbilitySystemLibrary.h"
 #include "AbilitySystem/ZAttributeSet.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Blueprint/UserWidget.h"
@@ -252,6 +253,7 @@ void AZPlayerControllerBase::AbilityInputTagHeld(FGameplayTag InputTag)
 				CardComponent->UseCard(CardComponent->ActivatingCard);
 				CardComponent->bActivatingCard = false;
 				CardComponent->ActivateCardDelegate.Broadcast();
+				UZAbilitySystemLibrary::PayCost(Cast<AZCharacterBase>(GetPawn()), CardComponent->ActivatingCard.CardCost);
 			}
 		}
 		else if (GetASC())

@@ -51,8 +51,8 @@ struct FEffectProperties
 	ACharacter* TargetCharacter = nullptr;
 };
 
-template<class T>
-using TStaticFunPtr = typename TBaseStaticDelegateInstance<T,FDefaultDelegateUserPolicy>::FFuncPtr;
+template <class T>
+using TStaticFunPtr = typename TBaseStaticDelegateInstance<T, FDefaultDelegateUserPolicy>::FFuncPtr;
 
 UCLASS()
 class PROJECTZ_API UZAttributeSet : public UAttributeSet
@@ -65,100 +65,102 @@ public:
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
-	TMap<FGameplayTag,TStaticFunPtr<FGameplayAttribute()>> TagToAttribute;
+	TMap<FGameplayTag, TStaticFunPtr<FGameplayAttribute()>> TagToAttribute;
 
 	// Vital Attributes
-	UPROPERTY(BlueprintReadOnly, Category = "Vital Attributes")
+	UPROPERTY(BlueprintReadWrite, Category = "Vital Attributes")
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, Health) // Make Getter, Setter
 
-	UPROPERTY(BlueprintReadOnly, Category = "Vital Attributes")
+	UPROPERTY(BlueprintReadWrite, Category = "Vital Attributes")
 	FGameplayAttributeData Mentality;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, Mentality)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Vital Attributes")
+	UPROPERTY(BlueprintReadWrite, Category = "Vital Attributes")
 	FGameplayAttributeData Cost;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, Cost)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Vital Attributes")
+	UPROPERTY(BlueprintReadWrite, Category = "Vital Attributes")
 	FGameplayAttributeData MaxCost;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, MaxCost)
 
-	
 
 	// Primary Attributes : For Passive Cards
-	UPROPERTY(BlueprintReadOnly, Category = "Primary Attributes")
+	UPROPERTY(BlueprintReadWrite, Category = "Primary Attributes")
 	FGameplayAttributeData Strength;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, Strength)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Primary Attributes")
+	UPROPERTY(BlueprintReadWrite, Category = "Primary Attributes")
 	FGameplayAttributeData Dexterity;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, Dexterity)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Primary Attributes")
+	UPROPERTY(BlueprintReadWrite, Category = "Primary Attributes")
 	FGameplayAttributeData Sociability;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, Sociability)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Primary Attributes")
+	UPROPERTY(BlueprintReadWrite, Category = "Primary Attributes")
 	FGameplayAttributeData AntiSociability;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, AntiSociability)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Primary Attributes")
+	UPROPERTY(BlueprintReadWrite, Category = "Primary Attributes")
 	FGameplayAttributeData Engineering;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, Engineering)
 
 	// Secondary Attributes
-	UPROPERTY(BlueprintReadOnly, Category = "Secondary Attributes")
+	UPROPERTY(BlueprintReadWrite, Category = "Secondary Attributes")
 	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, MaxHealth)
-	
-	UPROPERTY(BlueprintReadOnly, Category = "Secondary Attributes")
+
+	UPROPERTY(BlueprintReadWrite, Category = "Secondary Attributes")
 	FGameplayAttributeData MaxMentality;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, MaxMentality)
 
 	// TO DO : Set Secondary Attribute calculation in GameplayEffect that setting Secondary Attributes
-	UPROPERTY(BlueprintReadOnly, Category = "Secondary Attributes")
+	UPROPERTY(BlueprintReadWrite, Category = "Secondary Attributes")
 	FGameplayAttributeData Armor;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, Armor)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Secondary Attributes")
+	UPROPERTY(BlueprintReadWrite, Category = "Secondary Attributes")
 	FGameplayAttributeData ArmorPenetration;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, ArmorPenetration)
-	
-	UPROPERTY(BlueprintReadOnly, Category = "Secondary Attributes")
+
+	UPROPERTY(BlueprintReadWrite, Category = "Secondary Attributes")
 	FGameplayAttributeData DodgeChance;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, DodgeChance)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Secondary Attributes")
+	UPROPERTY(BlueprintReadWrite, Category = "Secondary Attributes")
 	FGameplayAttributeData CriticalHitChance;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, CriticalHitChance)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Secondary Attributes")
+	UPROPERTY(BlueprintReadWrite, Category = "Secondary Attributes")
 	FGameplayAttributeData CriticalHitDamage;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, CriticalHitDamage)
-	
-	UPROPERTY(BlueprintReadOnly, Category = "Secondary Attributes")
+
+	UPROPERTY(BlueprintReadWrite, Category = "Secondary Attributes")
 	FGameplayAttributeData CriticalHitResistance;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, CriticalHitResistance)
 
 	// Resistance Attributes
 
-	UPROPERTY(BlueprintReadOnly, Category = "Resistance Attributes")
+	UPROPERTY(BlueprintReadWrite, Category = "Resistance Attributes")
 	FGameplayAttributeData FireResistance;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, FireResistance)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Resistance Attributes")
+	UPROPERTY(BlueprintReadWrite, Category = "Resistance Attributes")
 	FGameplayAttributeData PhysicalResistance;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, PhysicalResistance)
 
 	// Card
-	UPROPERTY(BlueprintReadOnly, Category = "Card")
+	UPROPERTY(BlueprintReadWrite, Category = "Card")
 	FGameplayAttributeData WeaponAtk;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, WeaponAtk)
-	
-	UPROPERTY(BlueprintReadOnly, Category = "Card")
+
+	UPROPERTY(BlueprintReadWrite, Category = "Card")
 	FGameplayAttributeData Defence;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, Defence)
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE void SetDefenceInBlueprint(float InDefence) { SetDefence(InDefence); }
 
 	// Meta Attributes
 	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
