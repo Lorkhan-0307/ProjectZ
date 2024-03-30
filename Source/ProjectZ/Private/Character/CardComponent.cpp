@@ -16,6 +16,7 @@
 #include "AbilitySystem/ZAbilitySystemComponent.h"
 #include "AbilitySystem/ZAbilitySystemLibrary.h"
 #include "AbilitySystem/ZAttributeSet.h"
+#include "AbilitySystem/Ability/ZGameplayAbility.h"
 #include "Game/ZGameModeBase.h"
 
 
@@ -49,12 +50,6 @@ void UCardComponent::BeginPlay()
 void UCardComponent::AddCardToInventory(FName NewCardName)
 {
 	const FCard NewCard = ConvertCardNameToFCard(NewCardName);
-	if (NewCard.CardAbility)
-	{
-		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(NewCard.CardAbility, 1);
-		AbilitySpec.DynamicAbilityTags.AddTag(NewCard.CardTag);
-		ZCharacter->GetAbilitySystemComponent()->GiveAbility(NewCard.CardAbility);
-	}
 	CardInventory.Push(NewCard);
 }
 
@@ -90,6 +85,17 @@ void UCardComponent::DrawCard()
 void UCardComponent::InitializeCardComponent(AZCharacterBase* Character)
 {
 	ZCharacter = Character;
+
+	for (const TSubclassOf<UGameplayAbility> Ability : CardAbilities)
+	{
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Ability, 1);
+		if (const UZGameplayAbility* ZAbility = Cast<UZGameplayAbility>(AbilitySpec.Ability))
+		{
+			AbilitySpec.DynamicAbilityTags.AddTag(ZAbility->CardSkillTag);
+			ZCharacter->GetAbilitySystemComponent()->GiveAbility(AbilitySpec);
+		}
+	}
+	
 	// For Test
 	//if (ZCharacter && ZCharacter->GetPlayerState()) Cast<AZPlayerState>(ZCharacter->GetPlayerState())->SetCharacterName(FName("JohnDoe"));
 	UCharacterClassInfo* CharacterClassInfo = UZAbilitySystemLibrary::GetCharacterClassInfo(Character);
@@ -135,12 +141,11 @@ void UCardComponent::MakeCardDeck()
 	AddCardToInventory(FName("KitchenKnife"));
 	AddCardToInventory(FName("Sword"));
 	AddCardToInventory(FName("Axe"));
-	AddCardToInventory(FName("ThrowStone"));
-	AddCardToInventory(FName("ThrowStone"));
-	AddCardToInventory(FName("ThrowStone"));
-	AddCardToInventory(FName("ThrowStone"));
 	AddCardToInventory(FName("HealthPotion"));
 	AddCardToInventory(FName("HealthPotion"));
+	AddCardToInventory(FName("Smash"));
+	AddCardToInventory(FName("Smash"));
+	AddCardToInventory(FName("Smash"));
 	// ...
 
 	CardDeck.Empty();

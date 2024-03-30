@@ -46,7 +46,7 @@ void AZPlayerControllerBase::ShowDamageNumber(float DamageAmount, ACharacter* Ta
 {
 	if (IsValid(TargetCharacter) && DamageTextComponentClass)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("!!%f!!"),DamageAmount);
+		UE_LOG(LogTemp, Warning, TEXT("!!%f!!"), DamageAmount);
 		UDamageTextComponent* DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass);
 		DamageText->RegisterComponent();
 		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
@@ -235,6 +235,16 @@ void AZPlayerControllerBase::AbilityInputTagHeld(FGameplayTag InputTag)
 		{
 			FHitResult HitResult;
 			GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
+			if (CardComponent->ActivatingCard.bTargeting)
+			{
+				if (Cast<ICombatInterface>(HitResult.GetActor()) == nullptr)
+				{
+					//CardComponent->CancelActivateCard();
+					return;
+				}
+			}
+
+
 			float Distance = FVector::DistXY(GetCharacter()->GetActorLocation(), HitResult.Location) / 100.f;
 			if (Distance <= CardComponent->ActivatingCard.SkillRange)
 			{

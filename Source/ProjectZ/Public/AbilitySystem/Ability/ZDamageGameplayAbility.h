@@ -26,30 +26,33 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 
-	UPROPERTY(EditDefaultsOnly, Category = Damage)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Damage)
 	FGameplayTag CardType;
 
-	UPROPERTY(EditDefaultsOnly, Category = Damage)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Damage)
 	FGameplayTag DamageType;
 
-	UPROPERTY(EditDefaultsOnly, Category = Damage)
-	FScalableFloat Damage;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Damage)
+	float Damage;
 
-	UPROPERTY(EditDefaultsOnly, Category = Debuff)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Debuff)
 	FGameplayTag DebuffType;
 
-	UPROPERTY(EditDefaultsOnly, Category = Debuff)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Debuff)
 	float DebuffChance = 20.f;
 
-	UPROPERTY(EditDefaultsOnly, Category = Debuff)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Debuff)
 	float DebuffDamage = 5.f;
 
 	// By Turn
-	UPROPERTY(EditDefaultsOnly, Category = Debuff)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Debuff)
 	int32 DebuffDuration = 1;
 
-	UPROPERTY(EditDefaultsOnly, Category = Debuff)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Debuff)
 	int32 DebuffStack = 1;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Montage)
+	UAnimMontage* AbilityMontage;
 
 
 	UFUNCTION(BlueprintPure)

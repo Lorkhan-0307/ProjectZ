@@ -67,7 +67,9 @@ public:
 	void SetLeftHandCard(FCard Card, bool bIsValid = true);
 	void SetRightHandCard(FCard Card, bool bIsValid = true);
 
+	UPROPERTY(BlueprintReadOnly)
 	FCard ActivatingCard;
+	
 	bool bActivatingCard = false;
 
 	FVector2D LeftEquipPosMin;
@@ -109,6 +111,9 @@ private:
 	// Card data
 	UPROPERTY(EditAnywhere, Category = Card)
 	UDataTable* CardDataTable;
+
+	UPROPERTY(EditAnywhere, Category = Card)
+	TArray<TSubclassOf<UGameplayAbility>> CardAbilities;
 
 	// Card Inventory : For NonCombat
 	UPROPERTY(VisibleAnywhere, Category = Card)

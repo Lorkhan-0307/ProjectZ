@@ -59,6 +59,9 @@ struct FCard : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float SkillRange;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bTargeting;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
 	TArray<TSubclassOf<UGameplayEffect>> InstantGameplayEffects;
 

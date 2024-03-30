@@ -5,15 +5,13 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/ZAbilitySystemLibrary.h"
 
 void UZDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 {
-	FGameplayEffectSpecHandle DamageSpecHandle = MakeOutgoingGameplayEffectSpec(DamageEffectClass);
-
-	const float DamageMagnitude = Damage.GetValueAtLevel(1);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageSpecHandle, DamageType, DamageMagnitude);
-
-	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*DamageSpecHandle.Data.Get(), UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
+	FDamageEffectParams DamageEffectParams = MakeDamageEffectParamsFromClassDefaults(TargetActor);
+	
+	UZAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
 }
 
 FDamageEffectParams UZDamageGameplayAbility::MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor) const
@@ -23,7 +21,7 @@ FDamageEffectParams UZDamageGameplayAbility::MakeDamageEffectParamsFromClassDefa
 	Params.DamageGameplayEffectClass = DamageEffectClass;
 	Params.SourceAbilitySystemComponent = GetAbilitySystemComponentFromActorInfo();
 	Params.TargetAbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
-	Params.BaseDamage = Damage.GetValueAtLevel(GetAbilityLevel());
+	Params.BaseDamage = Damage;
 	Params.AbilityLevel = GetAbilityLevel();
 	Params.DamageType = DamageType;
 	Params.DebuffType = DebuffType;
@@ -41,3 +39,4 @@ FTaggedMontage UZDamageGameplayAbility::GetRandomTaggedMontageFromArray(const TA
 	const int32 Selection = FMath::RandRange(0, TaggedMontages.Num() - 1);
 	return TaggedMontages[Selection];
 }
+
