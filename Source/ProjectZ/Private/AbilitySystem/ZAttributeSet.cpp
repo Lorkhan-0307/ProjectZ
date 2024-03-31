@@ -7,6 +7,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "ZGameplayTag.h"
 #include "AbilitySystem/ZAbilitySystemLibrary.h"
+#include "AbilitySystem/Data/AttributeInfo.h"
 #include "Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/ZPlayerControllerBase.h"
@@ -114,6 +115,8 @@ void UZAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 	{
 		Debuff(Props);
 	}
+
+	Buff(Props);
 }
 
 void UZAttributeSet::Debuff(const FEffectProperties& Props)
@@ -161,6 +164,47 @@ void UZAttributeSet::Debuff(const FEffectProperties& Props)
 	NewDebuff.DebuffType = DebuffType;
 	NewDebuff.DebuffEffectSpec = MutableSpec;
 	ICombatInterface::Execute_AddDebuff(Props.TargetCharacter, NewDebuff);
+}
+
+void UZAttributeSet::Buff(const FEffectProperties& Props)
+{
+	const FZGameplayTag& GameplayTag = FZGameplayTag::Get();
+	FGameplayEffectContextHandle EffectContext = Props.SourceASC->MakeEffectContext();
+	EffectContext.AddSourceObject(Props.SourceAvatarActor);
+
+	const FGameplayTag BuffType = UZAbilitySystemLibrary::GetBuffType(Props.EffectContextHandle);
+	const FGameplayTag BuffAttribute = UZAbilitySystemLibrary::GetBuffAttribute(Props.EffectContextHandle);
+	const float BuffMagnitude = UZAbilitySystemLibrary::GetBuffMagnitude(Props.EffectContextHandle);
+	const int32 BuffDuration = UZAbilitySystemLibrary::GetBuffDuration(Props.EffectContextHandle);
+
+	if (!BuffAttribute.IsValid())
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Buff Type Not Valid"));
+		return;
+	}
+	
+	FString BuffName = FString::Printf(TEXT("DynamicBuff_%s"), *BuffType.ToString());
+
+	UGameplayEffect* Effect = NewObject<UGameplayEffect>(GetTransientPackage(), FName(BuffName));
+
+	Effect->DurationPolicy = EGameplayEffectDurationType::Infinite;
+	Effect->InheritableOwnedTagsContainer.AddTag(BuffAttribute);
+
+	Effect->StackingType = EGameplayEffectStackingType::AggregateBySource;
+	//Effect->StackLimitCount = 1;
+
+	const int32 Index = Effect->Modifiers.Num();
+	Effect->Modifiers.Add(FGameplayModifierInfo());
+	FGameplayModifierInfo& ModifierInfo = Effect->Modifiers[Index];
+
+	ModifierInfo.ModifierMagnitude = FScalableFloat(BuffMagnitude);
+	ModifierInfo.ModifierOp = EGameplayModOp::Additive;
+	ModifierInfo.Attribute = TagToAttribute[BuffAttribute]();
+
+	FGameplayEffectSpec* MutableSpec = new FGameplayEffectSpec(Effect, EffectContext, 1.f);
+	
+	ICombatInterface::Execute_AddBuff(Props.TargetCharacter, BuffAttribute, BuffDuration);
+	GetOwningAbilitySystemComponent()->ApplyGameplayEffectSpecToSelf(*MutableSpec);
 }
 
 void UZAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage) const

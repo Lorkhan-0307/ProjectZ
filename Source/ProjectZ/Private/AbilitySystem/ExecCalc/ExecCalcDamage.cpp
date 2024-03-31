@@ -125,6 +125,20 @@ void UExecCalcDamage::Execute_Implementation(const FGameplayEffectCustomExecutio
 		}
 	}
 
+	for (FGameplayTag BuffType : GameplayTag.BuffAttributes)
+	{
+		const bool bBuffIsSet = Spec.GetSetByCallerMagnitude(BuffType, false, -1.f) > -0.5f;
+		if (bBuffIsSet)
+		{
+			const float BuffMagnitude = Spec.GetSetByCallerMagnitude(GameplayTag.Buff_Magnitude, false, -1.f);
+			const int32 BuffDuration = Spec.GetSetByCallerMagnitude(GameplayTag.Buff_Duration, false, -1.f);
+
+			UZAbilitySystemLibrary::SetBuffAttribute(ContextHandle, BuffType);
+			UZAbilitySystemLibrary::SetBuffMagnitude(ContextHandle, BuffMagnitude);
+			UZAbilitySystemLibrary::SetBuffDuration(ContextHandle, BuffDuration);
+		}
+	}
+
 	// Get Damage Set by Caller Magnitude
 	float Damage = 0.f;
 	for (const auto& Pair : GameplayTag.DamageTypeToResistance)

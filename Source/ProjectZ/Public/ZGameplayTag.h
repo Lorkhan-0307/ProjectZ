@@ -27,6 +27,8 @@ public:
 	FGameplayTag Attributes_Secondary_CriticalHitDamage;
 	FGameplayTag Attributes_Secondary_CriticalHitResistance;
 
+	TArray<FGameplayTag> BuffAttributes;
+
 	FGameplayTag Attributes_Card_WeaponAtk;
 	FGameplayTag Attributes_Card_Defence;
 
@@ -57,6 +59,9 @@ public:
 	FGameplayTag Debuff_Stack;
 
 	TArray<FGameplayTag> Debuffs;
+	
+	FGameplayTag Buff_Magnitude;
+	FGameplayTag Buff_Duration;
 
 	FGameplayTag Ability_Attack;
 
@@ -73,6 +78,8 @@ public:
 	
 	FGameplayTag Card_Weapon_OneHand;
 	FGameplayTag Card_Weapon_TwoHand;
+	FGameplayTag Card_Weapon_Left;
+	FGameplayTag Card_Weapon_Right;
 	
 	FGameplayTag Card_SKill_ThrowStone;
 	FGameplayTag Card_Skill_Swing;

@@ -15,6 +15,7 @@ GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
 GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
+class UAttributeInfo;
 USTRUCT()
 struct FEffectProperties
 {
@@ -160,7 +161,7 @@ public:
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, Defence)
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE void SetDefenceInBlueprint(float InDefence) { SetDefence(InDefence); }
+	FORCEINLINE void AddDefenceInBlueprint(float InDefence) { SetDefence(GetDefence() + InDefence); }
 
 	// Meta Attributes
 	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
@@ -170,6 +171,7 @@ public:
 private:
 	void HandleIncomingDamage(const FEffectProperties& Props);
 	void Debuff(const FEffectProperties& Props);
+	void Buff(const FEffectProperties& Props);
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
 	void ShowFloatingText(const FEffectProperties& Props, float Damage) const;
 };

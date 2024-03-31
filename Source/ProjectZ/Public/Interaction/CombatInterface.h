@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ActiveGameplayEffectHandle.h"
 #include "GameplayTagContainer.h"
 #include "UObject/Interface.h"
 #include "CombatInterface.generated.h"
@@ -46,6 +47,20 @@ struct FDebuff
 	FGameplayEffectSpec* DebuffEffectSpec;
 };
 
+USTRUCT(BlueprintType)
+struct FBuff
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FGameplayTag BuffType;
+
+	UPROPERTY()
+	int32 BuffDuration;
+
+	FGameplayEffectSpec* BuffEffectSpec;
+};
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI, BlueprintType)
 class UCombatInterface : public UInterface
@@ -80,7 +95,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	TArray<FTaggedMontage> GetAttackMontages();
-	
+
 	TArray<FDebuff> Debuffs;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
@@ -88,6 +103,11 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void RemoveDebuff(FGameplayTag RemoveDebuffType);
+
+	TMap<FGameplayTag, int32> Buffs;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void AddBuff(FGameplayTag BuffType, int32 BuffDuration);
 
 	virtual FOnASCRegistered GetOnASCRegisterdDelegate() = 0;
 	virtual FOnDeath GetOnDeathDelegate() = 0;

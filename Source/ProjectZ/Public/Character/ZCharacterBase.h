@@ -42,6 +42,7 @@ public:
 	virtual void RemoveDebuff_Implementation(FGameplayTag RemoveDebuffType) override;
 	virtual FOnASCRegistered GetOnASCRegisterdDelegate() override;
 	virtual FOnDeath GetOnDeathDelegate() override;
+	virtual void AddBuff_Implementation(FGameplayTag BuffType, int32 BuffDuration) override;
 
 	FOnASCRegistered OnASCRegisteredDelegate;
 	FOnDeath OnDeathDelegate;

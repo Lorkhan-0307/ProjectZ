@@ -162,6 +162,8 @@ void UCardComponent::MakeCardDeck()
 	AddCardToInventory(FName("Smash"));
 	AddCardToInventory(FName("Blocking"));
 	AddCardToInventory(FName("Blocking"));
+	AddCardToInventory(FName("Frenzy"));
+	AddCardToInventory(FName("Frenzy"));
 	// ...
 
 	CardDeck.Empty();
@@ -283,6 +285,7 @@ void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand)
 		{
 			SetRightHandCard(Card);
 		}
+		ZCharacter->GetAbilitySystemComponent()->RemoveLooseGameplayTag(FZGameplayTag::Get().Card_Weapon_TwoHand);
 		ZCharacter->GetAbilitySystemComponent()->AddLooseGameplayTag(FZGameplayTag::Get().Card_Weapon_OneHand);
 		UZAbilitySystemLibrary::PayCost(ZCharacter, Card.CardCost);
 		ActivateCardDelegate.Broadcast();
@@ -291,6 +294,7 @@ void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand)
 	case ECardType::ECT_TwoHandWeapon:
 		SetLeftHandCard(Card);
 		SetRightHandCard(Card);
+		ZCharacter->GetAbilitySystemComponent()->RemoveLooseGameplayTag(FZGameplayTag::Get().Card_Weapon_OneHand);
 		ZCharacter->GetAbilitySystemComponent()->AddLooseGameplayTag(FZGameplayTag::Get().Card_Weapon_TwoHand);
 		UZAbilitySystemLibrary::PayCost(ZCharacter, Card.CardCost);
 		ActivateCardDelegate.Broadcast();

@@ -49,6 +49,18 @@ struct FDamageEffectParams
 
 	UPROPERTY()
 	int32 DebuffStack = 0;
+
+	UPROPERTY()
+	FGameplayTag BuffType = FGameplayTag();
+
+	UPROPERTY()
+	FGameplayTag BuffAttribute;
+
+	UPROPERTY()
+	float BuffMagnitude;
+
+	UPROPERTY()
+	int32 BuffDuration;
 };
 
 // Custom GameplayEffectContext
@@ -66,6 +78,10 @@ public:
 	FGameplayTag GetDebuffType() const { return DebuffType; }
 	TSharedPtr<FGameplayTag> GetDamageType() const { return DamageType; }
 	int32 GetDebuffStack() const { return DebuffStack; }
+	FGameplayTag GetBuffType() const { return BuffType; }
+	FGameplayTag GetBuffAttribute() const { return BuffAttribute; }
+	float GetBuffMagnitude() const { return BuffMagnitude; }
+	int32 GetBuffDuration() const { return BuffDuration; }
 
 	void SetIsCriticalHit(bool bInIsCriticalHit) { bIsCriticalHit = bInIsCriticalHit; }
 	void SetIsDodged(bool bInIsDodged) { bIsDodged = bInIsDodged; }
@@ -75,6 +91,10 @@ public:
 	void SetDebuffType(FGameplayTag InDebuffType) { DebuffType = InDebuffType; }
 	void SetDamageType(TSharedPtr<FGameplayTag> InDamageType) { DamageType = InDamageType; }
 	void SetDebuffStack(int32 InDebuffStack) { DebuffStack = InDebuffStack; }
+	void SetBuffType(FGameplayTag InBuffType) { BuffType = InBuffType; }
+	void SetBuffAttribute(FGameplayTag InBuffAttribute) { BuffAttribute = InBuffAttribute; }
+	void SetBuffMagnitude(float InBuffMagnitude) { BuffMagnitude = InBuffMagnitude; }
+	void SetBuffDuration(int32 InBuffDuration) { BuffDuration = InBuffDuration; }
 
 	// Returns the actual struct used for serialization, subclasses must override this
 	virtual UScriptStruct* GetScriptStruct() const
@@ -121,6 +141,18 @@ protected:
 
 	UPROPERTY()
 	int32 DebuffStack = 0;
+
+	UPROPERTY()
+	FGameplayTag BuffType;
+
+	UPROPERTY()
+	FGameplayTag BuffAttribute;
+
+	UPROPERTY()
+	float BuffMagnitude = 0.f;
+
+	UPROPERTY()
+	int32 BuffDuration = 0;
 };
 
 template <>

@@ -127,26 +127,38 @@ void AZGameModeBase::NextTurn()
 	{
 		SetTurn(ETurn::ET_EnemyTurn);
 	}
-	
-	if (CombatInterface)
-	{
-		for (FDebuff& Debuff : CombatInterface->Debuffs)
-		{
-			if (Debuff.DebuffType.MatchesTagExact(FZGameplayTag::Get().Debuff_Stun) && Debuff.DebuffDuration > 0)
-			{
-				Debuff.DebuffDuration--;
-				CombatInterface->bIsStuned = true;
-				CombatInterface->StunImmunityCount = 3;
 
-				if (Debuff.DebuffDuration == 0)
-				{
-					UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TurnActor);
-					FGameplayTagContainer TagContainer;
-					TagContainer.AddTag(Debuff.DebuffType);
-					TargetASC->RemoveActiveEffectsWithGrantedTags(TagContainer);
-				}
+	for (FDebuff& Debuff : CombatInterface->Debuffs)
+	{
+		if (Debuff.DebuffType.MatchesTagExact(FZGameplayTag::Get().Debuff_Stun) && Debuff.DebuffDuration > 0)
+		{
+			Debuff.DebuffDuration--;
+			CombatInterface->bIsStuned = true;
+			CombatInterface->StunImmunityCount = 3;
+
+			if (Debuff.DebuffDuration == 0)
+			{
+				UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TurnActor);
+				FGameplayTagContainer TagContainer;
+				TagContainer.AddTag(Debuff.DebuffType);
+				TargetASC->RemoveActiveEffectsWithGrantedTags(TagContainer);
 			}
 		}
 	}
 	CombatInterface->StunImmunityCount--;
+	
+	for (TTuple<FGameplayTag,int32>& Buff :CombatInterface->Buffs)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("%s %d"),*Buff.Key.GetTagName().ToString(),Buff.Value);
+		Buff.Value--;
+		if (Buff.Value == 0)
+		{
+			UE_LOG(LogTemp,Warning,TEXT("Remove %s"),*Buff.Key.GetTagName().ToString());
+			UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TurnActor);
+			FGameplayTagContainer TagContainer;
+			TagContainer.AddTag(Buff.Key);
+			TargetASC->RemoveActiveEffectsWithGrantedTags(TagContainer);
+		}
+	}
+	
 }

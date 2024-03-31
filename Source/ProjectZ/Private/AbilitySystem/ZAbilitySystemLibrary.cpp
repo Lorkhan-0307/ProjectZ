@@ -164,6 +164,42 @@ int32 UZAbilitySystemLibrary::GetDebuffStack(const FGameplayEffectContextHandle&
 	return 0;
 }
 
+FGameplayTag UZAbilitySystemLibrary::GetBuffType(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FZGameplayEffectContext* ZEffectContext = static_cast<const FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return ZEffectContext->GetBuffType();
+	}
+	return FGameplayTag();
+}
+
+FGameplayTag UZAbilitySystemLibrary::GetBuffAttribute(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FZGameplayEffectContext* ZEffectContext = static_cast<const FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return ZEffectContext->GetBuffAttribute();
+	}
+	return FGameplayTag();
+}
+
+float UZAbilitySystemLibrary::GetBuffMagnitude(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FZGameplayEffectContext* ZEffectContext = static_cast<const FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return ZEffectContext->GetBuffMagnitude();
+	}
+	return 0.f;
+}
+
+int32 UZAbilitySystemLibrary::GetBuffDuration(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FZGameplayEffectContext* ZEffectContext = static_cast<const FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return ZEffectContext->GetBuffDuration();
+	}
+	return 0;
+}
+
 void UZAbilitySystemLibrary::SetIsDodged(FGameplayEffectContextHandle& EffectContextHandle, bool bInIsDodged)
 {
 	if (FZGameplayEffectContext* ZEffectContext = static_cast<FZGameplayEffectContext*>(EffectContextHandle.Get()))
@@ -229,6 +265,38 @@ void UZAbilitySystemLibrary::SetDebuffStack(FGameplayEffectContextHandle& Effect
 	}
 }
 
+void UZAbilitySystemLibrary::SetBuffType(FGameplayEffectContextHandle& EffectContextHandle, const FGameplayTag& InBuffType)
+{
+	if (FZGameplayEffectContext* ZEffectContext = static_cast<FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		ZEffectContext->SetBuffType(InBuffType);
+	}
+}
+
+void UZAbilitySystemLibrary::SetBuffAttribute(FGameplayEffectContextHandle& EffectContextHandle, const FGameplayTag& InBuffAttribute)
+{
+	if (FZGameplayEffectContext* ZEffectContext = static_cast<FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		ZEffectContext->SetBuffAttribute(InBuffAttribute);
+	}
+}
+
+void UZAbilitySystemLibrary::SetBuffMagnitude(FGameplayEffectContextHandle& EffectContextHandle, float InBuffMagnitude)
+{
+	if (FZGameplayEffectContext* ZEffectContext = static_cast<FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		ZEffectContext->SetBuffMagnitude(InBuffMagnitude);
+	}
+}
+
+void UZAbilitySystemLibrary::SetBuffDuration(FGameplayEffectContextHandle& EffectContextHandle, int32 InBuffDuration)
+{
+	if (FZGameplayEffectContext* ZEffectContext = static_cast<FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		ZEffectContext->SetBuffDuration(InBuffDuration);
+	}
+}
+
 bool UZAbilitySystemLibrary::PayCost(AZCharacterBase* Character, float Cost)
 {
 	UZAttributeSet* AS = Cast<UZAttributeSet>(Character->GetAttributeSet());
@@ -276,6 +344,11 @@ FGameplayEffectContextHandle UZAbilitySystemLibrary::ApplyDamageEffect(const FDa
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTag.Debuff_Chance, DamageEffectParams.DebuffChance);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTag.Debuff_Damage, DamageEffectParams.DebuffDamage);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTag.Debuff_Duration, DamageEffectParams.DebuffDuration);
+
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageEffectParams.BuffType, 1);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageEffectParams.BuffAttribute, 1);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTag.Buff_Magnitude, DamageEffectParams.BuffMagnitude);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTag.Buff_Duration, DamageEffectParams.BuffDuration);
 
 	DamageEffectParams.TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data);
 	return EffectContextHandle;

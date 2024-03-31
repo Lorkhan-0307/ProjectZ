@@ -66,8 +66,25 @@ bool FZGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bool&
 		{
 			RepBits |= 1 << 14;
 		}
+		if (BuffType.IsValid())
+		{
+			RepBits |= 1 << 15;
+		}
+		if (BuffAttribute.IsValid())
+		{
+			RepBits |= 1 << 16;
+		}
+		if (BuffMagnitude > 0)
+		{
+			RepBits |= 1 << 17;
+		}
+		if (BuffDuration > 0)
+		{
+			RepBits |= 1 << 18;
+		}
 
-		Ar.SerializeBits(&RepBits, 15);
+
+		Ar.SerializeBits(&RepBits, 19);
 
 		if (RepBits & (1 << 0))
 		{
@@ -147,6 +164,22 @@ bool FZGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bool&
 		if (RepBits & (1 << 14))
 		{
 			Ar << DebuffStack;
+		}
+		if (RepBits & (1 << 15))
+		{
+			Ar << BuffType;
+		}
+		if (RepBits & (1 << 16))
+		{
+			Ar << BuffAttribute;
+		}
+		if (RepBits & (1 << 17))
+		{
+			Ar << BuffMagnitude;
+		}
+		if (RepBits & (1 << 18))
+		{
+			Ar << BuffDuration;
 		}
 	}
 

@@ -24,6 +24,21 @@ void FZGameplayTag::InitializeNativeGameplayTags()
 	GameplayTag.Attributes_Secondary_CriticalHitDamage = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.CriticalHitDamage"));
 	GameplayTag.Attributes_Secondary_CriticalHitResistance = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.CriticalHitResistance"));
 
+	GameplayTag.BuffAttributes.Add(GameplayTag.Attributes_Primary_Sociability);
+	GameplayTag.BuffAttributes.Add(GameplayTag.Attributes_Primary_AntiSociability);
+	GameplayTag.BuffAttributes.Add(GameplayTag.Attributes_Primary_Strength);
+	GameplayTag.BuffAttributes.Add(GameplayTag.Attributes_Primary_Dexterity);
+	GameplayTag.BuffAttributes.Add(GameplayTag.Attributes_Primary_Engineering);
+	GameplayTag.BuffAttributes.Add(GameplayTag.Attributes_Secondary_MaxHealth);
+	GameplayTag.BuffAttributes.Add(GameplayTag.Attributes_Secondary_MaxMentality);
+	GameplayTag.BuffAttributes.Add(GameplayTag.Attributes_Secondary_Armor);
+	GameplayTag.BuffAttributes.Add(GameplayTag.Attributes_Secondary_ArmorPenetration);
+	GameplayTag.BuffAttributes.Add(GameplayTag.Attributes_Secondary_DodgeChance);
+	GameplayTag.BuffAttributes.Add(GameplayTag.Attributes_Secondary_CriticalHitChance);
+	GameplayTag.BuffAttributes.Add(GameplayTag.Attributes_Secondary_CriticalHitDamage);
+	GameplayTag.BuffAttributes.Add(GameplayTag.Attributes_Secondary_CriticalHitResistance);
+	
+
 	GameplayTag.Attributes_Card_WeaponAtk = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Card.WeaponAtk"));
 	GameplayTag.Attributes_Card_Defence = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Card.Defence"));
 
@@ -64,6 +79,10 @@ void FZGameplayTag::InitializeNativeGameplayTags()
 	GameplayTag.Debuffs.Add(GameplayTag.Debuff_Slow);
 	GameplayTag.Debuffs.Add(GameplayTag.Debuff_Stun);
 
+	// Buff
+	GameplayTag.Buff_Magnitude = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Buff.Magnitude"));
+	GameplayTag.Buff_Duration = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Buff.Duration"));
+
 	// Effect
 	GameplayTag.Effect_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Effect.HitReact"), FString("Tag granted when Hit React"));
 
@@ -75,6 +94,8 @@ void FZGameplayTag::InitializeNativeGameplayTags()
 	
 	GameplayTag.Card_Weapon_OneHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Weapon.OneHand"));
 	GameplayTag.Card_Weapon_TwoHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Weapon.TwoHand"));
+	GameplayTag.Card_Weapon_Left = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Weapon.Left"));
+	GameplayTag.Card_Weapon_Right = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Weapon.Right"));
 	
 	GameplayTag.Card_SKill_ThrowStone = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.ThrowStone"));
 	GameplayTag.Card_Skill_Swing = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.Swing"));
@@ -90,3 +111,4 @@ void FZGameplayTag::InitializeNativeGameplayTags()
 	GameplayTag.Montage_Attack_LeftHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.LeftHand"));
 	
 }
+

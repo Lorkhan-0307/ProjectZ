@@ -103,7 +103,7 @@ void AZCharacterBase::AddDebuff_Implementation(FDebuff Debuff)
 		if (NowDebuff.DebuffType.MatchesTagExact(Debuff.DebuffType))
 		{
 			if (Debuff.DebuffType.MatchesTagExact(FZGameplayTag::Get().Debuff_Stun) && StunImmunityCount > 0) return;
-			
+
 			NowDebuff.DebuffStack += Debuff.DebuffStack;
 			NowDebuff.DebuffDuration = Debuff.DebuffDuration;
 			AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*Debuff.DebuffEffectSpec);
@@ -122,12 +122,24 @@ void AZCharacterBase::RemoveDebuff_Implementation(FGameplayTag RemoveDebuffType)
 		{
 			NowDebuff.DebuffDuration = 0;
 			NowDebuff.DebuffStack = 0;
-			
+
 			FGameplayTagContainer TagContainer;
 			TagContainer.AddTag(RemoveDebuffType);
 			AbilitySystemComponent->RemoveActiveEffectsWithGrantedTags(TagContainer);
 			return;
 		}
+	}
+}
+
+void AZCharacterBase::AddBuff_Implementation(FGameplayTag BuffType, int32 BuffDuration)
+{
+	if (Buffs.Contains(BuffType))
+	{
+		Buffs[BuffType] = BuffDuration;
+	}
+	else
+	{
+		Buffs.Add(BuffType, BuffDuration);
 	}
 }
 

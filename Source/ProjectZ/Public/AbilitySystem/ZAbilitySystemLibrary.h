@@ -57,6 +57,18 @@ public:
 	UFUNCTION(BlueprintPure, Category = "ZAbilitySystemLibrary|GameplayEffects")
 	static int32 GetDebuffStack(const FGameplayEffectContextHandle& EffectContextHandle);
 
+	UFUNCTION(BlueprintPure, Category = "ZAbilitySystemLibrary|GameplayEffects")
+	static FGameplayTag GetBuffType(const FGameplayEffectContextHandle& EffectContextHandle);
+
+	UFUNCTION(BlueprintPure, Category = "ZAbilitySystemLibrary|GameplayEffects")
+	static FGameplayTag GetBuffAttribute(const FGameplayEffectContextHandle& EffectContextHandle);
+
+	UFUNCTION(BlueprintPure, Category = "ZAbilitySystemLibrary|GameplayEffects")
+	static float GetBuffMagnitude(const FGameplayEffectContextHandle& EffectContextHandle);
+
+	UFUNCTION(BlueprintPure, Category = "ZAbilitySystemLibrary|GameplayEffects")
+	static int32 GetBuffDuration(const FGameplayEffectContextHandle& EffectContextHandle);
+
 	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayEffects")
 	static void SetIsDodged(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool bInIsDodged);
 
@@ -80,6 +92,18 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayEffects")
 	static void SetDebuffStack(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, int32 InDebuffStack);
+
+	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayEffects")
+	static void SetBuffType(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, const FGameplayTag& InBuffType);
+	
+	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayEffects")
+	static void SetBuffAttribute(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, const FGameplayTag& InBuffAttribute);
+
+	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayEffects")
+	static void SetBuffMagnitude(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, float InBuffMagnitude);
+
+	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayEffects")
+	static void SetBuffDuration(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, int32 InBuffDuration);
 
 	UFUNCTION(BlueprintCallable)
 	static bool PayCost(AZCharacterBase* Character, float Cost);

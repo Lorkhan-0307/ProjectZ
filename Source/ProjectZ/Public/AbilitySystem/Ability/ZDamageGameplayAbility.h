@@ -8,6 +8,7 @@
 #include "Interaction/CombatInterface.h"
 #include "ZDamageGameplayAbility.generated.h"
 
+class UCardComponent;
 /**
  * 
  */
@@ -25,6 +26,9 @@ public:
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
+
+	UPROPERTY(BlueprintReadWrite)
+	UCardComponent* CardComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Damage)
 	FGameplayTag CardType;
@@ -53,6 +57,21 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Montage)
 	UAnimMontage* AbilityMontage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Buff)
+	FGameplayTag BuffType;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Buff)
+	int32 BuffMagnitude;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Buff)
+	int32 BuffDuration;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Buff)
+	FGameplayTag BuffAttribute;
+
+	UFUNCTION(BlueprintCallable)
+	void ApplyBuff();
 
 
 	UFUNCTION(BlueprintPure)
