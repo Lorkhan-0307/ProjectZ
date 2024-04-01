@@ -72,11 +72,11 @@ AFloorGenerate::AFloorGenerate()
     Tile->SetWorldScale3D(FVector(1.2, 1.2, 0.1));
     Tile->SetRelativeLocation(FVector(120, 120, 0));
     XWall->SetStaticMesh(CubeMesh3);
-    XWall->SetWorldScale3D(FVector(1.2, 0.1, 2.5));
-    XWall->SetRelativeLocation(FVector(0, 0, 120));
+    XWall->SetWorldScale3D(FVector(1.2, 0.1, 2.0));
+    XWall->SetRelativeLocation(FVector(0, 0, 100));
 	YWall->SetStaticMesh(CubeMesh3);
-	YWall->SetWorldScale3D(FVector(0.1, 1.2, 2.5));
-	YWall->SetRelativeLocation(FVector(0, 0, 120));
+	YWall->SetWorldScale3D(FVector(0.1, 1.2, 2.0));
+	YWall->SetRelativeLocation(FVector(0, 0, 100));
 	AttachedDoor = nullptr;
 }
 

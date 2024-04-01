@@ -67,14 +67,16 @@ public:
 
     bool isAdjacent(const Room& newRoom) const {
         for (const auto& room : rooms) {
+            int check = 0;
             if ((newRoom.x == room.x + room.width || newRoom.x + newRoom.width == room.x) &&
                 (newRoom.y >= room.y && newRoom.y <= room.y + room.height || room.y >= newRoom.y && room.y <= newRoom.y + newRoom.height)) {
-                return true;
+                check++;
             }
             if ((newRoom.y == room.y + room.height || newRoom.y + newRoom.height == room.y) &&
                 (newRoom.x >= room.x && newRoom.x <= room.x + room.width || room.x >= newRoom.x && room.x <= newRoom.x + newRoom.width)) {
-                return true;
+                check++;
             }
+            if(check == 1) return true;
         }
         return false;
     }
