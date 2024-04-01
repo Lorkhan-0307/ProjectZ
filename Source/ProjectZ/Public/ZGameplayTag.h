@@ -31,6 +31,7 @@ public:
 
 	FGameplayTag Attributes_Card_WeaponAtk;
 	FGameplayTag Attributes_Card_Defence;
+	FGameplayTag Attributes_Card_Gather;
 
 	// For Test
 	FGameplayTag InputTag_T;

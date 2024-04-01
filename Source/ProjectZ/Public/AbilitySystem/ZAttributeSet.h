@@ -163,6 +163,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE void AddDefenceInBlueprint(float InDefence) { SetDefence(GetDefence() + InDefence); }
 
+	UPROPERTY(BlueprintReadWrite, Category = "Card")
+	FGameplayAttributeData Gather;
+	ATTRIBUTE_ACCESSORS(UZAttributeSet, Gather)
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE void AddGatherInBlueprint(float InGather) { SetGather(GetGather() + InGather); }
+
 	// Meta Attributes
 	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
 	FGameplayAttributeData IncomingDamage;

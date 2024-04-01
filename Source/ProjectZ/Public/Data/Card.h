@@ -54,7 +54,7 @@ struct FCard : public FTableRowBase
 	ECardType CardType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 CardLevel;
+	int32 CardLevel = 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float SkillRange;

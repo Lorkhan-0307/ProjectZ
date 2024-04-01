@@ -149,11 +149,9 @@ void AZGameModeBase::NextTurn()
 	
 	for (TTuple<FGameplayTag,int32>& Buff :CombatInterface->Buffs)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("%s %d"),*Buff.Key.GetTagName().ToString(),Buff.Value);
 		Buff.Value--;
 		if (Buff.Value == 0)
 		{
-			UE_LOG(LogTemp,Warning,TEXT("Remove %s"),*Buff.Key.GetTagName().ToString());
 			UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TurnActor);
 			FGameplayTagContainer TagContainer;
 			TagContainer.AddTag(Buff.Key);

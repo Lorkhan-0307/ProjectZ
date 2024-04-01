@@ -93,7 +93,6 @@ void UNonCombatOverlay::SetCardComponent(UCardComponent* CC)
 		CardComponent->DiscardedCardLocation = CanvasPanelSlot->GetPosition() - CanvasPanelSlot->GetSize() / 2.f;
 		//CardComponent->DiscardedCardLocation.X = ScreenSize.X + (CanvasPanelSlot->GetPosition().X + CanvasPanelSlot->GetSize().X / 2.f);
 		//CardComponent->DiscardedCardLocation.Y = ScreenSize.Y + (CanvasPanelSlot->GetPosition().Y + CanvasPanelSlot->GetSize().Y / 2.f);
-		UE_LOG(LogTemp, Warning, TEXT("%f %f"), CardComponent->DiscardedCardLocation.X, CardComponent->DiscardedCardLocation.X);
 
 		CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(CardGraveyardSizeBox);
 		CardComponent->CardGraveyardLocation = CanvasPanelSlot->GetPosition() - CanvasPanelSlot->GetSize() / 2.f;
@@ -410,7 +409,6 @@ void UNonCombatOverlay::UpdateCharacterPortrait()
 	{
 		UCanvasPanelSlot* CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(PortraitWidgets[i]);
 		PortraitWidgets[i]->DestinationLocation = FVector2D(GetIndexPositionFromCenter(i, PortraitWidgets.Num()) * CanvasPanelSlot->GetSize().X + CharacterPortraitCenter, 0.f);
-		UE_LOG(LogTemp, Warning, TEXT("%d %f %d %f"), i, GetIndexPositionFromCenter(i, PortraitWidgets.Num()), PortraitWidgets.Num(), PortraitWidgets[i]->DestinationLocation.X);
 	}
 }
 
@@ -427,7 +425,6 @@ void UNonCombatOverlay::DiscardCharacterPortrait(AActor* Actor)
 			i--;
 		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *Actor->GetActorNameOrLabel())
 	UpdateCharacterPortrait();
 }
 

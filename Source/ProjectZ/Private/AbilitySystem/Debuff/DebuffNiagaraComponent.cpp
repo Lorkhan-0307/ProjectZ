@@ -39,7 +39,6 @@ void UDebuffNiagaraComponent::BeginPlay()
 
 void UDebuffNiagaraComponent::DebuffTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {
-	UE_LOG(LogTemp,Warning,TEXT("!!!"));
 	if (NewCount > 0)
 	{
 		Activate();

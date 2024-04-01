@@ -8,6 +8,7 @@
 #include "ZGameplayTag.h"
 #include "AbilitySystem/ZAbilitySystemLibrary.h"
 #include "AbilitySystem/Data/AttributeInfo.h"
+#include "Character/ZCharacterBase.h"
 #include "Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/ZPlayerControllerBase.h"
@@ -104,6 +105,7 @@ void UZAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 		Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 	}
 
+	if (LocalIncomingDamage > 0) Cast<UZAttributeSet>(Cast<AZCharacterBase>(Props.SourceCharacter)->GetAttributeSet())->SetGather(0.f);
 	SetDefence(0.f);
 
 	const bool bDodge = UZAbilitySystemLibrary::IsDodged(Props.EffectContextHandle);
@@ -179,10 +181,10 @@ void UZAttributeSet::Buff(const FEffectProperties& Props)
 
 	if (!BuffAttribute.IsValid())
 	{
-		UE_LOG(LogTemp,Warning,TEXT("Buff Type Not Valid"));
+		UE_LOG(LogTemp, Warning, TEXT("Buff Type Not Valid"));
 		return;
 	}
-	
+
 	FString BuffName = FString::Printf(TEXT("DynamicBuff_%s"), *BuffType.ToString());
 
 	UGameplayEffect* Effect = NewObject<UGameplayEffect>(GetTransientPackage(), FName(BuffName));
@@ -202,7 +204,7 @@ void UZAttributeSet::Buff(const FEffectProperties& Props)
 	ModifierInfo.Attribute = TagToAttribute[BuffAttribute]();
 
 	FGameplayEffectSpec* MutableSpec = new FGameplayEffectSpec(Effect, EffectContext, 1.f);
-	
+
 	ICombatInterface::Execute_AddBuff(Props.TargetCharacter, BuffAttribute, BuffDuration);
 	GetOwningAbilitySystemComponent()->ApplyGameplayEffectSpecToSelf(*MutableSpec);
 }

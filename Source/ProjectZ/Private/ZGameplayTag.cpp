@@ -41,6 +41,7 @@ void FZGameplayTag::InitializeNativeGameplayTags()
 
 	GameplayTag.Attributes_Card_WeaponAtk = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Card.WeaponAtk"));
 	GameplayTag.Attributes_Card_Defence = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Card.Defence"));
+	GameplayTag.Attributes_Card_Gather = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Card.Gather"));
 
 	// For Test
 	GameplayTag.InputTag_T = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.T"));

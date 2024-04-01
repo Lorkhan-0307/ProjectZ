@@ -31,7 +31,7 @@ UCardComponent::UCardComponent()
 
 void UCardComponent::UseCard(FCard Card)
 {
-	if (Card.CardType == ECardType::ECT_Skill)
+	if (Card.CardType == ECardType::ECT_Skill || Card.CardType == ECardType::ECT_Buff)
 	{
 		DiscardCard.Add(Card);
 	}
@@ -151,7 +151,6 @@ void UCardComponent::ShuffleDeck()
 void UCardComponent::MakeCardDeck()
 {
 	// For Test
-	AddCardToInventory(FName("HealthPotion"));
 	AddCardToInventory(FName("KitchenKnife"));
 	AddCardToInventory(FName("Sword"));
 	AddCardToInventory(FName("Axe"));
@@ -159,11 +158,12 @@ void UCardComponent::MakeCardDeck()
 	AddCardToInventory(FName("HealthPotion"));
 	AddCardToInventory(FName("Smash"));
 	AddCardToInventory(FName("Smash"));
-	AddCardToInventory(FName("Smash"));
 	AddCardToInventory(FName("Blocking"));
 	AddCardToInventory(FName("Blocking"));
 	AddCardToInventory(FName("Frenzy"));
 	AddCardToInventory(FName("Frenzy"));
+	AddCardToInventory(FName("Gather"));
+	AddCardToInventory(FName("Gather"));
 	// ...
 
 	CardDeck.Empty();

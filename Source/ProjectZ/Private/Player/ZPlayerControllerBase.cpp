@@ -47,7 +47,6 @@ void AZPlayerControllerBase::ShowDamageNumber(float DamageAmount, ACharacter* Ta
 {
 	if (IsValid(TargetCharacter) && DamageTextComponentClass)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("!!%f!!"), DamageAmount);
 		UDamageTextComponent* DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass);
 		DamageText->RegisterComponent();
 		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);

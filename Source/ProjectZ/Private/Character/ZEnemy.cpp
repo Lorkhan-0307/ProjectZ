@@ -87,7 +87,6 @@ void AZEnemy::BeginPlay()
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(ZAS->GetHealthAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
 		{
 			OnHealthChanged.Broadcast(Data.NewValue);
-			UE_LOG(LogTemp, Warning, TEXT("Damage Applied %f"), Data.NewValue);
 		});
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(ZAS->GetMaxHealthAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
 		{

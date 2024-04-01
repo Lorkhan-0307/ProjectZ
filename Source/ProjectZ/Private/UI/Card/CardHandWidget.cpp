@@ -49,7 +49,6 @@ void UCardHandWidget::UpdateCardPosition()
 	{
 		HandCard[i]->DestinationPosition = FVector2D(GetCardXPosition(i), GetCardYPosition(i));
 		HandCard[i]->DestinationAngle = GetCardAngle(i);
-		UE_LOG(LogTemp,Warning,TEXT("%d %f %f"),i,GetCardXPosition(i),GetCardYPosition(i));
 	}
 }
 

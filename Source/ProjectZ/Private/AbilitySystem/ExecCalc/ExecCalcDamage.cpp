@@ -25,6 +25,7 @@ struct ZDamageStatic
 
 	DECLARE_ATTRIBUTE_CAPTUREDEF(WeaponAtk)
 	DECLARE_ATTRIBUTE_CAPTUREDEF(Defence)
+	DECLARE_ATTRIBUTE_CAPTUREDEF(Gather)
 
 	TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition> TagsToCaptureDef;
 
@@ -42,6 +43,7 @@ struct ZDamageStatic
 
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UZAttributeSet, WeaponAtk, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UZAttributeSet, Defence, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UZAttributeSet, Gather, Source, false);
 
 		const FZGameplayTag& Tags = FZGameplayTag::Get();
 		TagsToCaptureDef.Add(Tags.Attributes_Secondary_Armor, ArmorDef);
@@ -56,6 +58,7 @@ struct ZDamageStatic
 
 		TagsToCaptureDef.Add(Tags.Attributes_Card_WeaponAtk, WeaponAtkDef);
 		TagsToCaptureDef.Add(Tags.Attributes_Card_Defence, DefenceDef);
+		TagsToCaptureDef.Add(Tags.Attributes_Card_Gather, GatherDef);
 	}
 };
 
@@ -79,6 +82,7 @@ UExecCalcDamage::UExecCalcDamage()
 
 	RelevantAttributesToCapture.Add(DamageStatic().WeaponAtkDef);
 	RelevantAttributesToCapture.Add(DamageStatic().DefenceDef);
+	RelevantAttributesToCapture.Add(DamageStatic().GatherDef);
 }
 
 void UExecCalcDamage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
@@ -220,6 +224,13 @@ void UExecCalcDamage::Execute_Implementation(const FGameplayEffectCustomExecutio
 
 	Damage -= TargetDefence;
 	Damage = FMath::Max<float>(Damage, 0.f);
+
+	// Gather
+	float SourceGather = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatic().GatherDef, EvaluationParameters, SourceGather);
+	SourceGather = FMath::Max(SourceGather, 0.f);
+	if (SourceGather != 0) Damage *= SourceGather;
+	UE_LOG(LogTemp,Warning,TEXT("%f"),SourceGather);
 
 	// Apply Damage
 	const FGameplayModifierEvaluatedData EvaluatedData(UZAttributeSet::GetIncomingDamageAttribute(), EGameplayModOp::Additive, Damage);

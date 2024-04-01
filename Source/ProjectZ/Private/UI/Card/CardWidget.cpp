@@ -232,7 +232,6 @@ void UCardWidget::TrashCard(float DeltaTime)
 
 	const float Alpha = (TrashCardStartPosition - CanvasPanelSlot->GetPosition()).Size() / (TrashCardStartPosition - DestinationPosition).Size();
 	CanvasPanelSlot->SetSize(FMath::Lerp(CardSize, 70, Alpha));
-	UE_LOG(LogTemp, Warning, TEXT("%f %f"), CanvasPanelSlot->GetPosition().X, CanvasPanelSlot->GetPosition().Y);
 
 	if (CanvasPanelSlot->GetPosition() == DestinationPosition)
 	{
