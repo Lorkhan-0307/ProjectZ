@@ -8,6 +8,7 @@ AActor* CurrentDoor;
 
 void AFloorGenerate::BasicRoom()
 {
+	int adjacent[4] = {-2, -2};
 	// Reset all tiles, walls, doors
 	Tile->ClearInstances();
 	XWall->ClearInstances();
@@ -42,12 +43,28 @@ void AFloorGenerate::BasicRoom()
 			}
 			if(i && floorPlan[i][j] != floorPlan[i-1][j])
 			{
-				if(floorPlan[i][j] != -1 && floorPlan[i-1][j] != -1) CreateDoor(i*120+60, j*120+60, true);
+				if(floorPlan[i][j] != -1 && floorPlan[i-1][j] != -1 && (adjacent[0] != floorPlan[i][j] || adjacent[1] != floorPlan[i-1][j]))
+				{
+					adjacent[0] = floorPlan[i][j];
+					adjacent[1] = floorPlan[i-1][j];
+					CreateDoor(i*120+60, j*120+60, true);
+				}
 				else YWall->AddInstance(FTransform(FVector(600+i*1200, 100+j*100, 0)));
 			}
+		}
+	}
+	for(int j=0;j<floorWidth;j++)
+	{
+		for(int i=0;i<floorHeight;i++)
+		{
 			if(j && floorPlan[i][j] != floorPlan[i][j-1])
 			{
-				if(floorPlan[i][j] != -1 && floorPlan[i][j-1] != -1) CreateDoor(i*120+60, j*120+60, false);
+				if(floorPlan[i][j] != -1 && floorPlan[i][j-1] != -1 && (adjacent[0] != floorPlan[i][j] || adjacent[1] != floorPlan[i][j-1]))
+				{
+					adjacent[0] = floorPlan[i][j];
+					adjacent[1] = floorPlan[i][j-1];
+					CreateDoor(i*120+60, j*120+60, false);
+				}
 				else XWall->AddInstance(FTransform(FVector(100+i*100, 600+j*1200, 0)));
 			}
 		}
@@ -110,6 +127,5 @@ void AFloorGenerate::BeginPlay()
 void AFloorGenerate::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
