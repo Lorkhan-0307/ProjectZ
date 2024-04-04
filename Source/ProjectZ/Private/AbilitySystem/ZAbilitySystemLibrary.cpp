@@ -350,6 +350,11 @@ FGameplayEffectContextHandle UZAbilitySystemLibrary::ApplyDamageEffect(const FDa
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTag.Buff_Magnitude, DamageEffectParams.BuffMagnitude);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTag.Buff_Duration, DamageEffectParams.BuffDuration);
 
-	DamageEffectParams.TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data);
+	if (DamageEffectParams.TargetAbilitySystemComponent)
+		DamageEffectParams.TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data);
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("No Target Ability"));
+	}
 	return EffectContextHandle;
 }

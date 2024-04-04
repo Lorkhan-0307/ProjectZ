@@ -81,10 +81,11 @@ public:
 	FGameplayTag Card_Weapon_TwoHand;
 	FGameplayTag Card_Weapon_Left;
 	FGameplayTag Card_Weapon_Right;
+	FGameplayTag Card_Weapon_BasicAttack;
 	
 	FGameplayTag Card_SKill_ThrowStone;
 	FGameplayTag Card_Skill_Swing;
-	FGameplayTag Card_Skill_Blocking;
+	FGameplayTag Card_Skill_Block;
 	FGameplayTag Card_Skill_Smash;
 	FGameplayTag Card_Skill_Frenzy;
 	FGameplayTag Card_Skill_Gather;

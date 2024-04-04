@@ -42,7 +42,7 @@ void UCardWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointer
 {
 	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
 	bMouseHovered = true;
-	if (CardStat.CardType == ECardType::ECT_Skill)
+	if (CardStat.CardType == ECardType::ECT_Skill || CanvasPanelSlot == nullptr)
 	{
 		AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(GetOwningPlayerPawn());
 		PlayerCharacter->ShowSKillRange(CardStat.SkillRange);
@@ -82,6 +82,7 @@ void UCardWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPoint
 	DragCardWidget->InitCardStatus(CardStat);
 	CardDragDropOperation->DefaultDragVisual = DragCardWidget;
 	CardDragDropOperation->Pivot = EDragPivot::CenterCenter;
+	
 	SetVisibility(ESlateVisibility::Hidden);
 
 	OutOperation = CardDragDropOperation;
@@ -100,27 +101,24 @@ void UCardWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, U
 
 	if (CanvasPanelSlot == nullptr) // Equipping Card
 	{
-		bool bUnEquipCard;
+		bool bBasicAttack;
 		const bool bIsLeftHandCard = GetCachedGeometry().GetAbsolutePosition().X < UWidgetLayoutLibrary::GetViewportSize(this).X / 2.f;
 		if (bIsLeftHandCard)
 		{
-			bUnEquipCard = !(CardComponent->LeftEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->LeftEquipPosMax) && CanEquip);
+			bBasicAttack = !(CardComponent->LeftEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->LeftEquipPosMax) && CanEquip);
 		}
 		else
 		{
-			bUnEquipCard = !(CardComponent->RightEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->RightEquipPosMax) && CanEquip);
+			bBasicAttack = !(CardComponent->RightEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->RightEquipPosMax) && CanEquip);
 		}
-		bUnEquipCard = bUnEquipCard && CardStat.CardCost <= AS->GetCost();
+		bBasicAttack = bBasicAttack && CardStat.CardCost <= AS->GetCost() && CardComponent->bActivatingCard == false;
 
-		if (bUnEquipCard)
+		if (bBasicAttack)
 		{
-			CardStat.IsValid = false;
-			CardComponent->ActiveCard(CardStat, bIsLeftHandCard);
+			//CardStat.IsValid = false;
+			CardComponent->ActiveCard(CardStat, bIsLeftHandCard, true);
 		}
-		else
-		{
-			SetVisibility(ESlateVisibility::Visible);
-		}
+		SetVisibility(ESlateVisibility::Visible);
 		return;
 	}
 
@@ -128,7 +126,7 @@ void UCardWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, U
 	bool bUseCard = MousePosition.Y < CardComponent->GetPlayCardHeight() && (CardStat.CardType == ECardType::ECT_Skill || CardStat.CardType == ECardType::ECT_Buff || CardStat.CardType == ECardType::ECT_UsablePassive); // Use Card
 	bUseCard = bUseCard || (CardComponent->LeftEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->LeftEquipPosMax) && CanEquip); // Equip Card Left
 	bUseCard = bUseCard || (CardComponent->RightEquipPosMin.ComponentwiseAllLessOrEqual(MousePosition) && MousePosition.ComponentwiseAllLessOrEqual(CardComponent->RightEquipPosMax) && CanEquip); // Equip Card Right
-	bUseCard = bUseCard && CardStat.CardCost <= AS->GetCost();
+	bUseCard = bUseCard && CardStat.CardCost <= AS->GetCost() && CardComponent->bActivatingCard == false;
 
 	if (bUseCard) // Use Card
 	{

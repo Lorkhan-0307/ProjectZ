@@ -248,11 +248,21 @@ void AZPlayerControllerBase::AbilityInputTagHeld(FGameplayTag InputTag)
 			float Distance = FVector::DistXY(GetCharacter()->GetActorLocation(), HitResult.Location) / 100.f;
 			if (Distance <= CardComponent->ActivatingCard.SkillRange)
 			{
-				GetASC()->AbilityInputTagHeld(CardComponent->ActivatingCard.CardTag); // Activate Skill Card
-				CardComponent->UseCard(CardComponent->ActivatingCard);
 				CardComponent->bActivatingCard = false;
-				CardComponent->ActivateCardDelegate.Broadcast();
-				UZAbilitySystemLibrary::PayCost(Cast<AZCharacterBase>(GetPawn()), CardComponent->ActivatingCard.CardCost);
+				if (GetASC()->AbilityInputTagHeld(CardComponent->ActivatingCard.CardTag))
+				{
+					UZAbilitySystemLibrary::PayCost(Cast<AZCharacterBase>(GetPawn()), CardComponent->ActivatingCard.CardCost);					
+				}
+				else
+				{
+					UZAbilitySystemLibrary::PayCost(Cast<AZCharacterBase>(GetPawn()), 1);
+				}
+
+				if (CardComponent->ActivatingCard.CardType == ECardType::ECT_Skill || CardComponent->ActivatingCard.CardType == ECardType::ECT_Buff)
+				{
+					CardComponent->UseCard(CardComponent->ActivatingCard);
+					CardComponent->ActivateCardDelegate.Broadcast();
+				}
 			}
 		}
 		else if (GetASC())

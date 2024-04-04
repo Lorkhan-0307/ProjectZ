@@ -7,6 +7,7 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/ZAbilitySystemLibrary.h"
 #include "AbilitySystem/ZAttributeSet.h"
+#include "Character/CardComponent.h"
 
 void UZDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 {
@@ -67,4 +68,9 @@ FTaggedMontage UZDamageGameplayAbility::GetRandomTaggedMontageFromArray(const TA
 
 	const int32 Selection = FMath::RandRange(0, TaggedMontages.Num() - 1);
 	return TaggedMontages[Selection];
+}
+
+void UZDamageGameplayAbility::ReduceWeaponDurability(FGameplayTag WeaponTag)
+{
+	CardComponent->ReduceWeaponDurability(WeaponTag);
 }

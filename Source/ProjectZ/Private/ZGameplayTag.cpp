@@ -97,10 +97,11 @@ void FZGameplayTag::InitializeNativeGameplayTags()
 	GameplayTag.Card_Weapon_TwoHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Weapon.TwoHand"));
 	GameplayTag.Card_Weapon_Left = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Weapon.Left"));
 	GameplayTag.Card_Weapon_Right = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Weapon.Right"));
+	GameplayTag.Card_Weapon_BasicAttack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Weapon.BasicAttack"));
 	
 	GameplayTag.Card_SKill_ThrowStone = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.ThrowStone"));
 	GameplayTag.Card_Skill_Swing = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.Swing"));
-	GameplayTag.Card_Skill_Blocking = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.Blocking"));
+	GameplayTag.Card_Skill_Block = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.Block"));
 	GameplayTag.Card_Skill_Smash = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.Smash"));
 	GameplayTag.Card_Skill_Frenzy = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.Frenzy"));
 	GameplayTag.Card_Skill_Gather = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.Gather"));

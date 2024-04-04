@@ -61,11 +61,14 @@ public:
 	void InitializeCardInventory(UCharacterClassInfo* CharacterClassInfo);
 
 	// Active Card, Apply Effect to target
-	void ActiveCard(FCard Card, bool bIsLeftHand = true);
+	void ActiveCard(FCard Card, bool bIsLeftHand = true, bool bActiveEquipCard = false);
 	void CancelActivateCard();
+	void BasicAttack(FCard Card);
 
 	void SetLeftHandCard(FCard Card, bool bIsValid = true);
 	void SetRightHandCard(FCard Card, bool bIsValid = true);
+
+	void ReduceWeaponDurability(FGameplayTag WeaponTag);
 
 	UPROPERTY(BlueprintReadOnly)
 	FCard ActivatingCard;

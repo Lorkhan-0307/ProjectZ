@@ -77,6 +77,6 @@ protected:
 	UFUNCTION(BlueprintPure)
 	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const;
 
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void CardEffect();
+	UFUNCTION(BlueprintCallable)
+	void ReduceWeaponDurability(FGameplayTag WeaponTag);
 };
