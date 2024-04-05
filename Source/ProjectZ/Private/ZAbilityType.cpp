@@ -82,9 +82,13 @@ bool FZGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bool&
 		{
 			RepBits |= 1 << 18;
 		}
+		if (bIsBlocked)
+		{
+			RepBits |= 1 << 19;
+		}
 
 
-		Ar.SerializeBits(&RepBits, 19);
+		Ar.SerializeBits(&RepBits, 20);
 
 		if (RepBits & (1 << 0))
 		{
@@ -180,6 +184,10 @@ bool FZGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bool&
 		if (RepBits & (1 << 18))
 		{
 			Ar << BuffDuration;
+		}
+		if (RepBits & (1 << 19))
+		{
+			Ar << bIsBlocked;
 		}
 	}
 

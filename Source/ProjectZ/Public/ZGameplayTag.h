@@ -89,6 +89,12 @@ public:
 	FGameplayTag Card_Skill_Smash;
 	FGameplayTag Card_Skill_Frenzy;
 	FGameplayTag Card_Skill_Gather;
+	
+	FGameplayTag Card_Skill_Stab;
+	FGameplayTag Card_Skill_Wound;
+	FGameplayTag Card_Skill_Salt;
+	FGameplayTag Card_Skill_Hack;
+
 
 private:
 	static FZGameplayTag GameplayTag;

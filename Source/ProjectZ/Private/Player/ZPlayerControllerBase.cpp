@@ -51,7 +51,7 @@ void AZPlayerControllerBase::ShowDamageNumber(float DamageAmount, ACharacter* Ta
 		DamageText->RegisterComponent();
 		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-		DamageText->SetDamageText(DamageAmount);
+		DamageText->SetDamageText(DamageAmount, TargetCharacter == GetCharacter());
 	}
 }
 
@@ -251,7 +251,7 @@ void AZPlayerControllerBase::AbilityInputTagHeld(FGameplayTag InputTag)
 				CardComponent->bActivatingCard = false;
 				if (GetASC()->AbilityInputTagHeld(CardComponent->ActivatingCard.CardTag))
 				{
-					UZAbilitySystemLibrary::PayCost(Cast<AZCharacterBase>(GetPawn()), CardComponent->ActivatingCard.CardCost);					
+					UZAbilitySystemLibrary::PayCost(Cast<AZCharacterBase>(GetPawn()), CardComponent->ActivatingCard.CardCost);
 				}
 				else
 				{

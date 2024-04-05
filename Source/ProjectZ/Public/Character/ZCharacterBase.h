@@ -94,6 +94,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UDebuffNiagaraComponent> BleedDebuffComponent;
 
+	UPROPERTY(BlueprintReadWrite)
+	int32 BleedCount = 0;
+
 	virtual void InitAbilityActorInfo();
 
 	virtual void InitializeDefaultAttributes() const;

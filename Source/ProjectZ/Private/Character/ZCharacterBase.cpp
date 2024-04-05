@@ -14,6 +14,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Game/ZGameModeBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AZCharacterBase::AZCharacterBase()
@@ -98,6 +99,7 @@ TArray<FTaggedMontage> AZCharacterBase::GetAttackMontages_Implementation()
 
 void AZCharacterBase::AddDebuff_Implementation(FDebuff Debuff)
 {
+	bool NewDebuff = true;
 	for (FDebuff& NowDebuff : Debuffs)
 	{
 		if (NowDebuff.DebuffType.MatchesTagExact(Debuff.DebuffType))
@@ -107,10 +109,22 @@ void AZCharacterBase::AddDebuff_Implementation(FDebuff Debuff)
 			NowDebuff.DebuffStack += Debuff.DebuffStack;
 			NowDebuff.DebuffDuration = Debuff.DebuffDuration;
 			AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*Debuff.DebuffEffectSpec);
-			return;
+			NewDebuff = false;
 		}
 	}
-	AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*Debuff.DebuffEffectSpec);
+	if (Debuff.DebuffType.MatchesTagExact(FZGameplayTag::Get().Debuff_Bleed))
+	{
+		BleedCount += Debuff.DebuffStack;
+		UE_LOG(LogTemp, Warning, TEXT("Bleed : %d"), BleedCount);
+		if (BleedCount >= 5)
+		{
+			FGameplayTagContainer TagContainer;
+			TagContainer.AddTag(FZGameplayTag::Get().Debuff_Bleed);
+			Cast<AZCharacterBase>(UGameplayStatics::GetPlayerController(this, 0)->GetCharacter())->GetCardComponent()->ActivatingCard.bShowDamage = true;
+			AbilitySystemComponent->TryActivateAbilitiesByTag(TagContainer);
+		}
+	}
+	if (NewDebuff) AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*Debuff.DebuffEffectSpec);
 	Debuffs.Add(Debuff);
 }
 
@@ -126,8 +140,11 @@ void AZCharacterBase::RemoveDebuff_Implementation(FGameplayTag RemoveDebuffType)
 			FGameplayTagContainer TagContainer;
 			TagContainer.AddTag(RemoveDebuffType);
 			AbilitySystemComponent->RemoveActiveEffectsWithGrantedTags(TagContainer);
-			return;
 		}
+	}
+	if (RemoveDebuffType.MatchesTagExact(FZGameplayTag::Get().Debuff_Bleed))
+	{
+		BleedCount = 0;
 	}
 }
 

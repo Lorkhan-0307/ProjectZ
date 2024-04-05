@@ -107,6 +107,15 @@ bool UZAbilitySystemLibrary::IsCriticalHit(const FGameplayEffectContextHandle& E
 	return false;
 }
 
+bool UZAbilitySystemLibrary::IsBlocked(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FZGameplayEffectContext* ZEffectContext = static_cast<const FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return ZEffectContext->IsBlocked();
+	}
+	return false;
+}
+
 bool UZAbilitySystemLibrary::IsSuccessfulDebuff(const FGameplayEffectContextHandle& EffectContextHandle)
 {
 	if (const FZGameplayEffectContext* ZEffectContext = static_cast<const FZGameplayEffectContext*>(EffectContextHandle.Get()))
@@ -213,6 +222,14 @@ void UZAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& Effe
 	if (FZGameplayEffectContext* ZEffectContext = static_cast<FZGameplayEffectContext*>(EffectContextHandle.Get()))
 	{
 		ZEffectContext->SetIsCriticalHit(bInIsCriticalHit);
+	}
+}
+
+void UZAbilitySystemLibrary::SetIsBlocked(FGameplayEffectContextHandle& EffectContextHandle, bool bInIsBlocked)
+{
+	if (FZGameplayEffectContext* ZEffectContext = static_cast<FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		ZEffectContext->SetIsBlocked(bInIsBlocked);
 	}
 }
 
@@ -344,6 +361,7 @@ FGameplayEffectContextHandle UZAbilitySystemLibrary::ApplyDamageEffect(const FDa
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTag.Debuff_Chance, DamageEffectParams.DebuffChance);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTag.Debuff_Damage, DamageEffectParams.DebuffDamage);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTag.Debuff_Duration, DamageEffectParams.DebuffDuration);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTag.Debuff_Stack, DamageEffectParams.DebuffStack);
 
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageEffectParams.BuffType, 1);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageEffectParams.BuffAttribute, 1);

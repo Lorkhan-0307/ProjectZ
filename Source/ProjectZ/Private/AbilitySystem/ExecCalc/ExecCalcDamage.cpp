@@ -225,12 +225,13 @@ void UExecCalcDamage::Execute_Implementation(const FGameplayEffectCustomExecutio
 	Damage -= TargetDefence;
 	Damage = FMath::Max<float>(Damage, 0.f);
 
+	UZAbilitySystemLibrary::SetIsBlocked(EffectContextHandle, TargetDefence > 0.f);
+
 	// Gather
 	float SourceGather = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatic().GatherDef, EvaluationParameters, SourceGather);
 	SourceGather = FMath::Max(SourceGather, 0.f);
 	if (SourceGather != 0) Damage *= SourceGather;
-	UE_LOG(LogTemp,Warning,TEXT("%f"),SourceGather);
 
 	// Apply Damage
 	const FGameplayModifierEvaluatedData EvaluatedData(UZAttributeSet::GetIncomingDamageAttribute(), EGameplayModOp::Additive, Damage);

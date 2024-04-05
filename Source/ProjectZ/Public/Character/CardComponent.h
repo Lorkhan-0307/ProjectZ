@@ -165,4 +165,7 @@ private:
 
 	UPROPERTY()
 	AZGameModeBase* GameMode;
+
+	bool bLeftAttack = false;
+	bool bRightAttack = false;
 };

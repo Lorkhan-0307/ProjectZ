@@ -8,6 +8,7 @@
 #include "ZGameplayTag.h"
 #include "AbilitySystem/ZAbilitySystemLibrary.h"
 #include "AbilitySystem/Data/AttributeInfo.h"
+#include "Character/CardComponent.h"
 #include "Character/ZCharacterBase.h"
 #include "Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
@@ -37,6 +38,7 @@ UZAttributeSet::UZAttributeSet()
 
 	TagToAttribute.Add(GameplayTag.Attributes_Card_WeaponAtk, GetWeaponAtkAttribute);
 	TagToAttribute.Add(GameplayTag.Attributes_Card_Defence, GetDefenceAttribute);
+	TagToAttribute.Add(GameplayTag.Attributes_Card_Gather, GetGatherAttribute);
 }
 
 // Clamp Attributes
@@ -110,6 +112,7 @@ void UZAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 
 	const bool bDodge = UZAbilitySystemLibrary::IsDodged(Props.EffectContextHandle);
 	const bool bCriticalHit = UZAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
+	const bool bBlock = UZAbilitySystemLibrary::IsBlocked(Props.EffectContextHandle);
 
 	ShowFloatingText(Props, LocalIncomingDamage);
 
@@ -211,12 +214,9 @@ void UZAttributeSet::Buff(const FEffectProperties& Props)
 
 void UZAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage) const
 {
-	if (Props.SourceCharacter != Props.TargetCharacter)
+	if (AZPlayerControllerBase* PC = Cast<AZPlayerControllerBase>(UGameplayStatics::GetPlayerController(Props.SourceCharacter, 0)))
 	{
-		if (AZPlayerControllerBase* PC = Cast<AZPlayerControllerBase>(UGameplayStatics::GetPlayerController(Props.SourceCharacter, 0)))
-		{
-			PC->ShowDamageNumber(Damage, Props.TargetCharacter);
-		}
+		if (Cast<AZCharacterBase>(PC->GetCharacter())->GetCardComponent()->ActivatingCard.bShowDamage) PC->ShowDamageNumber(Damage, Props.TargetCharacter);
 	}
 }
 

@@ -160,14 +160,12 @@ void UCardComponent::MakeCardDeck()
 	AddCardToInventory(FName("Sword"));
 	AddCardToInventory(FName("Axe"));
 	AddCardToInventory(FName("HealthPotion"));
-	AddCardToInventory(FName("Smash"));
-	AddCardToInventory(FName("Smash"));
-	AddCardToInventory(FName("Block"));
-	AddCardToInventory(FName("Block"));
-	AddCardToInventory(FName("Frenzy"));
-	AddCardToInventory(FName("Frenzy"));
-	AddCardToInventory(FName("Gather"));
-	AddCardToInventory(FName("Gather"));
+	AddCardToInventory(FName("Stab"));
+	AddCardToInventory(FName("Stab"));
+	AddCardToInventory(FName("Wound"));
+	AddCardToInventory(FName("Wound"));
+	
+
 	// ...
 
 	CardDeck.Empty();
@@ -238,6 +236,9 @@ void UCardComponent::TurnChanged(ETurn Turn)
 			ShuffleDeck();
 		}
 	}
+
+	bLeftAttack = false;
+	bRightAttack = false;
 }
 
 
@@ -289,7 +290,11 @@ void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand, bool bActiveEquipC
 	case ECardType::ECT_OneHandWeapon:
 		if (bActiveEquipCard)
 		{
+			if (bIsLeftHand && bLeftAttack) break;
+			if (!bIsLeftHand && bRightAttack) break;
 			BasicAttack(Card);
+			if (bIsLeftHand) bLeftAttack = true;
+			else bRightAttack = true;
 			break;
 		}
 		if (bIsLeftHand)
@@ -359,6 +364,9 @@ void UCardComponent::SetLeftHandCard(FCard Card, bool bIsValid)
 	}
 
 	LeftHandCard = Card;
+	UZAttributeSet* AS = Cast<UZAttributeSet>(ZCharacter->GetAttributeSet());
+	AS->SetWeaponAtk(FMath::Max(LeftHandCard.IsValid ? LeftHandCard.CardAtk : 0, RightHandCard.IsValid ? RightHandCard.CardAtk : 0));
+	UE_LOG(LogTemp,Warning,TEXT("Weapon ATK : %f"),AS->GetWeaponAtk());
 	UpdateLeftHandCardDelegate.Broadcast(Card);
 }
 
@@ -370,6 +378,8 @@ void UCardComponent::SetRightHandCard(FCard Card, bool bIsValid)
 	}
 
 	RightHandCard = Card;
+	UZAttributeSet* AS = Cast<UZAttributeSet>(ZCharacter->GetAttributeSet());
+	AS->SetWeaponAtk(FMath::Max(LeftHandCard.IsValid ? LeftHandCard.CardAtk : 0, RightHandCard.IsValid ? RightHandCard.CardAtk : 0));
 	UpdateRightHandCardDelegate.Broadcast(Card);
 }
 

@@ -72,6 +72,7 @@ struct FZGameplayEffectContext : public FGameplayEffectContext
 public:
 	bool IsCriticalHit() const { return bIsCriticalHit; }
 	bool IsDodged() const { return bIsDodged; }
+	bool IsBlocked() const { return bIsBlocked; }
 	bool IsSuccessfulDebuff() const { return bIsSuccessfulDebuff; }
 	float GetDebuffDamage() const { return DebuffDamage; }
 	int32 GetDebuffDuration() const { return DebuffDuration; }
@@ -85,6 +86,7 @@ public:
 
 	void SetIsCriticalHit(bool bInIsCriticalHit) { bIsCriticalHit = bInIsCriticalHit; }
 	void SetIsDodged(bool bInIsDodged) { bIsDodged = bInIsDodged; }
+	void SetIsBlocked(bool bInIsBlocked) { bIsBlocked = bInIsBlocked; }
 	void SetIsSuccessfulDebuff(bool bInIsDebuff) { bIsSuccessfulDebuff = bInIsDebuff; }
 	void SetDebuffDamage(float InDamage) { DebuffDamage = InDamage; }
 	void SetDebuffDuration(int32 InDuration) { DebuffDuration = InDuration; }
@@ -124,6 +126,9 @@ protected:
 
 	UPROPERTY()
 	bool bIsCriticalHit = false;
+
+	UPROPERTY()
+	bool bIsBlocked = false;
 
 	UPROPERTY()
 	bool bIsSuccessfulDebuff = false;
