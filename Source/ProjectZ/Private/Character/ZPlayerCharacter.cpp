@@ -14,6 +14,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Character/CardComponent.h"
+#include "Character/SkillRangeComponent.h"
 #include "Character/ZNonCombatCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SplineComponent.h"
@@ -205,15 +206,35 @@ float AZPlayerCharacter::GetPathLength()
 	return SplineLength;
 }
 
-void AZPlayerCharacter::ShowSKillRange(float Range)
+void AZPlayerCharacter::ShowSKillRange(float Angle, float Range)
 {
+	/*
 	SkillRangeMesh->SetWorldScale3D(FVector(Range, Range, 1.f));
 	SkillRangeMesh->SetVisibility(true);
+	*/
+
+	SkillRangeComponents.Empty();
+
+	for (int i = - Angle / 10; i < Angle / 10; i++)
+	{
+		USkillRangeComponent* SkillRangeComponent = NewObject<USkillRangeComponent>(this, SkillRangedMeshComponentClass);
+		SkillRangeComponent->RegisterComponent();
+		SkillRangeComponent->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		SkillRangeComponent->InitMesh(i * 5, Range);
+		SkillRangeComponent->SetMaterial(0, SkillRangeMaterial);
+		SkillRangeComponents.Add(SkillRangeComponent);
+	}
 }
 
 void AZPlayerCharacter::HideSkillRange()
 {
-	SkillRangeMesh->SetVisibility(false);
+	//SkillRangeMesh->SetVisibility(false);
+
+	for (USkillRangeComponent* SkillRangeComponent : SkillRangeComponents)
+	{
+		if (SkillRangeComponent) SkillRangeComponent->DestroyComponent();
+	}
+	SkillRangeComponents.Empty();
 }
 
 void AZPlayerCharacter::BeginPlay()

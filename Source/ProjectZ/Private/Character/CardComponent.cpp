@@ -164,7 +164,7 @@ void UCardComponent::MakeCardDeck()
 	AddCardToInventory(FName("Stab"));
 	AddCardToInventory(FName("Wound"));
 	AddCardToInventory(FName("Wound"));
-	
+
 
 	// ...
 
@@ -290,8 +290,16 @@ void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand, bool bActiveEquipC
 	case ECardType::ECT_OneHandWeapon:
 		if (bActiveEquipCard)
 		{
-			if (bIsLeftHand && bLeftAttack) break;
-			if (!bIsLeftHand && bRightAttack) break;
+			if (bIsLeftHand && bLeftAttack)
+			{
+				if (AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(ZCharacter)) PlayerCharacter->HideSkillRange();
+				break;
+			}
+			if (!bIsLeftHand && bRightAttack)
+			{
+				if (AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(ZCharacter)) PlayerCharacter->HideSkillRange();
+				break;
+			}
 			BasicAttack(Card);
 			if (bIsLeftHand) bLeftAttack = true;
 			else bRightAttack = true;
@@ -366,7 +374,7 @@ void UCardComponent::SetLeftHandCard(FCard Card, bool bIsValid)
 	LeftHandCard = Card;
 	UZAttributeSet* AS = Cast<UZAttributeSet>(ZCharacter->GetAttributeSet());
 	AS->SetWeaponAtk(FMath::Max(LeftHandCard.IsValid ? LeftHandCard.CardAtk : 0, RightHandCard.IsValid ? RightHandCard.CardAtk : 0));
-	UE_LOG(LogTemp,Warning,TEXT("Weapon ATK : %f"),AS->GetWeaponAtk());
+	UE_LOG(LogTemp, Warning, TEXT("Weapon ATK : %f"), AS->GetWeaponAtk());
 	UpdateLeftHandCardDelegate.Broadcast(Card);
 }
 

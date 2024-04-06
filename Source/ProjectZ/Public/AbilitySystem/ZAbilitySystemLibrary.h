@@ -117,6 +117,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayMechanics")
 	static void GetLivePlayersWithinRadius(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius, const FVector& SphereOrigin);
 
+	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayMechanics")
+	static void GetSectorFormTarget(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Angle, float Radius, const FVector& SphereOrigin, const FVector& MousePos);
+
 	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|DamageEffect")
 	static FGameplayEffectContextHandle ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams);
 };

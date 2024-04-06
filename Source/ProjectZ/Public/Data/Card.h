@@ -58,6 +58,9 @@ struct FCard : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float SkillRange = 1.5f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SkillAngle = 360.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bTargeting;

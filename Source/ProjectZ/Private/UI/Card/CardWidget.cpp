@@ -45,7 +45,7 @@ void UCardWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointer
 	if (CardStat.CardType == ECardType::ECT_Skill || CanvasPanelSlot == nullptr)
 	{
 		AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(GetOwningPlayerPawn());
-		PlayerCharacter->ShowSKillRange(CardStat.SkillRange);
+		PlayerCharacter->ShowSKillRange(CardStat.SkillAngle, CardStat.SkillRange);
 	}
 }
 
@@ -82,7 +82,7 @@ void UCardWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPoint
 	DragCardWidget->InitCardStatus(CardStat);
 	CardDragDropOperation->DefaultDragVisual = DragCardWidget;
 	CardDragDropOperation->Pivot = EDragPivot::CenterCenter;
-	
+
 	SetVisibility(ESlateVisibility::Hidden);
 
 	OutOperation = CardDragDropOperation;

@@ -347,6 +347,18 @@ void UZAbilitySystemLibrary::GetLivePlayersWithinRadius(const UObject* WorldCont
 	}
 }
 
+void UZAbilitySystemLibrary::GetSectorFormTarget(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Angle, float Radius, const FVector& SphereOrigin, const FVector& MousePos)
+{
+	TArray<AActor*> Actors;
+	GetLivePlayersWithinRadius(WorldContextObject, Actors, ActorsToIgnore, Radius, SphereOrigin);
+	FVector CenterToMouse = MousePos - SphereOrigin;
+	for (const AActor* Actor : Actors)
+	{
+		FVector CenterToTarget = Actor->GetActorLocation() - SphereOrigin;
+		float TargetAngle = FMath::Acos(FVector::DotProduct(CenterToMouse,CenterToTarget));
+	}
+}
+
 FGameplayEffectContextHandle UZAbilitySystemLibrary::ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams)
 {
 	const FZGameplayTag& GameplayTag = FZGameplayTag::Get();
@@ -368,11 +380,10 @@ FGameplayEffectContextHandle UZAbilitySystemLibrary::ApplyDamageEffect(const FDa
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTag.Buff_Magnitude, DamageEffectParams.BuffMagnitude);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTag.Buff_Duration, DamageEffectParams.BuffDuration);
 
-	if (DamageEffectParams.TargetAbilitySystemComponent)
-		DamageEffectParams.TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data);
+	if (DamageEffectParams.TargetAbilitySystemComponent) DamageEffectParams.TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data);
 	else
 	{
-		UE_LOG(LogTemp,Warning,TEXT("No Target Ability"));
+		UE_LOG(LogTemp, Warning, TEXT("No Target Ability"));
 	}
 	return EffectContextHandle;
 }

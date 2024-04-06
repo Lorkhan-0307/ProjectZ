@@ -7,6 +7,7 @@
 #include "Game/ZGameModeBase.h"
 #include "ZPlayerCharacter.generated.h"
 
+class USkillRangeComponent;
 class UCostPathLengthWidget;
 class USplineComponent;
 class USplineMeshComponent;
@@ -35,7 +36,7 @@ public:
 	float GetPathLength();
 
 	UFUNCTION(BlueprintCallable)
-	void ShowSKillRange(float Range);
+	void ShowSKillRange(float Angle, float Range);
 	
 	UFUNCTION(BlueprintCallable)
 	void HideSkillRange();
@@ -58,6 +59,14 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = Spline)
 	FVector2D SplineScale = FVector2D(0.02f, 0.02f);
+
+	UPROPERTY(EditAnywhere, Category = "Skill Range")
+	TSubclassOf<UStaticMeshComponent> SkillRangedMeshComponentClass;
+
+	UPROPERTY(EditAnywhere, Category = "Skill Range")
+	UMaterial* SkillRangeMaterial; 
+
+	TArray<USkillRangeComponent*> SkillRangeComponents;
 
 	void UpdateSplinePath();
 
