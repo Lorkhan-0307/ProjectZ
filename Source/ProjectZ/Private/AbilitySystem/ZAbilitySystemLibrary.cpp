@@ -16,6 +16,7 @@
 #include "ZGameplayTag.h"
 #include "AbilitySystem/ZAttributeSet.h"
 #include "Character/ZCharacterBase.h"
+#include "Character/ZPlayerCharacter.h"
 
 UOverlayWidgetController* UZAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
 {
@@ -336,7 +337,7 @@ void UZAbilitySystemLibrary::GetLivePlayersWithinRadius(const UObject* WorldCont
 	TArray<FOverlapResult> Overlaps;
 	if (const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
 	{
-		World->OverlapMultiByObjectType(Overlaps, SphereOrigin, FQuat::Identity, FCollisionObjectQueryParams::InitType::AllDynamicObjects, FCollisionShape::MakeSphere(Radius), SphereParams);
+		World->OverlapMultiByObjectType(Overlaps, SphereOrigin, FQuat::Identity, FCollisionObjectQueryParams(FCollisionObjectQueryParams::InitType::AllDynamicObjects), FCollisionShape::MakeSphere(Radius), SphereParams);
 		for (FOverlapResult& Overlap : Overlaps)
 		{
 			if (Overlap.GetActor()->Implements<UCombatInterface>() && !ICombatInterface::Execute_IsDead(Overlap.GetActor()))
@@ -350,12 +351,20 @@ void UZAbilitySystemLibrary::GetLivePlayersWithinRadius(const UObject* WorldCont
 void UZAbilitySystemLibrary::GetSectorFormTarget(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Angle, float Radius, const FVector& SphereOrigin, const FVector& MousePos)
 {
 	TArray<AActor*> Actors;
-	GetLivePlayersWithinRadius(WorldContextObject, Actors, ActorsToIgnore, Radius, SphereOrigin);
+	Cast<AZGameModeBase>(GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull)->GetAuthGameMode())->GetCombatActor(Actors);
 	FVector CenterToMouse = MousePos - SphereOrigin;
-	for (const AActor* Actor : Actors)
+	CenterToMouse.Normalize();
+	for (AActor* Actor : Actors)
 	{
+		if (Cast<AZPlayerCharacter>(Actor)) continue;
 		FVector CenterToTarget = Actor->GetActorLocation() - SphereOrigin;
-		float TargetAngle = FMath::Acos(FVector::DotProduct(CenterToMouse,CenterToTarget));
+		const float Distance = CenterToTarget.Length() / 100.f;
+		CenterToTarget.Normalize();
+		const float TargetAngle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(CenterToMouse, CenterToTarget)));
+		if (TargetAngle <= Angle / 2.f && Distance <= Radius)
+		{
+			OutOverlappingActors.Add(Actor);
+		}
 	}
 }
 

@@ -67,6 +67,8 @@ public:
 
 	FORCEINLINE int32 GetTurnPlayerIndex() const { return TurnPlayerIndex; }
 
+	void GetCombatActor(TArray<AActor*>& CombatActors);
+
 	UPROPERTY()
 	AActor* TurnActor;
 

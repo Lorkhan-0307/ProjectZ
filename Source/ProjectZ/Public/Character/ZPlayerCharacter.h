@@ -74,4 +74,6 @@ private:
 
 	UFUNCTION()
 	void TurnChanged(ETurn Turn);
+
+	void SetSkillRangePos();
 };

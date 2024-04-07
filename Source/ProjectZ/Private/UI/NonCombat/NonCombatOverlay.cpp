@@ -362,6 +362,7 @@ void UNonCombatOverlay::ShowTurnEndButton(bool bShow)
 
 void UNonCombatOverlay::ShowSkillCard(FCard Card)
 {
+	Card.IsValid = false;
 	ShowSkillCardWidget->InitCardStatus(Card, false);
 	ShowSkillCardOverlay->SetVisibility(ESlateVisibility::Visible);
 }

@@ -86,6 +86,7 @@ void AZPlayerCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	UpdateSplinePath();
+	SetSkillRangePos();
 }
 
 void AZPlayerCharacter::UpdateSplinePath()
@@ -196,6 +197,21 @@ void AZPlayerCharacter::TurnChanged(ETurn Turn)
 	GetCharacterMovement()->StopActiveMovement();
 }
 
+void AZPlayerCharacter::SetSkillRangePos()
+{
+	FHitResult CursorHit;
+	GetWorld()->GetFirstPlayerController()->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, CursorHit);
+	FVector Pos = CursorHit.Location - GetActorLocation();
+	for (USkillRangeComponent* Component : SkillRangeComponents)
+	{
+		if (IsValid(Component))
+		{
+			float MouseAngle = FMath::RadiansToDegrees(FMath::Atan2(Pos.Y, Pos.X));
+			Component->SetWorldRotation(FRotator(0.f, Component->Angle + MouseAngle, 0.f));
+		}
+	}
+}
+
 int32 AZPlayerCharacter::GetPathCost()
 {
 	return FMath::CeilToInt32(SplineLength);
@@ -213,7 +229,7 @@ void AZPlayerCharacter::ShowSKillRange(float Angle, float Range)
 	SkillRangeMesh->SetVisibility(true);
 	*/
 
-	SkillRangeComponents.Empty();
+	HideSkillRange();
 
 	for (int i = - Angle / 10; i < Angle / 10; i++)
 	{

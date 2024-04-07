@@ -184,7 +184,6 @@ void UZAttributeSet::Buff(const FEffectProperties& Props)
 
 	if (!BuffAttribute.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Buff Type Not Valid"));
 		return;
 	}
 

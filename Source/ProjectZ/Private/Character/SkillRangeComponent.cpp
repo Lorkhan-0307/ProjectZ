@@ -7,7 +7,7 @@
 
 USkillRangeComponent::USkillRangeComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	UPrimitiveComponent::SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 }

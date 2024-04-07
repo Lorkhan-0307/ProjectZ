@@ -246,7 +246,7 @@ void AZPlayerControllerBase::AbilityInputTagHeld(FGameplayTag InputTag)
 
 
 			float Distance = FVector::DistXY(GetCharacter()->GetActorLocation(), HitResult.Location) / 100.f;
-			if (Distance <= CardComponent->ActivatingCard.SkillRange)
+			if (Distance <= CardComponent->ActivatingCard.SkillRange || CardComponent->ActivatingCard.bTargeting == false)
 			{
 				CardComponent->bActivatingCard = false;
 				if (GetASC()->AbilityInputTagHeld(CardComponent->ActivatingCard.CardTag))

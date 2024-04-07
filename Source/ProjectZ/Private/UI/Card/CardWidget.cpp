@@ -42,7 +42,7 @@ void UCardWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointer
 {
 	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
 	bMouseHovered = true;
-	if (CardStat.CardType == ECardType::ECT_Skill || CanvasPanelSlot == nullptr)
+	if ((CardStat.CardType == ECardType::ECT_Skill || CanvasPanelSlot == nullptr) && CardStat.IsValid)
 	{
 		AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(GetOwningPlayerPawn());
 		PlayerCharacter->ShowSKillRange(CardStat.SkillAngle, CardStat.SkillRange);
@@ -55,7 +55,7 @@ void UCardWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 	Super::NativeOnMouseLeave(InMouseEvent);
 	bMouseHovered = false;
 	AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(GetOwningPlayerPawn());
-	PlayerCharacter->HideSkillRange();
+	if (CardStat.IsValid) PlayerCharacter->HideSkillRange();
 }
 
 FReply UCardWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)

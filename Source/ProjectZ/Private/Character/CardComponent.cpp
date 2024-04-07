@@ -164,6 +164,8 @@ void UCardComponent::MakeCardDeck()
 	AddCardToInventory(FName("Stab"));
 	AddCardToInventory(FName("Wound"));
 	AddCardToInventory(FName("Wound"));
+	AddCardToInventory(FName("Salt"));
+	AddCardToInventory(FName("Salt"));
 
 
 	// ...

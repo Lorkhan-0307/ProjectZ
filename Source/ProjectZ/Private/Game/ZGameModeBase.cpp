@@ -70,6 +70,11 @@ void AZGameModeBase::SetTurn(ETurn Turn)
 	TurnChangedDelegate.Broadcast(CurrentTurn);
 }
 
+void AZGameModeBase::GetCombatActor(TArray<AActor*>& CombatActors)
+{
+	CombatActors=CombatActor;
+}
+
 void AZGameModeBase::SortCombatActor()
 {
 	TArray<AZCharacterBase*> SortArray;
