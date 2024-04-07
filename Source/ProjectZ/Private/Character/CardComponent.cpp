@@ -157,8 +157,6 @@ void UCardComponent::MakeCardDeck()
 {
 	// For Test
 	AddCardToInventory(FName("KitchenKnife"));
-	AddCardToInventory(FName("Sword"));
-	AddCardToInventory(FName("Axe"));
 	AddCardToInventory(FName("HealthPotion"));
 	AddCardToInventory(FName("Stab"));
 	AddCardToInventory(FName("Stab"));
@@ -166,6 +164,8 @@ void UCardComponent::MakeCardDeck()
 	AddCardToInventory(FName("Wound"));
 	AddCardToInventory(FName("Salt"));
 	AddCardToInventory(FName("Salt"));
+	AddCardToInventory(FName("Hack"));
+	AddCardToInventory(FName("Hack"));
 
 
 	// ...
