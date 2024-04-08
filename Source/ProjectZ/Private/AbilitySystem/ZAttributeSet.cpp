@@ -136,6 +136,17 @@ void UZAttributeSet::Debuff(const FEffectProperties& Props)
 	const FGameplayTag DebuffType = UZAbilitySystemLibrary::GetDebuffType(Props.EffectContextHandle);
 	const int32 DebuffStack = UZAbilitySystemLibrary::GetDebuffStack(Props.EffectContextHandle);
 
+	if (DebuffType.MatchesTagExact(GameplayTag.Debuff_KnockBack))
+	{
+		const FVector& KnockbackForce = UZAbilitySystemLibrary::GetKnockbackForce(Props.EffectContextHandle);
+		UE_LOG(LogTemp,Warning,TEXT("%f"),KnockbackForce.Size());
+		if (!KnockbackForce.IsNearlyZero(10.f))
+		{
+			Props.TargetCharacter->LaunchCharacter(KnockbackForce, true, false);
+		}
+		return;
+	}
+
 	FString DebuffName = FString::Printf(TEXT("DynamicDebuff_%s"), *DamageType.ToString());
 
 	UGameplayEffect* Effect = NewObject<UGameplayEffect>(GetTransientPackage(), FName(DebuffName));

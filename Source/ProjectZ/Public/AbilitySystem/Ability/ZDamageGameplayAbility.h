@@ -21,6 +21,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CauseDamage(AActor* TargetActor);
 
+	UFUNCTION(BlueprintPure)
 	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr) const;
 
 protected:
@@ -54,6 +55,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Debuff)
 	int32 DebuffStack = 1;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Debuff)
+	float KnockbackForceMagnitude = 1000.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Montage)
 	UAnimMontage* AbilityMontage;

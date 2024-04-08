@@ -14,53 +14,59 @@ struct FDamageEffectParams
 	{
 	}
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<UObject> WorldContextObject = nullptr;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TSubclassOf<UGameplayEffect> DamageGameplayEffectClass = nullptr;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<UAbilitySystemComponent> SourceAbilitySystemComponent;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<UAbilitySystemComponent> TargetAbilitySystemComponent;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float BaseDamage = 0.f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float AbilityLevel = 1.f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	FGameplayTag DamageType = FGameplayTag();
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	FGameplayTag DebuffType = FGameplayTag();
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float DebuffChance = 0.f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float DebuffDamage = 0.f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	int32 DebuffDuration = 0;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	int32 DebuffStack = 0;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	FGameplayTag BuffType = FGameplayTag();
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	FGameplayTag BuffAttribute;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float BuffMagnitude;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	int32 BuffDuration;
+
+	UPROPERTY(BlueprintReadWrite)
+	float KnockbackForceMagnitude = 0.f;
+
+	UPROPERTY(BlueprintReadWrite)
+	FVector KnockbackForce = FVector::ZeroVector;
 };
 
 // Custom GameplayEffectContext
@@ -83,6 +89,7 @@ public:
 	FGameplayTag GetBuffAttribute() const { return BuffAttribute; }
 	float GetBuffMagnitude() const { return BuffMagnitude; }
 	int32 GetBuffDuration() const { return BuffDuration; }
+	FVector GetKnockbackForce() const { return KnockbackForce; }
 
 	void SetIsCriticalHit(bool bInIsCriticalHit) { bIsCriticalHit = bInIsCriticalHit; }
 	void SetIsDodged(bool bInIsDodged) { bIsDodged = bInIsDodged; }
@@ -97,6 +104,7 @@ public:
 	void SetBuffAttribute(FGameplayTag InBuffAttribute) { BuffAttribute = InBuffAttribute; }
 	void SetBuffMagnitude(float InBuffMagnitude) { BuffMagnitude = InBuffMagnitude; }
 	void SetBuffDuration(int32 InBuffDuration) { BuffDuration = InBuffDuration; }
+	void SetKnockbackForce(const FVector& InForce) { KnockbackForce = InForce; }
 
 	// Returns the actual struct used for serialization, subclasses must override this
 	virtual UScriptStruct* GetScriptStruct() const
@@ -158,6 +166,9 @@ protected:
 
 	UPROPERTY()
 	int32 BuffDuration = 0;
+
+	UPROPERTY()
+	FVector KnockbackForce = FVector::ZeroVector;
 };
 
 template <>

@@ -10,6 +10,7 @@
 #include "AI/ZAIController.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Character/CardComponent.h"
 #include "Game/ZGameModeBase.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "ProjectZ/ProjectZ.h"
@@ -40,6 +41,37 @@ void AZEnemy::PossessedBy(AController* NewController)
 	if (CharacterClass == ECharacterClass::RangedAttackZombie)
 		ZAIController->GetBlackboardComponent()->SetValueAsBool(FName("RangedAttacker"), true);
 	*/
+}
+
+void AZEnemy::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	AZCharacterBase* ZCharacter = Cast<AZCharacterBase>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+	UCardComponent* CharacterCardComponent = ZCharacter->GetCardComponent();
+
+	if (!CharacterCardComponent->bActivatingCard) return;
+	FHitResult CursorHit;
+	GetWorld()->GetFirstPlayerController()->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, CursorHit);
+	if (!CursorHit.bBlockingHit) return;
+
+	FVector MousePos = CursorHit.Location;
+
+	FVector CenterToMouse = MousePos - ZCharacter->GetActorLocation();
+	CenterToMouse.Normalize();
+	FVector CenterToTarget = GetActorLocation() - ZCharacter->GetActorLocation();
+	const float Distance = CenterToTarget.Length() / 100.f;
+	CenterToTarget.Normalize();
+	const float TargetAngle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(CenterToMouse, CenterToTarget)));
+
+	if (CharacterCardComponent && TargetAngle <= CharacterCardComponent->ActivatingCard.SkillAngle / 2.f && Distance <= CharacterCardComponent->ActivatingCard.SkillRange)
+	{
+		HighlightActor();
+	}
+	else
+	{
+		UnHighlightActor();
+	}
 }
 
 int32 AZEnemy::GetPlayerLevel()

@@ -79,6 +79,7 @@ void FZGameplayTag::InitializeNativeGameplayTags()
 	GameplayTag.Debuffs.Add(GameplayTag.Debuff_Bleed);
 	GameplayTag.Debuffs.Add(GameplayTag.Debuff_Slow);
 	GameplayTag.Debuffs.Add(GameplayTag.Debuff_Stun);
+	GameplayTag.Debuffs.Add(GameplayTag.Debuff_KnockBack);
 
 	// Buff
 	GameplayTag.Buff_Magnitude = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Buff.Magnitude"));

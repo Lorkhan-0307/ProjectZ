@@ -35,6 +35,12 @@ FDamageEffectParams UZDamageGameplayAbility::MakeDamageEffectParamsFromClassDefa
 	Params.BuffAttribute = BuffAttribute;
 	Params.BuffMagnitude = BuffMagnitude;
 	Params.BuffDuration = BuffDuration;
+	Params.KnockbackForceMagnitude = KnockbackForceMagnitude;
+	if (TargetActor)
+	{
+		const FVector KnockbackForce = (TargetActor->GetActorLocation() - GetAvatarActorFromActorInfo()->GetActorLocation()).GetSafeNormal() * KnockbackForceMagnitude;
+		Params.KnockbackForce = KnockbackForce;
+	}
 	return Params;
 }
 

@@ -56,7 +56,7 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "ZAbilitySystemLibrary|GameplayEffects")
 	static FGameplayTag GetDebuffType(const FGameplayEffectContextHandle& EffectContextHandle);
-	
+
 	UFUNCTION(BlueprintPure, Category = "ZAbilitySystemLibrary|GameplayEffects")
 	static int32 GetDebuffStack(const FGameplayEffectContextHandle& EffectContextHandle);
 
@@ -71,6 +71,9 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "ZAbilitySystemLibrary|GameplayEffects")
 	static int32 GetBuffDuration(const FGameplayEffectContextHandle& EffectContextHandle);
+
+	UFUNCTION(BlueprintPure, Category = "ZAbilitySystemLibrary|GameplayEffects")
+	static FVector GetKnockbackForce(const FGameplayEffectContextHandle& EffectContextHandle);
 
 	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayEffects")
 	static void SetIsDodged(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool bInIsDodged);
@@ -95,13 +98,13 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayEffects")
 	static void SetDebuffType(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, const FGameplayTag& InDebuffType);
-	
+
 	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayEffects")
 	static void SetDebuffStack(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, int32 InDebuffStack);
 
 	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayEffects")
 	static void SetBuffType(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, const FGameplayTag& InBuffType);
-	
+
 	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayEffects")
 	static void SetBuffAttribute(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, const FGameplayTag& InBuffAttribute);
 
@@ -110,6 +113,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayEffects")
 	static void SetBuffDuration(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, int32 InBuffDuration);
+
+	UFUNCTION(BlueprintCallable, Category = "ZAbilitySystemLibrary|GameplayEffects")
+	static void SetKnockbackForce(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, const FVector& InForce);
 
 	UFUNCTION(BlueprintCallable)
 	static bool PayCost(AZCharacterBase* Character, float Cost);

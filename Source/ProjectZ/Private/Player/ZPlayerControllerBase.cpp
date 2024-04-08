@@ -256,6 +256,20 @@ void AZPlayerControllerBase::AbilityInputTagHeld(FGameplayTag InputTag)
 				else
 				{
 					UZAbilitySystemLibrary::PayCost(Cast<AZCharacterBase>(GetPawn()), 1);
+					if (AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(GetPawn()))
+					{
+						PlayerCharacter->HideSkillRange();
+					}
+					TArray<AActor*> Actors;
+					GameMode->GetCombatActor(Actors);
+					for (auto Actor : Actors)
+					{
+						IEnemyInterface* EnemyInterface = Cast<IEnemyInterface>(Actor);
+						if (EnemyInterface)
+						{
+							EnemyInterface->UnHighlightActor();
+						}
+					}
 				}
 
 				if (CardComponent->ActivatingCard.CardType == ECardType::ECT_Skill || CardComponent->ActivatingCard.CardType == ECardType::ECT_Buff)

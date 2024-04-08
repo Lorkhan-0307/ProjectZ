@@ -210,6 +210,15 @@ int32 UZAbilitySystemLibrary::GetBuffDuration(const FGameplayEffectContextHandle
 	return 0;
 }
 
+FVector UZAbilitySystemLibrary::GetKnockbackForce(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FZGameplayEffectContext* ZEffectContext = static_cast<const FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return ZEffectContext->GetKnockbackForce();
+	}
+	return FVector::ZeroVector;
+}
+
 void UZAbilitySystemLibrary::SetIsDodged(FGameplayEffectContextHandle& EffectContextHandle, bool bInIsDodged)
 {
 	if (FZGameplayEffectContext* ZEffectContext = static_cast<FZGameplayEffectContext*>(EffectContextHandle.Get()))
@@ -315,6 +324,14 @@ void UZAbilitySystemLibrary::SetBuffDuration(FGameplayEffectContextHandle& Effec
 	}
 }
 
+void UZAbilitySystemLibrary::SetKnockbackForce(FGameplayEffectContextHandle& EffectContextHandle, const FVector& InForce)
+{
+	if (FZGameplayEffectContext* ZEffectContext = static_cast<FZGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		ZEffectContext->SetKnockbackForce(InForce);
+	}
+}
+
 bool UZAbilitySystemLibrary::PayCost(AZCharacterBase* Character, float Cost)
 {
 	UZAttributeSet* AS = Cast<UZAttributeSet>(Character->GetAttributeSet());
@@ -375,6 +392,7 @@ FGameplayEffectContextHandle UZAbilitySystemLibrary::ApplyDamageEffect(const FDa
 
 	FGameplayEffectContextHandle EffectContextHandle = DamageEffectParams.SourceAbilitySystemComponent->MakeEffectContext();
 	EffectContextHandle.AddSourceObject(SourceAvatarActor);
+	SetKnockbackForce(EffectContextHandle, DamageEffectParams.KnockbackForce);
 	const FGameplayEffectSpecHandle SpecHandle = DamageEffectParams.SourceAbilitySystemComponent->MakeOutgoingSpec(DamageEffectParams.DamageGameplayEffectClass, DamageEffectParams.AbilityLevel, EffectContextHandle);
 
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageEffectParams.DebuffType, 1);

@@ -115,7 +115,6 @@ void AZCharacterBase::AddDebuff_Implementation(FDebuff Debuff)
 	if (Debuff.DebuffType.MatchesTagExact(FZGameplayTag::Get().Debuff_Bleed))
 	{
 		BleedCount += Debuff.DebuffStack;
-		UE_LOG(LogTemp, Warning, TEXT("Bleed : %d"), BleedCount);
 		if (BleedCount >= 5)
 		{
 			FGameplayTagContainer TagContainer;

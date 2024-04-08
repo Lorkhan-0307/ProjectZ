@@ -26,6 +26,8 @@ public:
 
 	virtual void PossessedBy(AController* NewController) override;
 
+	virtual void Tick(float DeltaSeconds) override;
+
 	// Combat Interface
 	virtual int32 GetPlayerLevel() override;
 
