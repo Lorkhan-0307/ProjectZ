@@ -8,7 +8,10 @@ AActor* CurrentDoor;
 
 void AFloorGenerate::BasicRoom()
 {
-	int adjacent[4] = {-2, -2};
+	// Variables used for creating doors
+	int adjacent[2] = {-2, -2};
+	std::vector<std::vector<float>> doorCandidate;
+	
 	// Reset all tiles, walls, doors
 	Tile->ClearInstances();
 	XWall->ClearInstances();
@@ -43,31 +46,122 @@ void AFloorGenerate::BasicRoom()
 			}
 			if(i && floorPlan[i][j] != floorPlan[i-1][j])
 			{
-				if(floorPlan[i][j] != -1 && floorPlan[i-1][j] != -1 && (adjacent[0] != floorPlan[i][j] || adjacent[1] != floorPlan[i-1][j]))
+				if(floorPlan[i][j] != -1 && floorPlan[i-1][j] != -1)
 				{
-					adjacent[0] = floorPlan[i][j];
-					adjacent[1] = floorPlan[i-1][j];
-					CreateDoor(i*120+60, j*120+60, true);
+					if(adjacent[0] != floorPlan[i][j] || adjacent[1] != floorPlan[i-1][j])
+					{
+						adjacent[0] = floorPlan[i][j];
+						adjacent[1] = floorPlan[i-1][j];
+						if(doorCandidate.size() != 0)
+						{
+							int rnd = rand() % doorCandidate.size();
+							doorCandidate[rnd][4] = 1.0f;
+							for(int t = 5 + rand() % 3;(rnd + t)<doorCandidate.size();t += (5 + rand() % 3))
+							{
+								doorCandidate[rnd + t][4] = 1.0f;
+							}
+							for(int t = 5 + rand() % 3;(rnd - t) >= 0;t += (5 + rand() % 3))
+							{
+								doorCandidate[rnd - t][4] = 1.0f;
+							}
+						}
+						for(std::vector<float> dw : doorCandidate)
+						{
+							if(dw[4] == 1.0f) CreateDoor(dw[0], dw[1], true);
+							else YWall->AddInstance(FTransform(FVector(dw[2], dw[3], 0)));
+						}
+						doorCandidate.clear();
+						doorCandidate.push_back({i*120+60.0f, j*120+60.0f, i*1200+600.0f, j*100+100.0f, 0.0f});
+					}
+					else
+					{
+						doorCandidate.push_back({i*120+60.0f, j*120+60.0f, i*1200+600.0f, j*100+100.0f, 0.0f});
+					}
 				}
 				else YWall->AddInstance(FTransform(FVector(600+i*1200, 100+j*100, 0)));
 			}
 		}
 	}
+	if(doorCandidate.size() != 0)
+	{
+		int rnd = rand() % doorCandidate.size();
+		doorCandidate[rnd][4] = 1.0f;
+		for(int t = 5 + rand() % 3;(rnd + t)<doorCandidate.size();t += (5 + rand() % 3))
+		{
+			doorCandidate[rnd + t][4] = 1.0f;
+		}
+		for(int t = 5 + rand() % 3;(rnd - t) >= 0;t += (5 + rand() % 3))
+		{
+			doorCandidate[rnd - t][4] = 1.0f;
+		}
+	}
+	for(std::vector<float> dw : doorCandidate)
+	{
+		if(dw[4] == 1.0f) CreateDoor(dw[0], dw[1], true);
+		else YWall->AddInstance(FTransform(FVector(dw[2], dw[3], 0)));
+	}
+	doorCandidate.clear();
+	adjacent[0] = -2;
+	adjacent[1] = -2;
 	for(int j=0;j<floorWidth;j++)
 	{
 		for(int i=0;i<floorHeight;i++)
 		{
 			if(j && floorPlan[i][j] != floorPlan[i][j-1])
 			{
-				if(floorPlan[i][j] != -1 && floorPlan[i][j-1] != -1 && (adjacent[0] != floorPlan[i][j] || adjacent[1] != floorPlan[i][j-1]))
+				if(floorPlan[i][j] != -1 && floorPlan[i][j-1] != -1)
 				{
-					adjacent[0] = floorPlan[i][j];
-					adjacent[1] = floorPlan[i][j-1];
-					CreateDoor(i*120+60, j*120+60, false);
+					if(adjacent[0] != floorPlan[i][j] || adjacent[1] != floorPlan[i][j-1])
+					{
+						adjacent[0] = floorPlan[i][j];
+						adjacent[1] = floorPlan[i][j-1];
+						if(doorCandidate.size() != 0)
+						{
+							int rnd = rand() % doorCandidate.size();
+							doorCandidate[rnd][4] = 1.0f;
+							for(int t = 5 + rand() % 3;(rnd + t)<doorCandidate.size();t += (5 + rand() % 3))
+							{
+								doorCandidate[rnd + t][4] = 1.0f;
+							}
+							for(int t = 5 + rand() % 3;(rnd - t) >= 0;t += (5 + rand() % 3))
+							{
+								doorCandidate[rnd - t][4] = 1.0f;
+							}
+						}
+						for(std::vector<float> dw : doorCandidate)
+						{
+							if(dw[4] == 1.0f) CreateDoor(dw[0], dw[1], false);
+							else XWall->AddInstance(FTransform(FVector(dw[2], dw[3], 0)));
+						}
+						doorCandidate.clear();
+						doorCandidate.push_back({i*120+60.0f, j*120+60.0f, i*100+100.0f, j*1200+600.0f, 0.0f});
+					}
+					else
+					{
+						doorCandidate.push_back({i*120+60.0f, j*120+60.0f, i*100+100.0f, j*1200+600.0f, 0.0f});
+					}
 				}
 				else XWall->AddInstance(FTransform(FVector(100+i*100, 600+j*1200, 0)));
 			}
 		}
+	}
+	if(doorCandidate.size() != 0)
+	{
+		int rnd = rand() % doorCandidate.size();
+		doorCandidate[rnd][4] = 1.0f;
+		for(int t = 5 + rand() % 3;(rnd + t)<doorCandidate.size();t += (5 + rand() % 3))
+		{
+			doorCandidate[rnd + t][4] = 1.0f;
+		}
+		for(int t = 5 + rand() % 3;(rnd - t) >= 0;t += (5 + rand() % 3))
+		{
+			doorCandidate[rnd - t][4] = 1.0f;
+		}
+	}
+	for(std::vector<float> dw : doorCandidate)
+	{
+		if(dw[4] == 1.0f) CreateDoor(dw[0], dw[1], false);
+		else XWall->AddInstance(FTransform(FVector(dw[2], dw[3], 0)));
 	}
 }
 
