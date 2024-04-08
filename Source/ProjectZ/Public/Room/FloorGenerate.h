@@ -9,6 +9,18 @@
 #include "GameFramework/Actor.h"
 #include "FloorGenerate.generated.h"
 
+USTRUCT(BlueprintType)
+struct FFurnitureData
+{
+    GENERATED_BODY()
+
+public:
+    UPROPERTY(EditAnywhere, BlueprintReadOnly) TSubclassOf<AActor> Furniture;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly) int32 Width;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly) int32 Height;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly) bool StickToWall;
+};
+
 UCLASS()
 class PROJECTZ_API AFloorGenerate : public AActor
 {
@@ -22,7 +34,9 @@ public:
     UFUNCTION(BlueprintCallable) void BasicRoom();
     UFUNCTION(BlueprintCallable) void SetDoor(TSubclassOf<class UObject> Door);
     UPROPERTY(EditAnywhere, BlueprintReadOnly) TSubclassOf<class UObject> AttachedDoor;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly) TArray<FFurnitureData> FurnitureList;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<AActor*> DoorArray;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<AActor*> FurniturePlaced;
     void CreateDoor(float x, float y, bool isVertical);
     
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Floor Settings") int floorWidth=40;

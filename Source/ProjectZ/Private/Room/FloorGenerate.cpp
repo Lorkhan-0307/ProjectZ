@@ -12,7 +12,7 @@ void AFloorGenerate::BasicRoom()
 	int adjacent[2] = {-2, -2};
 	std::vector<std::vector<float>> doorCandidate;
 	
-	// Reset all tiles, walls, doors
+	// Reset all tiles, walls, doors, furniture
 	Tile->ClearInstances();
 	XWall->ClearInstances();
 	YWall->ClearInstances();
@@ -24,6 +24,14 @@ void AFloorGenerate::BasicRoom()
 		}
 	}
 	DoorArray.Empty();
+	for(AActor* Actor : FurniturePlaced)
+	{
+		if(Actor)
+		{
+			Actor->Destroy();
+		}
+	}
+	FurniturePlaced.Empty();
 
 	// Random Generate Floor Plans
 	Floor floor(floorWidth, floorHeight);
@@ -31,7 +39,7 @@ void AFloorGenerate::BasicRoom()
 	std::vector<std::vector<int>> floorPlan(floorHeight, std::vector<int>(floorWidth, -1));
 	floorPlan = floor.makePlan();
 	
-	// Materialize Floor From Floor Plans
+	// Materialize Floor, Wall & Door From Floor Plans
 	for(int i=0;i<floorHeight;i++)
 	{
 		for(int j=0;j<floorWidth;j++)
@@ -162,6 +170,24 @@ void AFloorGenerate::BasicRoom()
 	{
 		if(dw[4] == 1.0f) CreateDoor(dw[0], dw[1], false);
 		else XWall->AddInstance(FTransform(FVector(dw[2], dw[3], 0)));
+	}
+
+	//Place Furniture
+	for(FFurnitureData fd : FurnitureList)
+	{
+		for(int i=0;i<floorHeight-fd.Height;i++)
+		{
+			for(int j=0;j<floorWidth-fd.Width;j++)
+			{
+				if(floorPlan[i][j] != -1 && floorPlan[i+fd.Height][j+fd.Width] !=-1 && floorPlan[i][j] == floorPlan[i+fd.Height][j+fd.Width])
+				{
+					if(rand()%10 == 0)
+					{
+						FurniturePlaced.Add(GetWorld()->SpawnActor<AActor>(fd.Furniture, FTransform(FVector(i*120+60, j*120+60, 0)+GetActorLocation())));
+					}
+				}
+			}
+		}
 	}
 }
 
