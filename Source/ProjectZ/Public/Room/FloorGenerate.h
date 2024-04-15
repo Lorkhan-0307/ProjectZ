@@ -41,6 +41,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Floor Settings") int floorWidth=40;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Floor Settings") int floorHeight=25;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Floor Settings") int numRooms=9;
+    std::vector<std::vector<int>> furniturePlan;
 
 protected:
 	// Called when the game starts or when spawned

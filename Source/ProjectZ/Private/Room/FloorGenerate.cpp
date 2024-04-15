@@ -37,7 +37,6 @@ void AFloorGenerate::BasicRoom()
 	Floor floor(floorWidth, floorHeight);
 	floor.generateRooms(numRooms);
 	std::vector<std::vector<int>> floorPlan(floorHeight, std::vector<int>(floorWidth, -1));
-	std::vector<std::vector<int>> furniturePlan(floorHeight, std::vector<int>(floorWidth, -1));
 	floorPlan = floor.makePlan();
 	furniturePlan = floorPlan;
 	
@@ -315,11 +314,14 @@ void AFloorGenerate::CreateDoor(float x, float y, bool isVertical)
 	if(isVertical)
 	{
 		CurrentDoor = GetWorld()->SpawnActor<AActor>(AttachedDoor, FTransform(FRotator(0, 90, 0), FVector(x, y, 10)+GetActorLocation()));
+		furniturePlan[(x-60)/120-1][(y-60)/120] = -1;
 	}
 	else
 	{
 		CurrentDoor = GetWorld()->SpawnActor<AActor>(AttachedDoor, FTransform(FVector(x, y, 10)+GetActorLocation()));
+		furniturePlan[(x-60)/120][(y-60)/120-1] = -1;
 	}
+	furniturePlan[(x-60)/120][(y-60)/120] = -1;
 	DoorArray.Add(CurrentDoor);
 }
 
