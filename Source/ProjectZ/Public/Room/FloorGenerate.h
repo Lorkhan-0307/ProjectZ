@@ -32,7 +32,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
     UFUNCTION(BlueprintCallable) void BasicRoom();
-    UFUNCTION(BlueprintCallable) void SetDoor(TSubclassOf<class UObject> Door);
     UPROPERTY(EditAnywhere, BlueprintReadOnly) TSubclassOf<class UObject> AttachedDoor;
     UPROPERTY(EditAnywhere, BlueprintReadOnly) TArray<FFurnitureData> FurnitureList;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<AActor*> DoorArray;

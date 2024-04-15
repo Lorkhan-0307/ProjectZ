@@ -37,7 +37,9 @@ void AFloorGenerate::BasicRoom()
 	Floor floor(floorWidth, floorHeight);
 	floor.generateRooms(numRooms);
 	std::vector<std::vector<int>> floorPlan(floorHeight, std::vector<int>(floorWidth, -1));
+	std::vector<std::vector<int>> furniturePlan(floorHeight, std::vector<int>(floorWidth, -1));
 	floorPlan = floor.makePlan();
+	furniturePlan = floorPlan;
 	
 	// Materialize Floor, Wall & Door From Floor Plans
 	for(int i=0;i<floorHeight;i++)
@@ -179,11 +181,31 @@ void AFloorGenerate::BasicRoom()
 		{
 			for(int j=0;j<floorWidth-fd.Width;j++)
 			{
-				if(floorPlan[i][j] != -1 && floorPlan[i+fd.Height][j+fd.Width] !=-1 && floorPlan[i][j] == floorPlan[i+fd.Height][j+fd.Width])
+				if(furniturePlan[i][j] == -1) continue;
+				bool fits = true;
+				for(int k=0;k<fd.Height;k++)
+				{
+					for(int l=0;l<fd.Width;l++)
+					{
+						if(furniturePlan[i+k][j+l] != furniturePlan[i][j])
+						{
+							fits = false;
+							break;
+						}
+					}
+				}
+				if(fits)
 				{
 					if(rand()%10 == 0)
 					{
 						FurniturePlaced.Add(GetWorld()->SpawnActor<AActor>(fd.Furniture, FTransform(FVector(i*120+60, j*120+60, 0)+GetActorLocation())));
+						for(int k=0;k<fd.Height;k++)
+						{
+							for(int l=0;l<fd.Width;l++)
+							{
+								furniturePlan[i+k][j+l] = -1;
+							}
+						}
 					}
 				}
 			}
@@ -215,11 +237,6 @@ AFloorGenerate::AFloorGenerate()
 	YWall->SetWorldScale3D(FVector(0.1, 1.2, 2.0));
 	YWall->SetRelativeLocation(FVector(0, 0, 100));
 	AttachedDoor = nullptr;
-}
-
-void AFloorGenerate::SetDoor(TSubclassOf<UObject> Door)
-{
-	AttachedDoor = Door;
 }
 
 void AFloorGenerate::CreateDoor(float x, float y, bool isVertical)
