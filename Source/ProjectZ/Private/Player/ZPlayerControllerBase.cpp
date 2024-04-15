@@ -9,6 +9,7 @@
 #include "NavigationSystem.h"
 #include "ZGameplayTag.h"
 #include "AbilitySystem/ZAbilitySystemComponent.h"
+#include "AbilitySystem/ZAbilitySystemLibrary.h"
 #include "AbilitySystem/ZAttributeSet.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Blueprint/UserWidget.h"
@@ -21,6 +22,7 @@
 #include "Input/ZInputComponent.h"
 #include "Interaction/EnemyInterface.h"
 #include "Player/ZPlayerState.h"
+#include "UI/Combat/DamageTextComponent.h"
 
 AZPlayerControllerBase::AZPlayerControllerBase()
 {
@@ -39,6 +41,18 @@ void AZPlayerControllerBase::SetupInputComponent()
 	ZInputComponent->BindAction(CameraResetAction, ETriggerEvent::Triggered, this, &AZPlayerControllerBase::CameraReset);
 	ZInputComponent->BindAction(CameraZoomAction, ETriggerEvent::Triggered, this, &AZPlayerControllerBase::CameraZoom);
 	ZInputComponent->BindAction(ESCAction, ETriggerEvent::Triggered, this, &AZPlayerControllerBase::ESC);
+}
+
+void AZPlayerControllerBase::ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter)
+{
+	if (IsValid(TargetCharacter) && DamageTextComponentClass)
+	{
+		UDamageTextComponent* DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass);
+		DamageText->RegisterComponent();
+		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+		DamageText->SetDamageText(DamageAmount, TargetCharacter == GetCharacter());
+	}
 }
 
 void AZPlayerControllerBase::PlayerTick(float DeltaTime)
@@ -221,13 +235,48 @@ void AZPlayerControllerBase::AbilityInputTagHeld(FGameplayTag InputTag)
 		{
 			FHitResult HitResult;
 			GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
-			float Distance = FVector::DistXY(GetCharacter()->GetActorLocation(), HitResult.Location) / 100.f;
-			if (Distance <= CardComponent->ActivatingCard.SkillRange)
+			if (CardComponent->ActivatingCard.bTargeting)
 			{
-				GetASC()->AbilityInputTagHeld(CardComponent->ActivatingCard.CardTag); // Activate Skill Card
-				CardComponent->UseCard(CardComponent->ActivatingCard);
+				if (Cast<ICombatInterface>(HitResult.GetActor()) == nullptr)
+				{
+					//CardComponent->CancelActivateCard();
+					return;
+				}
+			}
+
+
+			float Distance = FVector::DistXY(GetCharacter()->GetActorLocation(), HitResult.Location) / 100.f;
+			if (Distance <= CardComponent->ActivatingCard.SkillRange || CardComponent->ActivatingCard.bTargeting == false)
+			{
 				CardComponent->bActivatingCard = false;
-				CardComponent->ActivateCardDelegate.Broadcast();
+				if (GetASC()->AbilityInputTagHeld(CardComponent->ActivatingCard.CardTag))
+				{
+					UZAbilitySystemLibrary::PayCost(Cast<AZCharacterBase>(GetPawn()), CardComponent->ActivatingCard.CardCost);
+				}
+				else
+				{
+					UZAbilitySystemLibrary::PayCost(Cast<AZCharacterBase>(GetPawn()), 1);
+					if (AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(GetPawn()))
+					{
+						PlayerCharacter->HideSkillRange();
+					}
+					TArray<AActor*> Actors;
+					GameMode->GetCombatActor(Actors);
+					for (auto Actor : Actors)
+					{
+						IEnemyInterface* EnemyInterface = Cast<IEnemyInterface>(Actor);
+						if (EnemyInterface)
+						{
+							EnemyInterface->UnHighlightActor();
+						}
+					}
+				}
+
+				if (CardComponent->ActivatingCard.CardType == ECardType::ECT_Skill || CardComponent->ActivatingCard.CardType == ECardType::ECT_Buff)
+				{
+					CardComponent->UseCard(CardComponent->ActivatingCard);
+					CardComponent->ActivateCardDelegate.Broadcast();
+				}
 			}
 		}
 		else if (GetASC())

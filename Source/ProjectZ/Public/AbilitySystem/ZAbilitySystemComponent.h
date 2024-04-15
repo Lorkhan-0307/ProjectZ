@@ -20,7 +20,7 @@ public:
 
 	void AddCharacterAbility(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbility);
 
-	void AbilityInputTagHeld(const FGameplayTag& InputTag);
+	bool AbilityInputTagHeld(const FGameplayTag& InputTag);
 	void AbilityInputTagReleased(const FGameplayTag& InputTag);
 	
 protected:

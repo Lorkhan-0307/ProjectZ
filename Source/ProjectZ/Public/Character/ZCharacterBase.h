@@ -9,6 +9,7 @@
 #include "Interaction/CombatInterface.h"
 #include "ZCharacterBase.generated.h"
 
+class UDebuffNiagaraComponent;
 class UGameplayAbility;
 class UGameplayEffect;
 class UAbilitySystemComponent;
@@ -27,8 +28,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	UCardComponent* CardComponent;
 
-	bool bIsMyTurn = false;
-
 	UFUNCTION(BlueprintCallable)
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass) const;
 
@@ -39,6 +38,14 @@ public:
 	virtual bool IsDead_Implementation() const override;
 	virtual AActor* GetAvatar_Implementation() override;
 	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() override;
+	virtual void AddDebuff_Implementation(FDebuff Debuff) override;
+	virtual void RemoveDebuff_Implementation(FGameplayTag RemoveDebuffType) override;
+	virtual FOnASCRegistered GetOnASCRegisterdDelegate() override;
+	virtual FOnDeath GetOnDeathDelegate() override;
+	virtual void AddBuff_Implementation(FGameplayTag BuffType, int32 BuffDuration) override;
+
+	FOnASCRegistered OnASCRegisteredDelegate;
+	FOnDeath OnDeathDelegate;
 
 	UPROPERTY(EditAnywhere, Category = Combat)
 	TArray<FTaggedMontage> AttackMontages;
@@ -83,6 +90,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	float LifeSpan = 5.f;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UDebuffNiagaraComponent> BleedDebuffComponent;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 BleedCount = 0;
 
 	virtual void InitAbilityActorInfo();
 

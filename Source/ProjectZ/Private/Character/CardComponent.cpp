@@ -12,9 +12,11 @@
 #include "Player/ZPlayerState.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "ZGameplayTag.h"
 #include "AbilitySystem/ZAbilitySystemComponent.h"
 #include "AbilitySystem/ZAbilitySystemLibrary.h"
 #include "AbilitySystem/ZAttributeSet.h"
+#include "AbilitySystem/Ability/ZGameplayAbility.h"
 #include "Game/ZGameModeBase.h"
 
 
@@ -29,7 +31,7 @@ UCardComponent::UCardComponent()
 
 void UCardComponent::UseCard(FCard Card)
 {
-	if (Card.CardType == ECardType::ECT_Skill)
+	if (Card.CardType == ECardType::ECT_Skill || Card.CardType == ECardType::ECT_Buff)
 	{
 		DiscardCard.Add(Card);
 	}
@@ -45,10 +47,17 @@ void UCardComponent::BeginPlay()
 	GameMode->TurnChangedDelegate.AddDynamic(this, &UCardComponent::TurnChanged);
 }
 
+void UCardComponent::AddCardToInventory(FName NewCardName)
+{
+	const FCard NewCard = ConvertCardNameToFCard(NewCardName);
+	CardInventory.Push(NewCard);
+}
+
 // Add Card to Deck
 void UCardComponent::AddCardToDeck(FName NewCardName)
 {
-	CardDeck.Push(ConvertCardNameToFCard(NewCardName));
+	const FCard NewCard = ConvertCardNameToFCard(NewCardName);
+	CardDeck.Push(NewCard);
 	DeckSize++;
 }
 
@@ -76,11 +85,40 @@ void UCardComponent::DrawCard()
 void UCardComponent::InitializeCardComponent(AZCharacterBase* Character)
 {
 	ZCharacter = Character;
+
+	TArray<TSubclassOf<UGameplayAbility>> Abilities;
+	for (TTuple<FName, unsigned char*> Row : CardDataTable->GetRowMap())
+	{
+		const FCard Card = *CardDataTable->FindRow<FCard>(Row.Key, FString(""));
+
+		if (Abilities.Contains(Card.CardAbility)) continue;
+
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Card.CardAbility, 1);
+		if (const UZGameplayAbility* ZAbility = Cast<UZGameplayAbility>(AbilitySpec.Ability))
+		{
+			AbilitySpec.DynamicAbilityTags.AddTag(ZAbility->CardSkillTag);
+			ZCharacter->GetAbilitySystemComponent()->GiveAbility(AbilitySpec);
+		}
+		Abilities.Add(Card.CardAbility);
+	}
+
+
+	/*
+		for (const TSubclassOf<UGameplayAbility> Ability : CardAbilities)
+		{
+			FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Ability, 1);
+			if (const UZGameplayAbility* ZAbility = Cast<UZGameplayAbility>(AbilitySpec.Ability))
+			{
+				AbilitySpec.DynamicAbilityTags.AddTag(ZAbility->CardSkillTag);
+				ZCharacter->GetAbilitySystemComponent()->GiveAbility(AbilitySpec);
+			}
+		}
+		*/
+
 	// For Test
 	//if (ZCharacter && ZCharacter->GetPlayerState()) Cast<AZPlayerState>(ZCharacter->GetPlayerState())->SetCharacterName(FName("JohnDoe"));
 	UCharacterClassInfo* CharacterClassInfo = UZAbilitySystemLibrary::GetCharacterClassInfo(Character);
 	InitializeCardInventory(CharacterClassInfo);
-	MakeCardDeck();
 
 	// For Test
 	/*
@@ -117,6 +155,21 @@ void UCardComponent::ShuffleDeck()
 // Begin combat, make deck at inventory without passive cards
 void UCardComponent::MakeCardDeck()
 {
+	// For Test
+	AddCardToInventory(FName("KitchenKnife"));
+	AddCardToInventory(FName("HealthPotion"));
+	AddCardToInventory(FName("Stab"));
+	AddCardToInventory(FName("Stab"));
+	AddCardToInventory(FName("Wound"));
+	AddCardToInventory(FName("Wound"));
+	AddCardToInventory(FName("Salt"));
+	AddCardToInventory(FName("Salt"));
+	AddCardToInventory(FName("Hack"));
+	AddCardToInventory(FName("Hack"));
+
+
+	// ...
+
 	CardDeck.Empty();
 	for (const FCard& Card : CardInventory)
 	{
@@ -126,18 +179,6 @@ void UCardComponent::MakeCardDeck()
 		}
 	}
 
-	// For Test
-	AddCardToDeck(FName("HealthPotion"));
-	AddCardToDeck(FName("KitchenKnife"));
-	AddCardToDeck(FName("Sword"));
-	AddCardToDeck(FName("Axe"));
-	AddCardToDeck(FName("ThrowStone"));
-	AddCardToDeck(FName("ThrowStone"));
-	AddCardToDeck(FName("ThrowStone"));
-	AddCardToDeck(FName("ThrowStone"));
-	AddCardToDeck(FName("HealthPotion"));
-	AddCardToDeck(FName("HealthPotion"));
-	// ...
 
 	ShuffleDeck();
 }
@@ -168,6 +209,11 @@ void UCardComponent::ApplyEffectToTarget(TSubclassOf<UGameplayEffect> Effect, in
 void UCardComponent::TurnChanged(ETurn Turn)
 {
 	CurrentTurn = Turn;
+	if (GameMode->GetLastTurn() == ETurn::ET_NonCombat && Turn != ETurn::ET_NonCombat)
+	{
+		MakeCardDeck();
+	}
+
 	if (CurrentTurn == ETurn::ET_MoveTurn)
 	{
 		for (int i = 0; i < 5; i++)
@@ -192,29 +238,32 @@ void UCardComponent::TurnChanged(ETurn Turn)
 			ShuffleDeck();
 		}
 	}
+
+	bLeftAttack = false;
+	bRightAttack = false;
 }
 
 
 // Active Card and apply effect
-void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand)
+void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand, bool bActiveEquipCard)
 {
-	AZCharacterBase* TargetCharacter = Cast<AZCharacterBase>(ZCharacter);
+	FGameplayTagContainer TagContainer;
 	switch (Card.CardType)
 	{
 	case ECardType::ECT_UsablePassive:
 		for (const auto& InstantEffect : Card.InstantGameplayEffects)
 		{
-			ApplyEffectToTarget(InstantEffect, Card.CardLevel, TargetCharacter);
+			ApplyEffectToTarget(InstantEffect, Card.CardLevel, ZCharacter);
 		}
 		for (const auto& DurationEffect : Card.DurationGameplayEffects)
 		{
-			ApplyEffectToTarget(DurationEffect, Card.CardLevel, TargetCharacter);
+			ApplyEffectToTarget(DurationEffect, Card.CardLevel, ZCharacter);
 		}
 		for (const auto& InfiniteEffect : Card.InfiniteGameplayEffects)
 		{
-			ApplyEffectToTarget(InfiniteEffect, Card.CardLevel, TargetCharacter);
+			ApplyEffectToTarget(InfiniteEffect, Card.CardLevel, ZCharacter);
 		}
-		UZAbilitySystemLibrary::PayCost(TargetCharacter, Card.CardCost);
+		UZAbilitySystemLibrary::PayCost(ZCharacter, Card.CardCost);
 		UseCard(Card);
 		ActivateCardDelegate.Broadcast();
 		break;
@@ -225,16 +274,74 @@ void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand)
 		ShowSkillCardDelegate.Broadcast(Card);
 		break;
 
-	case ECardType::ECT_CanEquip:
+	case ECardType::ECT_Buff:
+		ActivatingCard = Card;
+		TagContainer.AddTag(Card.CardTag);
+		if (ZCharacter->GetAbilitySystemComponent()->TryActivateAbilitiesByTag(TagContainer))
+		{
+			UZAbilitySystemLibrary::PayCost(ZCharacter, Card.CardCost);
+		}
+		else
+		{
+			UZAbilitySystemLibrary::PayCost(ZCharacter, 1);
+		}
+		UseCard(Card);
+		ActivateCardDelegate.Broadcast();
+		break;
+
+	case ECardType::ECT_OneHandWeapon:
+		if (bActiveEquipCard)
+		{
+			if (bIsLeftHand && bLeftAttack)
+			{
+				if (AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(ZCharacter)) PlayerCharacter->HideSkillRange();
+				break;
+			}
+			if (!bIsLeftHand && bRightAttack)
+			{
+				if (AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(ZCharacter)) PlayerCharacter->HideSkillRange();
+				break;
+			}
+			BasicAttack(Card);
+			if (bIsLeftHand) bLeftAttack = true;
+			else bRightAttack = true;
+			break;
+		}
 		if (bIsLeftHand)
 		{
 			SetLeftHandCard(Card);
+			if (RightHandCard.CardType == ECardType::ECT_TwoHandWeapon)
+			{
+				RightHandCard.IsValid = false;
+				SetRightHandCard(RightHandCard);
+			}
 		}
 		else
 		{
 			SetRightHandCard(Card);
+			if (LeftHandCard.CardType == ECardType::ECT_TwoHandWeapon)
+			{
+				LeftHandCard.IsValid = false;
+				SetLeftHandCard(LeftHandCard);
+			}
 		}
-		UZAbilitySystemLibrary::PayCost(TargetCharacter, Card.CardCost);
+		ZCharacter->GetAbilitySystemComponent()->RemoveLooseGameplayTag(FZGameplayTag::Get().Card_Weapon_TwoHand);
+		ZCharacter->GetAbilitySystemComponent()->AddLooseGameplayTag(FZGameplayTag::Get().Card_Weapon_OneHand);
+		UZAbilitySystemLibrary::PayCost(ZCharacter, Card.CardCost);
+		ActivateCardDelegate.Broadcast();
+		break;
+
+	case ECardType::ECT_TwoHandWeapon:
+		if (bActiveEquipCard)
+		{
+			BasicAttack(Card);
+			break;
+		}
+		SetLeftHandCard(Card);
+		SetRightHandCard(Card);
+		ZCharacter->GetAbilitySystemComponent()->RemoveLooseGameplayTag(FZGameplayTag::Get().Card_Weapon_OneHand);
+		ZCharacter->GetAbilitySystemComponent()->AddLooseGameplayTag(FZGameplayTag::Get().Card_Weapon_TwoHand);
+		UZAbilitySystemLibrary::PayCost(ZCharacter, Card.CardCost);
 		ActivateCardDelegate.Broadcast();
 		break;
 
@@ -253,6 +360,12 @@ void UCardComponent::CancelActivateCard()
 	CancelActivateCardDelegate.Broadcast();
 }
 
+void UCardComponent::BasicAttack(FCard Card)
+{
+	ActivatingCard = Card;
+	bActivatingCard = true;
+}
+
 void UCardComponent::SetLeftHandCard(FCard Card, bool bIsValid)
 {
 	if (bIsValid == false)
@@ -261,6 +374,9 @@ void UCardComponent::SetLeftHandCard(FCard Card, bool bIsValid)
 	}
 
 	LeftHandCard = Card;
+	UZAttributeSet* AS = Cast<UZAttributeSet>(ZCharacter->GetAttributeSet());
+	AS->SetWeaponAtk(FMath::Max(LeftHandCard.IsValid ? LeftHandCard.CardAtk : 0, RightHandCard.IsValid ? RightHandCard.CardAtk : 0));
+	UE_LOG(LogTemp, Warning, TEXT("Weapon ATK : %f"), AS->GetWeaponAtk());
 	UpdateLeftHandCardDelegate.Broadcast(Card);
 }
 
@@ -272,7 +388,41 @@ void UCardComponent::SetRightHandCard(FCard Card, bool bIsValid)
 	}
 
 	RightHandCard = Card;
+	UZAttributeSet* AS = Cast<UZAttributeSet>(ZCharacter->GetAttributeSet());
+	AS->SetWeaponAtk(FMath::Max(LeftHandCard.IsValid ? LeftHandCard.CardAtk : 0, RightHandCard.IsValid ? RightHandCard.CardAtk : 0));
 	UpdateRightHandCardDelegate.Broadcast(Card);
+}
+
+void UCardComponent::ReduceWeaponDurability(FGameplayTag WeaponTag)
+{
+	FZGameplayTag GameplayTag = FZGameplayTag::Get();
+	if (WeaponTag.MatchesTagExact(GameplayTag.Card_Weapon_OneHand))
+	{
+		if (LeftHandCard.CardAtk > RightHandCard.CardAtk)
+		{
+			LeftHandCard.CardDef--;
+		}
+		else
+		{
+			RightHandCard.CardDef--;
+		}
+	}
+	else
+	{
+		LeftHandCard.CardDef--;
+		RightHandCard.CardDef--;
+	}
+
+	if (LeftHandCard.CardDef == 0 && LeftHandCard.IsValid)
+	{
+		LeftHandCard.IsValid = false;
+		SetLeftHandCard(LeftHandCard);
+	}
+	if (RightHandCard.CardDef == 0 && RightHandCard.IsValid)
+	{
+		RightHandCard.IsValid = false;
+		SetRightHandCard(RightHandCard);
+	}
 }
 
 

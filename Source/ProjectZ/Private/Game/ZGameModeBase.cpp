@@ -3,6 +3,8 @@
 
 #include "Game/ZGameModeBase.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "ZGameplayTag.h"
 #include "AbilitySystem/ZAttributeSet.h"
 #include "AI/ZAIController.h"
 #include "Character/ZCharacterBase.h"
@@ -10,6 +12,7 @@
 #include "Character/ZPlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/ZPlayerState.h"
+#include "Interaction/CombatInterface.h"
 
 void AZGameModeBase::BeginPlay()
 {
@@ -32,7 +35,9 @@ void AZGameModeBase::CombatStart()
 	SortCombatActor();
 	CombatStartDelegate.Broadcast(CombatActor);
 
-	TurnPlayerIndex = -1;
+	Cast<ICombatInterface>(CombatActor[0])->bIsMyTurn = true;
+
+	TurnPlayerIndex = CombatActor.Num() - 1;
 	TurnEnd();
 }
 
@@ -40,7 +45,7 @@ void AZGameModeBase::TurnEnd()
 {
 	if (CurrentTurn == ETurn::ET_EnemyTurn)
 	{
-		GetWorld()->GetTimerManager().SetTimer(TurnEndTimer, this, &AZGameModeBase::NextTurn, TurnEndTime, false);
+		TurnEndWithTime();
 	}
 	else
 	{
@@ -63,6 +68,11 @@ void AZGameModeBase::SetTurn(ETurn Turn)
 	LastTurn = CurrentTurn;
 	CurrentTurn = Turn;
 	TurnChangedDelegate.Broadcast(CurrentTurn);
+}
+
+void AZGameModeBase::GetCombatActor(TArray<AActor*>& CombatActors)
+{
+	CombatActors=CombatActor;
 }
 
 void AZGameModeBase::SortCombatActor()
@@ -93,8 +103,15 @@ void AZGameModeBase::SortCombatActor()
 	}
 }
 
+void AZGameModeBase::TurnEndWithTime()
+{
+	GetWorld()->GetTimerManager().SetTimer(TurnEndTimer, this, &AZGameModeBase::NextTurn, TurnEndTime, false);
+}
+
 void AZGameModeBase::NextTurn()
 {
+	Cast<AZCharacterBase>(CombatActor[TurnPlayerIndex])->bIsMyTurn = false;
+
 	TurnPlayerIndex++;
 	if (TurnPlayerIndex >= CombatActor.Num())
 	{
@@ -102,6 +119,11 @@ void AZGameModeBase::NextTurn()
 	}
 
 	TurnActor = CombatActor[TurnPlayerIndex];
+
+	ICombatInterface* CombatInterface = Cast<ICombatInterface>(TurnActor);
+	CombatInterface->bIsMyTurn = true;
+	CombatInterface->bIsStuned = false;
+
 	if (AZPlayerCharacter* PlayerCharacter = Cast<AZPlayerCharacter>(TurnActor))
 	{
 		SetTurn(ETurn::ET_MoveTurn);
@@ -109,6 +131,37 @@ void AZGameModeBase::NextTurn()
 	else if (AZEnemy* Enemy = Cast<AZEnemy>(TurnActor))
 	{
 		SetTurn(ETurn::ET_EnemyTurn);
-		Enemy->bIsMyTurn = true;
 	}
+
+	for (FDebuff& Debuff : CombatInterface->Debuffs)
+	{
+		if (Debuff.DebuffType.MatchesTagExact(FZGameplayTag::Get().Debuff_Stun) && Debuff.DebuffDuration > 0)
+		{
+			Debuff.DebuffDuration--;
+			CombatInterface->bIsStuned = true;
+			CombatInterface->StunImmunityCount = 3;
+
+			if (Debuff.DebuffDuration == 0)
+			{
+				UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TurnActor);
+				FGameplayTagContainer TagContainer;
+				TagContainer.AddTag(Debuff.DebuffType);
+				TargetASC->RemoveActiveEffectsWithGrantedTags(TagContainer);
+			}
+		}
+	}
+	CombatInterface->StunImmunityCount--;
+	
+	for (TTuple<FGameplayTag,int32>& Buff :CombatInterface->Buffs)
+	{
+		Buff.Value--;
+		if (Buff.Value == 0)
+		{
+			UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TurnActor);
+			FGameplayTagContainer TagContainer;
+			TagContainer.AddTag(Buff.Key);
+			TargetASC->RemoveActiveEffectsWithGrantedTags(TagContainer);
+		}
+	}
+	
 }

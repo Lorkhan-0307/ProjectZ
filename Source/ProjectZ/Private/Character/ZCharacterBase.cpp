@@ -2,15 +2,19 @@
 
 
 #include "Character/ZCharacterBase.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Character/CardComponent.h"
 #include "AbilitySystemComponent.h"
 #include "GameplayEffectTypes.h"
 #include "ZGameplayTag.h"
 #include "AbilitySystem/ZAbilitySystemComponent.h"
 #include "AbilitySystem/ZAbilitySystemLibrary.h"
+#include "AbilitySystem/Debuff/DebuffNiagaraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Game/ZGameModeBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AZCharacterBase::AZCharacterBase()
@@ -23,6 +27,10 @@ AZCharacterBase::AZCharacterBase()
 	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetMesh()->SetGenerateOverlapEvents(true);
+
+	BleedDebuffComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>("BleedDebuffComponent");
+	BleedDebuffComponent->SetupAttachment(GetRootComponent());
+	BleedDebuffComponent->DebuffTag = FZGameplayTag::Get().Debuff_Bleed;
 }
 
 UAnimMontage* AZCharacterBase::GetHitReactMontage_Implementation()
@@ -71,6 +79,7 @@ void AZCharacterBase::Die()
 
 	SetLifeSpan(LifeSpan);
 	bIsDead = true;
+	OnDeathDelegate.Broadcast(this);
 }
 
 bool AZCharacterBase::IsDead_Implementation() const
@@ -86,6 +95,78 @@ AActor* AZCharacterBase::GetAvatar_Implementation()
 TArray<FTaggedMontage> AZCharacterBase::GetAttackMontages_Implementation()
 {
 	return AttackMontages;
+}
+
+void AZCharacterBase::AddDebuff_Implementation(FDebuff Debuff)
+{
+	bool NewDebuff = true;
+	for (FDebuff& NowDebuff : Debuffs)
+	{
+		if (NowDebuff.DebuffType.MatchesTagExact(Debuff.DebuffType))
+		{
+			if (Debuff.DebuffType.MatchesTagExact(FZGameplayTag::Get().Debuff_Stun) && StunImmunityCount > 0) return;
+
+			NowDebuff.DebuffStack += Debuff.DebuffStack;
+			NowDebuff.DebuffDuration = Debuff.DebuffDuration;
+			AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*Debuff.DebuffEffectSpec);
+			NewDebuff = false;
+		}
+	}
+	if (Debuff.DebuffType.MatchesTagExact(FZGameplayTag::Get().Debuff_Bleed))
+	{
+		BleedCount += Debuff.DebuffStack;
+		if (BleedCount >= 5)
+		{
+			FGameplayTagContainer TagContainer;
+			TagContainer.AddTag(FZGameplayTag::Get().Debuff_Bleed);
+			Cast<AZCharacterBase>(UGameplayStatics::GetPlayerController(this, 0)->GetCharacter())->GetCardComponent()->ActivatingCard.bShowDamage = true;
+			AbilitySystemComponent->TryActivateAbilitiesByTag(TagContainer);
+		}
+	}
+	if (NewDebuff) AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*Debuff.DebuffEffectSpec);
+	Debuffs.Add(Debuff);
+}
+
+void AZCharacterBase::RemoveDebuff_Implementation(FGameplayTag RemoveDebuffType)
+{
+	for (FDebuff& NowDebuff : Debuffs)
+	{
+		if (NowDebuff.DebuffType.MatchesTagExact(RemoveDebuffType))
+		{
+			NowDebuff.DebuffDuration = 0;
+			NowDebuff.DebuffStack = 0;
+
+			FGameplayTagContainer TagContainer;
+			TagContainer.AddTag(RemoveDebuffType);
+			AbilitySystemComponent->RemoveActiveEffectsWithGrantedTags(TagContainer);
+		}
+	}
+	if (RemoveDebuffType.MatchesTagExact(FZGameplayTag::Get().Debuff_Bleed))
+	{
+		BleedCount = 0;
+	}
+}
+
+void AZCharacterBase::AddBuff_Implementation(FGameplayTag BuffType, int32 BuffDuration)
+{
+	if (Buffs.Contains(BuffType))
+	{
+		Buffs[BuffType] = BuffDuration;
+	}
+	else
+	{
+		Buffs.Add(BuffType, BuffDuration);
+	}
+}
+
+FOnASCRegistered AZCharacterBase::GetOnASCRegisterdDelegate()
+{
+	return OnASCRegisteredDelegate;
+}
+
+FOnDeath AZCharacterBase::GetOnDeathDelegate()
+{
+	return OnDeathDelegate;
 }
 
 // Called when the game starts or when spawned

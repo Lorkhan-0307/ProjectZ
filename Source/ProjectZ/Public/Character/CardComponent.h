@@ -61,13 +61,18 @@ public:
 	void InitializeCardInventory(UCharacterClassInfo* CharacterClassInfo);
 
 	// Active Card, Apply Effect to target
-	void ActiveCard(FCard Card, bool bIsLeftHand = true);
+	void ActiveCard(FCard Card, bool bIsLeftHand = true, bool bActiveEquipCard = false);
 	void CancelActivateCard();
+	void BasicAttack(FCard Card);
 
 	void SetLeftHandCard(FCard Card, bool bIsValid = true);
 	void SetRightHandCard(FCard Card, bool bIsValid = true);
 
+	void ReduceWeaponDurability(FGameplayTag WeaponTag);
+
+	UPROPERTY(BlueprintReadOnly)
 	FCard ActivatingCard;
+	
 	bool bActivatingCard = false;
 
 	FVector2D LeftEquipPosMin;
@@ -101,6 +106,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	// Change function name AddCard -> AddCardToDeck
+	void AddCardToInventory(FName NewCardName);
 	void AddCardToDeck(FName NewCard);
 	void DeleteCard(FName DeleteCard);
 
@@ -108,6 +114,9 @@ private:
 	// Card data
 	UPROPERTY(EditAnywhere, Category = Card)
 	UDataTable* CardDataTable;
+
+	UPROPERTY(EditAnywhere, Category = Card)
+	TArray<TSubclassOf<UGameplayAbility>> CardAbilities;
 
 	// Card Inventory : For NonCombat
 	UPROPERTY(VisibleAnywhere, Category = Card)
@@ -156,4 +165,7 @@ private:
 
 	UPROPERTY()
 	AZGameModeBase* GameMode;
+
+	bool bLeftAttack = false;
+	bool bRightAttack = false;
 };

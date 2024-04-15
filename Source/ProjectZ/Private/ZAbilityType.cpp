@@ -42,8 +42,57 @@ bool FZGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bool&
 		{
 			RepBits |= 1 << 8;
 		}
+		if (bIsSuccessfulDebuff)
+		{
+			RepBits |= 1 << 9;
+		}
+		if (DebuffDamage > 0.f)
+		{
+			RepBits |= 1 << 10;
+		}
+		if (DebuffDuration > 0)
+		{
+			RepBits |= 1 << 11;
+		}
+		if (DamageType.IsValid())
+		{
+			RepBits |= 1 << 12;
+		}
+		if (DebuffType.IsValid())
+		{
+			RepBits |= 1 << 13;
+		}
+		if (DebuffStack > 0)
+		{
+			RepBits |= 1 << 14;
+		}
+		if (BuffType.IsValid())
+		{
+			RepBits |= 1 << 15;
+		}
+		if (BuffAttribute.IsValid())
+		{
+			RepBits |= 1 << 16;
+		}
+		if (BuffMagnitude > 0)
+		{
+			RepBits |= 1 << 17;
+		}
+		if (BuffDuration > 0)
+		{
+			RepBits |= 1 << 18;
+		}
+		if (bIsBlocked)
+		{
+			RepBits |= 1 << 19;
+		}
+		if (!KnockbackForce.IsZero())
+		{
+			RepBits |= 1 << 20;
+		}
 
-		Ar.SerializeBits(&RepBits, 9);
+
+		Ar.SerializeBits(&RepBits, 21);
 
 		if (RepBits & (1 << 0))
 		{
@@ -71,7 +120,7 @@ bool FZGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bool&
 			{
 				if (!HitResult.IsValid())
 				{
-					HitResult = TSharedPtr<FHitResult>(new FHitResult());
+					HitResult = MakeShared<FHitResult>();
 				}
 			}
 			HitResult->NetSerialize(Ar, Map, bOutSuccess);
@@ -93,13 +142,68 @@ bool FZGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bool&
 		{
 			Ar << bIsCriticalHit;
 		}
+		if (RepBits & (1 << 9))
+		{
+			Ar << bIsSuccessfulDebuff;
+		}
+		if (RepBits & (1 << 10))
+		{
+			Ar << DebuffDamage;
+		}
+		if (RepBits & (1 << 11))
+		{
+			Ar << DebuffDuration;
+		}
+		if (RepBits & (1 << 12))
+		{
+			if (Ar.IsLoading())
+			{
+				if (!DamageType.IsValid())
+				{
+					DamageType = MakeShared<FGameplayTag>();
+				}
+			}
+			DamageType->NetSerialize(Ar, Map, bOutSuccess);
+		}
+		if (RepBits & (1 << 13))
+		{
+			Ar << DebuffType;
+		}
+		if (RepBits & (1 << 14))
+		{
+			Ar << DebuffStack;
+		}
+		if (RepBits & (1 << 15))
+		{
+			Ar << BuffType;
+		}
+		if (RepBits & (1 << 16))
+		{
+			Ar << BuffAttribute;
+		}
+		if (RepBits & (1 << 17))
+		{
+			Ar << BuffMagnitude;
+		}
+		if (RepBits & (1 << 18))
+		{
+			Ar << BuffDuration;
+		}
+		if (RepBits & (1 << 19))
+		{
+			Ar << bIsBlocked;
+		}
+		if (RepBits & (1 << 20))
+		{
+			Ar << KnockbackForce;
+		}
 	}
 
 	if (Ar.IsLoading())
 	{
 		AddInstigator(Instigator.Get(), EffectCauser.Get()); // Just to initialize InstigatorAbilitySystemComponent
-	}	
-	
+	}
+
 	bOutSuccess = true;
 	return true;
 }

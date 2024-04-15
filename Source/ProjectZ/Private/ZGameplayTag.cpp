@@ -24,6 +24,25 @@ void FZGameplayTag::InitializeNativeGameplayTags()
 	GameplayTag.Attributes_Secondary_CriticalHitDamage = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.CriticalHitDamage"));
 	GameplayTag.Attributes_Secondary_CriticalHitResistance = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.CriticalHitResistance"));
 
+	GameplayTag.BuffAttributes.Add(GameplayTag.Attributes_Primary_Sociability);
+	GameplayTag.BuffAttributes.Add(GameplayTag.Attributes_Primary_AntiSociability);
+	GameplayTag.BuffAttributes.Add(GameplayTag.Attributes_Primary_Strength);
+	GameplayTag.BuffAttributes.Add(GameplayTag.Attributes_Primary_Dexterity);
+	GameplayTag.BuffAttributes.Add(GameplayTag.Attributes_Primary_Engineering);
+	GameplayTag.BuffAttributes.Add(GameplayTag.Attributes_Secondary_MaxHealth);
+	GameplayTag.BuffAttributes.Add(GameplayTag.Attributes_Secondary_MaxMentality);
+	GameplayTag.BuffAttributes.Add(GameplayTag.Attributes_Secondary_Armor);
+	GameplayTag.BuffAttributes.Add(GameplayTag.Attributes_Secondary_ArmorPenetration);
+	GameplayTag.BuffAttributes.Add(GameplayTag.Attributes_Secondary_DodgeChance);
+	GameplayTag.BuffAttributes.Add(GameplayTag.Attributes_Secondary_CriticalHitChance);
+	GameplayTag.BuffAttributes.Add(GameplayTag.Attributes_Secondary_CriticalHitDamage);
+	GameplayTag.BuffAttributes.Add(GameplayTag.Attributes_Secondary_CriticalHitResistance);
+
+
+	GameplayTag.Attributes_Card_WeaponAtk = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Card.WeaponAtk"));
+	GameplayTag.Attributes_Card_Defence = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Card.Defence"));
+	GameplayTag.Attributes_Card_Gather = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Card.Gather"));
+
 	// For Test
 	GameplayTag.InputTag_T = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.T"));
 
@@ -45,6 +64,27 @@ void FZGameplayTag::InitializeNativeGameplayTags()
 	GameplayTag.DamageTypeToResistance.Add(GameplayTag.Damage_Fire, GameplayTag.Attributes_Resistance_Fire);
 	GameplayTag.DamageTypeToResistance.Add(GameplayTag.Damage_Physical, GameplayTag.Attributes_Resistance_Physical);
 
+	// Debuff
+	GameplayTag.Debuff_Bleed = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Bleed"));
+	GameplayTag.Debuff_Stun = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Stun"));
+	GameplayTag.Debuff_Slow = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Slow"));
+	GameplayTag.Debuff_KnockBack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.KnockBack"));
+
+	GameplayTag.Debuff_Chance = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Chance"));
+	GameplayTag.Debuff_Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Damage"));
+	GameplayTag.Debuff_Duration = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Duration"));
+	GameplayTag.Debuff_Stack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Debuff.Stack"));
+
+	// Array of Debuffs
+	GameplayTag.Debuffs.Add(GameplayTag.Debuff_Bleed);
+	GameplayTag.Debuffs.Add(GameplayTag.Debuff_Slow);
+	GameplayTag.Debuffs.Add(GameplayTag.Debuff_Stun);
+	GameplayTag.Debuffs.Add(GameplayTag.Debuff_KnockBack);
+
+	// Buff
+	GameplayTag.Buff_Magnitude = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Buff.Magnitude"));
+	GameplayTag.Buff_Duration = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Buff.Duration"));
+
 	// Effect
 	GameplayTag.Effect_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Effect.HitReact"), FString("Tag granted when Hit React"));
 
@@ -52,7 +92,26 @@ void FZGameplayTag::InitializeNativeGameplayTags()
 	GameplayTag.Ability_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Attack"));
 
 	// Card
+	GameplayTag.Card_Level = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Level"));
+
+	GameplayTag.Card_Weapon_OneHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Weapon.OneHand"));
+	GameplayTag.Card_Weapon_TwoHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Weapon.TwoHand"));
+	GameplayTag.Card_Weapon_Left = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Weapon.Left"));
+	GameplayTag.Card_Weapon_Right = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Weapon.Right"));
+	GameplayTag.Card_Weapon_BasicAttack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Weapon.BasicAttack"));
+
 	GameplayTag.Card_SKill_ThrowStone = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.ThrowStone"));
+	GameplayTag.Card_Skill_Swing = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.Swing"));
+	GameplayTag.Card_Skill_Block = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.Block"));
+	GameplayTag.Card_Skill_Smash = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.Smash"));
+	GameplayTag.Card_Skill_Frenzy = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.Frenzy"));
+	GameplayTag.Card_Skill_Gather = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.Gather"));
+
+	GameplayTag.Card_Skill_Stab = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.Stab"));
+	GameplayTag.Card_Skill_Wound = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.Wound"));
+	GameplayTag.Card_Skill_Salt = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.Salt"));
+	GameplayTag.Card_Skill_Hack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Card.Skill.Hack"));
+
 
 	// Montage
 	GameplayTag.Montage_Attack_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.Weapon"));
