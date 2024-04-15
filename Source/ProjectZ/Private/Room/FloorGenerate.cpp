@@ -194,12 +194,30 @@ void AFloorGenerate::BasicRoom()
 						}
 					}
 				}
-				if(fits)
+				if(fits && rand()%20 == 0)
 				{
-					if(rand()%20 == 0)
+					bool added = false;
+					if(fd.StickToWall)
+					{
+						if(rand()%2 == 0 && j > 0 && floorPlan[i][j] != floorPlan[i][j-1])
+						{
+							FurniturePlaced.Add(GetWorld()->SpawnActor<AActor>(fd.Furniture, FTransform(FVector(i*120+60+60*fd.Height, j*120+60+60*fd.Width, 0)+GetActorLocation())));
+							added = true;
+						}
+						else if(j + fd.Width < floorWidth && floorPlan[i][j] != floorPlan[i][j+fd.Width])
+						{
+							FurniturePlaced.Add(GetWorld()->SpawnActor<AActor>(fd.Furniture, FTransform(FRotator(0, 180, 0), FVector(i*120+60+60*fd.Height, j*120+60+60*fd.Width, 0)+GetActorLocation())));
+							added = true;
+						}
+					}
+					else
 					{
 						if(rand()%2 == 0) FurniturePlaced.Add(GetWorld()->SpawnActor<AActor>(fd.Furniture, FTransform(FVector(i*120+60+60*fd.Height, j*120+60+60*fd.Width, 0)+GetActorLocation())));
 						else FurniturePlaced.Add(GetWorld()->SpawnActor<AActor>(fd.Furniture, FTransform(FRotator(0, 180, 0), FVector(i*120+60+60*fd.Height, j*120+60+60*fd.Width, 0)+GetActorLocation())));
+						added = true;
+					}
+					if(added)
+					{
 						for(int k=0;k<fd.Height;k++)
 						{
 							for(int l=0;l<fd.Width;l++)
@@ -228,12 +246,30 @@ void AFloorGenerate::BasicRoom()
 						}
 					}
 				}
-				if(fits)
+				if(fits && rand()%20 == 0)
 				{
-					if(rand()%20 == 0)
+					bool added = false;
+					if(fd.StickToWall)
+					{
+						if(rand()%2 == 0 && i > 0 && floorPlan[i][j] != floorPlan[i-1][j])
+						{
+							FurniturePlaced.Add(GetWorld()->SpawnActor<AActor>(fd.Furniture, FTransform(FRotator(0, 270, 0),FVector(i*120+60+60*fd.Width, j*120+60+60*fd.Height, 0)+GetActorLocation())));
+							added = true;
+						}
+						else if(i + fd.Width < floorHeight && floorPlan[i][j] != floorPlan[i+fd.Width][j])
+						{
+							FurniturePlaced.Add(GetWorld()->SpawnActor<AActor>(fd.Furniture, FTransform(FRotator(0, 90, 0), FVector(i*120+60+60*fd.Width, j*120+60+60*fd.Height, 0)+GetActorLocation())));
+							added = true;
+						}
+					}
+					else
 					{
 						if(rand()%2 == 0) FurniturePlaced.Add(GetWorld()->SpawnActor<AActor>(fd.Furniture, FTransform(FRotator(0, 270, 0), FVector(i*120+60+60*fd.Width, j*120+60+60*fd.Height, 0)+GetActorLocation())));
 						else FurniturePlaced.Add(GetWorld()->SpawnActor<AActor>(fd.Furniture, FTransform(FRotator(0, 90, 0), FVector(i*120+60+60*fd.Width, j*120+60+60*fd.Height, 0)+GetActorLocation())));
+						added = true;
+					}
+					if(added)
+					{
 						for(int k=0;k<fd.Width;k++)
 						{
 							for(int l=0;l<fd.Height;l++)
