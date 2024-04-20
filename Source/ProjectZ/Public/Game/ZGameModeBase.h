@@ -37,7 +37,7 @@ public:
 	TArray<AActor*> CombatActor;
 
 	void CombatStart();
-	void NextTurn();
+	void TurnEnd();
 	void CharacterDie(AActor* DieActor);
 
 	UFUNCTION(BlueprintCallable)
@@ -67,10 +67,15 @@ public:
 
 	FORCEINLINE int32 GetTurnPlayerIndex() const { return TurnPlayerIndex; }
 
+	void GetCombatActor(TArray<AActor*>& CombatActors);
+
 	UPROPERTY()
 	AActor* TurnActor;
 
 	bool bCanMove = true;
+
+	UPROPERTY(EditAnywhere)
+	float TurnEndTime = 2.f;
 
 private:
 	ETurn CurrentTurn = ETurn::ET_NonCombat;
@@ -81,5 +86,11 @@ private:
 
 	int32 TurnPlayerIndex;
 
+	FTimerHandle TurnEndTimer;
+
 	void SortCombatActor();
+	void TurnEndWithTime();
+
+	UFUNCTION()
+	void NextTurn();
 };

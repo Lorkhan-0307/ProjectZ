@@ -14,5 +14,5 @@ void UTargetDataUnderMouse::Activate()
 	APlayerController* PC = Ability->GetCurrentActorInfo()->PlayerController.Get();
 	FHitResult CursorHit;
 	PC->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, CursorHit);
-	ValidData.Broadcast(CursorHit.Location);
+	ValidData.Broadcast(CursorHit);
 }

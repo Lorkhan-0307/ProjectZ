@@ -8,6 +8,7 @@
 #include "InputActionValue.h"
 #include "ZPlayerControllerBase.generated.h"
 
+class UDamageTextComponent;
 class AZGameModeBase;
 class IEnemyInterface;
 class UZInputConfig;
@@ -27,6 +28,9 @@ class PROJECTZ_API AZPlayerControllerBase : public APlayerController
 public:
 	AZPlayerControllerBase();
 	virtual void SetupInputComponent() override;
+
+	UFUNCTION()
+	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter);
 
 	FORCEINLINE USplineComponent* GetSplineComponent() const { return Spline; }
 	FORCEINLINE FVector GetCachedDestination() const { return CachedDestination; }
@@ -118,4 +122,7 @@ private:
 	void CursorTrace();
 	IEnemyInterface* LastActor;
 	IEnemyInterface* ThisActor;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
 };

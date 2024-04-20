@@ -9,6 +9,7 @@
 #include "Components/CanvasPanelSlot.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "Game/ZGameModeBase.h"
 
 void UCharacterPortraitWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
@@ -27,6 +28,9 @@ void UCharacterPortraitWidget::InitPortrait(AActor* Actor)
 	// For Test
 	if (CharacterClass == ECharacterClass::JohnDoe) TestText->SetText(FText::FromString(FString::Printf(TEXT("Player"))));
 	else TestText->SetText(FText::FromString(FString::Printf(TEXT("%s"), *Actor->GetActorNameOrLabel())));
+
+	Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->TurnChangedDelegate.AddDynamic(this, &UCharacterPortraitWidget::TurnChanged);
+	TurnChanged(ETurn::ET_NonCombat);
 }
 
 void UCharacterPortraitWidget::DestroyWidget()
@@ -41,4 +45,18 @@ void UCharacterPortraitWidget::SetLocation(float DeltaTime)
 	if (CanvasPanelSlot == nullptr) return;
 
 	CanvasPanelSlot->SetPosition(FMath::Vector2DInterpTo(CanvasPanelSlot->GetPosition(), DestinationLocation, DeltaTime, InterpSpeed));
+}
+
+void UCharacterPortraitWidget::TurnChanged(ETurn Turn)
+{
+	if (Cast<AZCharacterBase>(CharacterActor)->bIsMyTurn)
+	{
+		BackGroundImage->SetBrushTintColor(FSlateColor(FColor::Red));
+		//BackGroundImage->SetColorAndOpacity(FLinearColor(1,0,0));
+	}
+	else
+	{
+		BackGroundImage->SetBrushTintColor(FSlateColor(FColor::Black));
+		//BackGroundImage->SetColorAndOpacity(FLinearColor(0,0,0));
+	}
 }

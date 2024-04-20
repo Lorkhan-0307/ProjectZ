@@ -43,6 +43,10 @@ void UNonCombatOverlay::NativeConstruct()
 void UNonCombatOverlay::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	SetHPPercent(InDeltaTime);
+	SetMPPercent(InDeltaTime);
+
 	UpdateCardPosition();
 	if (TurnChangeWidget && TurnChangeWidget->GetVisibility() == ESlateVisibility::Visible)
 	{
@@ -89,7 +93,6 @@ void UNonCombatOverlay::SetCardComponent(UCardComponent* CC)
 		CardComponent->DiscardedCardLocation = CanvasPanelSlot->GetPosition() - CanvasPanelSlot->GetSize() / 2.f;
 		//CardComponent->DiscardedCardLocation.X = ScreenSize.X + (CanvasPanelSlot->GetPosition().X + CanvasPanelSlot->GetSize().X / 2.f);
 		//CardComponent->DiscardedCardLocation.Y = ScreenSize.Y + (CanvasPanelSlot->GetPosition().Y + CanvasPanelSlot->GetSize().Y / 2.f);
-		UE_LOG(LogTemp, Warning, TEXT("%f %f"), CardComponent->DiscardedCardLocation.X, CardComponent->DiscardedCardLocation.X);
 
 		CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(CardGraveyardSizeBox);
 		CardComponent->CardGraveyardLocation = CanvasPanelSlot->GetPosition() - CanvasPanelSlot->GetSize() / 2.f;
@@ -359,6 +362,7 @@ void UNonCombatOverlay::ShowTurnEndButton(bool bShow)
 
 void UNonCombatOverlay::ShowSkillCard(FCard Card)
 {
+	Card.IsValid = false;
 	ShowSkillCardWidget->InitCardStatus(Card, false);
 	ShowSkillCardOverlay->SetVisibility(ESlateVisibility::Visible);
 }
@@ -406,7 +410,6 @@ void UNonCombatOverlay::UpdateCharacterPortrait()
 	{
 		UCanvasPanelSlot* CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(PortraitWidgets[i]);
 		PortraitWidgets[i]->DestinationLocation = FVector2D(GetIndexPositionFromCenter(i, PortraitWidgets.Num()) * CanvasPanelSlot->GetSize().X + CharacterPortraitCenter, 0.f);
-		UE_LOG(LogTemp, Warning, TEXT("%d %f %d %f"), i, GetIndexPositionFromCenter(i, PortraitWidgets.Num()), PortraitWidgets.Num(), PortraitWidgets[i]->DestinationLocation.X);
 	}
 }
 
@@ -423,14 +426,13 @@ void UNonCombatOverlay::DiscardCharacterPortrait(AActor* Actor)
 			i--;
 		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *Actor->GetActorNameOrLabel())
 	UpdateCharacterPortrait();
 }
 
 
 void UNonCombatOverlay::TurnEnd()
 {
-	Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->NextTurn();
+	Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->TurnEnd();
 	//Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode())->SetTurn(ETurn::ET_EnemyTurn);
 	//CurrentTurn = ETurn::ET_EnemyTurn;
 }
@@ -464,28 +466,40 @@ void UNonCombatOverlay::SetMentalityCheckingBarPos()
 void UNonCombatOverlay::OnHealthChanged(float NewValue)
 {
 	Health = NewValue;
-	if (MaxHealth != 0) HealthBar->SetPercent(Health / MaxHealth);
-	SetHealthCheckingBarPos();
+	//if (MaxHealth != 0) HealthBar->SetPercent(Health / MaxHealth);
+	//SetHealthCheckingBarPos();
 }
 
 void UNonCombatOverlay::OnMaxHealthChanged(float NewValue)
 {
 	MaxHealth = NewValue;
-	if (MaxHealth != 0) HealthBar->SetPercent(Health / MaxHealth);
-	SetHealthCheckingBarPos();
+	//if (MaxHealth != 0) HealthBar->SetPercent(Health / MaxHealth);
+	//SetHealthCheckingBarPos();
 }
 
 void UNonCombatOverlay::OnMentalityChanged(float NewValue)
 {
 	Mentality = NewValue;
-	if (MaxMentality != 0) MentalityBar->SetPercent(Mentality / MaxMentality);
-	SetMentalityCheckingBarPos();
+	//if (MaxMentality != 0) MentalityBar->SetPercent(Mentality / MaxMentality);
+	//SetMentalityCheckingBarPos();
 }
 
 void UNonCombatOverlay::OnMaxMentalityChanged(float NewValue)
 {
 	MaxMentality = NewValue;
-	if (MaxMentality != 0) MentalityBar->SetPercent(Mentality / MaxMentality);
+	//if (MaxMentality != 0) MentalityBar->SetPercent(Mentality / MaxMentality);
+	//SetMentalityCheckingBarPos();
+}
+
+void UNonCombatOverlay::SetHPPercent(float DeltaTime)
+{
+	if (MaxHealth != 0) HealthBar->SetPercent(FMath::FInterpConstantTo(HealthBar->GetPercent(), Health / MaxHealth, DeltaTime, ProgressBarInterpSpeed));
+	SetHealthCheckingBarPos();
+}
+
+void UNonCombatOverlay::SetMPPercent(float DeltaTime)
+{
+	if (MaxMentality != 0) MentalityBar->SetPercent(FMath::FInterpConstantTo(MentalityBar->GetPercent(), Mentality / MaxMentality, DeltaTime, ProgressBarInterpSpeed));
 	SetMentalityCheckingBarPos();
 }
 

@@ -26,6 +26,8 @@ public:
 
 	virtual void PossessedBy(AController* NewController) override;
 
+	virtual void Tick(float DeltaSeconds) override;
+
 	// Combat Interface
 	virtual int32 GetPlayerLevel() override;
 
@@ -44,6 +46,12 @@ public:
 	bool bHitReacting;
 
 	bool bTargetSet = false;
+
+	UPROPERTY(BlueprintReadWrite, Category = Combat)
+	TObjectPtr<AActor> CombatTarget;
+
+	virtual void SetCombatTarget_Implementation(AActor* InCombatTarget) override;
+	virtual AActor* GetCombatTarget_Implementation() const override;
 
 	FORCEINLINE AZAIController* GetAIController() const { return ZAIController; }
 

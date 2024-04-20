@@ -23,6 +23,10 @@ struct ZDamageStatic
 	DECLARE_ATTRIBUTE_CAPTUREDEF(FireResistance)
 	DECLARE_ATTRIBUTE_CAPTUREDEF(PhysicalResistance)
 
+	DECLARE_ATTRIBUTE_CAPTUREDEF(WeaponAtk)
+	DECLARE_ATTRIBUTE_CAPTUREDEF(Defence)
+	DECLARE_ATTRIBUTE_CAPTUREDEF(Gather)
+
 	TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition> TagsToCaptureDef;
 
 	ZDamageStatic()
@@ -37,6 +41,10 @@ struct ZDamageStatic
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UZAttributeSet, FireResistance, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UZAttributeSet, PhysicalResistance, Target, false);
 
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UZAttributeSet, WeaponAtk, Source, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UZAttributeSet, Defence, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UZAttributeSet, Gather, Source, false);
+
 		const FZGameplayTag& Tags = FZGameplayTag::Get();
 		TagsToCaptureDef.Add(Tags.Attributes_Secondary_Armor, ArmorDef);
 		TagsToCaptureDef.Add(Tags.Attributes_Secondary_ArmorPenetration, ArmorPenetrationDef);
@@ -47,6 +55,10 @@ struct ZDamageStatic
 
 		TagsToCaptureDef.Add(Tags.Attributes_Resistance_Fire, FireResistanceDef);
 		TagsToCaptureDef.Add(Tags.Attributes_Resistance_Physical, PhysicalResistanceDef);
+
+		TagsToCaptureDef.Add(Tags.Attributes_Card_WeaponAtk, WeaponAtkDef);
+		TagsToCaptureDef.Add(Tags.Attributes_Card_Defence, DefenceDef);
+		TagsToCaptureDef.Add(Tags.Attributes_Card_Gather, GatherDef);
 	}
 };
 
@@ -67,6 +79,10 @@ UExecCalcDamage::UExecCalcDamage()
 
 	RelevantAttributesToCapture.Add(DamageStatic().FireResistanceDef);
 	RelevantAttributesToCapture.Add(DamageStatic().PhysicalResistanceDef);
+
+	RelevantAttributesToCapture.Add(DamageStatic().WeaponAtkDef);
+	RelevantAttributesToCapture.Add(DamageStatic().DefenceDef);
+	RelevantAttributesToCapture.Add(DamageStatic().GatherDef);
 }
 
 void UExecCalcDamage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
@@ -85,9 +101,51 @@ void UExecCalcDamage::Execute_Implementation(const FGameplayEffectCustomExecutio
 	EvaluationParameters.SourceTags = SourceTag;
 	EvaluationParameters.TargetTags = TargetTag;
 
+	// Debuff
+	const FZGameplayTag& GameplayTag = FZGameplayTag::Get();
+	FGameplayEffectContextHandle ContextHandle = Spec.GetContext();
+
+	for (FGameplayTag DebuffType : GameplayTag.Debuffs)
+	{
+		const bool bDebuffIsSet = Spec.GetSetByCallerMagnitude(DebuffType, false, -1.f) > -0.5f; // .5 padding for floating point imprecision
+		if (bDebuffIsSet)
+		{
+			const float SourceDebuffChance = Spec.GetSetByCallerMagnitude(GameplayTag.Debuff_Chance, false, -1.f);
+			const bool bDebuff = FMath::RandRange(1, 100) < SourceDebuffChance;
+			if (bDebuff)
+			{
+				UZAbilitySystemLibrary::SetIsSuccessfulDebuff(ContextHandle, true);
+				UZAbilitySystemLibrary::SetDebuffType(ContextHandle, DebuffType);
+				//UZAbilitySystemLibrary::SetDamageType(ContextHandle,DamageType);
+
+				const float DebuffDamage = Spec.GetSetByCallerMagnitude(GameplayTag.Debuff_Damage, false, -1.f);
+				const int32 DebuffDuration = Spec.GetSetByCallerMagnitude(GameplayTag.Debuff_Duration, false, -1.f);
+				const int32 DebuffStack = Spec.GetSetByCallerMagnitude(GameplayTag.Debuff_Stack, false, -1.f);
+
+				UZAbilitySystemLibrary::SetDebuffDamage(ContextHandle, DebuffDamage);
+				UZAbilitySystemLibrary::SetDebuffDuration(ContextHandle, DebuffDuration);
+				UZAbilitySystemLibrary::SetDebuffStack(ContextHandle, DebuffStack);
+			}
+		}
+	}
+
+	for (FGameplayTag BuffType : GameplayTag.BuffAttributes)
+	{
+		const bool bBuffIsSet = Spec.GetSetByCallerMagnitude(BuffType, false, -1.f) > -0.5f;
+		if (bBuffIsSet)
+		{
+			const float BuffMagnitude = Spec.GetSetByCallerMagnitude(GameplayTag.Buff_Magnitude, false, -1.f);
+			const int32 BuffDuration = Spec.GetSetByCallerMagnitude(GameplayTag.Buff_Duration, false, -1.f);
+
+			UZAbilitySystemLibrary::SetBuffAttribute(ContextHandle, BuffType);
+			UZAbilitySystemLibrary::SetBuffMagnitude(ContextHandle, BuffMagnitude);
+			UZAbilitySystemLibrary::SetBuffDuration(ContextHandle, BuffDuration);
+		}
+	}
+
 	// Get Damage Set by Caller Magnitude
 	float Damage = 0.f;
-	for (const auto& Pair : FZGameplayTag::Get().DamageTypeToResistance)
+	for (const auto& Pair : GameplayTag.DamageTypeToResistance)
 	{
 		const FGameplayTag DamageTypeTag = Pair.Key;
 		const FGameplayTag ResistanceTag = Pair.Value;
@@ -158,6 +216,22 @@ void UExecCalcDamage::Execute_Implementation(const FGameplayEffectCustomExecutio
 	UZAbilitySystemLibrary::SetIsCriticalHit(EffectContextHandle, bCriticalHit);
 
 	Damage = bCriticalHit ? SourceCriticalHitDamage * Damage : Damage;
+
+	// Defence
+	float TargetDefence = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatic().DefenceDef, EvaluationParameters, TargetDefence);
+	TargetDefence = FMath::Max<float>(TargetDefence, 0.f);
+
+	Damage -= TargetDefence;
+	Damage = FMath::Max<float>(Damage, 0.f);
+
+	UZAbilitySystemLibrary::SetIsBlocked(EffectContextHandle, TargetDefence > 0.f);
+
+	// Gather
+	float SourceGather = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatic().GatherDef, EvaluationParameters, SourceGather);
+	SourceGather = FMath::Max(SourceGather, 0.f);
+	if (SourceGather != 0) Damage *= SourceGather;
 
 	// Apply Damage
 	const FGameplayModifierEvaluatedData EvaluatedData(UZAttributeSet::GetIncomingDamageAttribute(), EGameplayModOp::Additive, Damage);

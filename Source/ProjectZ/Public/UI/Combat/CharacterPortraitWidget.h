@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "Blueprint/UserWidget.h"
+#include "Game/ZGameModeBase.h"
 #include "CharacterPortraitWidget.generated.h"
 
 class UTextBlock;
@@ -23,6 +24,9 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* CharacterPortraitImage;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* BackGroundImage;
 
 	UPROPERTY(meta = (BindWidget))
 	UOverlay* PortraitOverlay;
@@ -45,4 +49,7 @@ public:
 
 private:
 	void SetLocation(float DeltaTime);
+
+	UFUNCTION()
+	void TurnChanged(ETurn Turn);
 };
