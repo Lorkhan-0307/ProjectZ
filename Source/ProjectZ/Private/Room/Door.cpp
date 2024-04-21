@@ -4,7 +4,7 @@
 #include "Room/RoomGenerate.h"
 
 UStaticMesh* CubeMesh2;
-ARoomGenerate* Room;
+ARoomGenerate* Rooms;
 
 void ADoor::SetParams(int Count, int number)
 {
@@ -14,9 +14,9 @@ void ADoor::SetParams(int Count, int number)
 
 void ADoor::SpawnRoom()
 {
-	Room = GetWorld()->SpawnActor<ARoomGenerate>(ARoomGenerate::StaticClass(), FTransform(FRotator(0, -90, 0)+GetActorRotation(), FVector(-100, 0, 0)+GetActorLocation()));
-	Room->SetParams(false, RoomNo + 1);
-	Room->BasicRoom();
+	Rooms = GetWorld()->SpawnActor<ARoomGenerate>(ARoomGenerate::StaticClass(), FTransform(FRotator(0, -90, 0)+GetActorRotation(), FVector(-100, 0, 0)+GetActorLocation()));
+	Rooms->SetParams(false, RoomNo + 1);
+	Rooms->BasicRoom();
 }
 
 // Sets default values
