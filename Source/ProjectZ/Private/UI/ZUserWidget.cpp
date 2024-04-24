@@ -16,9 +16,10 @@ void UZUserWidget::SetCardComponent(UCardComponent* CC)
 	CardComponent = CC;
 }
 
+
+
 void UZUserWidget::WidgetControllerSet()
 {
+
 }
-
-
 

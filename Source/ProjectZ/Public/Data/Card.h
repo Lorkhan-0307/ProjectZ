@@ -1,19 +1,26 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Engine/DataTable.h"
 #include "Card.generated.h"
 
+class UZGameplayAbility;
 class UGameplayEffect;
+class UGameplayAbility;
 
 UENUM(BlueprintType)
 enum class ECardType : uint8
 {
-	ECT_Passive,
-	ECT_UsablePassive,
-	ECT_CanEquip,
-	ECT_CantEquip,
-	ECT_Skill
+	ECT_Passive UMETA(DisplayName = "Passive"),
+	ECT_UsablePassive UMETA(DisplayName = "UsablePassive"),
+	ECT_OneHandWeapon UMETA(DisplayName = "OneHandWeapon"),
+	ECT_TwoHandWeapon UMETA(DisplayName = "TwoHandWeapon"),
+	ECT_CantEquip UMETA(DisplayName = "CantEquip"),
+	ECT_Skill UMETA(DisplayName = "Skill"),
+	ECT_Buff UMETA(DisplayName = "Buff"),
+
+	ECT_Max
 };
 
 
@@ -47,8 +54,20 @@ struct FCard : public FTableRowBase
 	ECardType CardType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 CardLevel;
+	int32 CardLevel = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SkillRange = 1.5f;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SkillAngle = 360.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bTargeting;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bShowDamage = true;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
 	TArray<TSubclassOf<UGameplayEffect>> InstantGameplayEffects;
 
@@ -58,7 +77,16 @@ struct FCard : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
 	TArray<TSubclassOf<UGameplayEffect>> InfiniteGameplayEffects;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool IsValid = true;
-};
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Card Ability")
+	FGameplayTag CardTag;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Card Ability")
+	TSubclassOf<UGameplayAbility> CardAbility;
+	
+	bool IsValid = true;
+
+	bool operator==(const FCard& a) const
+	{
+		return CardName.EqualTo(a.CardName);
+	}
+};

@@ -9,6 +9,7 @@
 #include "Interaction/CombatInterface.h"
 #include "ZCharacterBase.generated.h"
 
+class UDebuffNiagaraComponent;
 class UGameplayAbility;
 class UGameplayEffect;
 class UAbilitySystemComponent;
@@ -27,7 +28,27 @@ public:
 	UPROPERTY(EditAnywhere)
 	UCardComponent* CardComponent;
 
+	UFUNCTION(BlueprintCallable)
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass) const;
+
+	// Combat Interface
+	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
+	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
+	virtual void Die() override;
+	virtual bool IsDead_Implementation() const override;
+	virtual AActor* GetAvatar_Implementation() override;
+	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() override;
+	virtual void AddDebuff_Implementation(FDebuff Debuff) override;
+	virtual void RemoveDebuff_Implementation(FGameplayTag RemoveDebuffType) override;
+	virtual FOnASCRegistered GetOnASCRegisterdDelegate() override;
+	virtual FOnDeath GetOnDeathDelegate() override;
+	virtual void AddBuff_Implementation(FGameplayTag BuffType, int32 BuffDuration) override;
+
+	FOnASCRegistered OnASCRegisteredDelegate;
+	FOnDeath OnDeathDelegate;
+
+	UPROPERTY(EditAnywhere, Category = Combat)
+	TArray<FTaggedMontage> AttackMontages;
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE UCardComponent* GetCardComponent() const { return CardComponent; }
@@ -35,16 +56,14 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	FORCEINLINE UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 	FORCEINLINE ECharacterClass GetCharacterClass() const { return CharacterClass; }
-
-	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
-	virtual void Die() override;
+	FORCEINLINE int32 GetCombatPriority() const { return CombatPriority; }
 
 protected:
 	virtual void BeginPlay() override;
 	virtual int32 GetLevel();
 
-	virtual FVector GetCombatSocketLocation() override;
-
+	bool bIsDead = false;
+	
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
@@ -57,6 +76,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Default")
 	ECharacterClass CharacterClass = ECharacterClass::JohnDoe;
 
+	UPROPERTY(EditAnywhere, Category = "Character Class Default")
+	int32 CombatPriority;
+
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes;
 
@@ -65,6 +87,15 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
+	float LifeSpan = 5.f;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UDebuffNiagaraComponent> BleedDebuffComponent;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 BleedCount = 0;
 
 	virtual void InitAbilityActorInfo();
 

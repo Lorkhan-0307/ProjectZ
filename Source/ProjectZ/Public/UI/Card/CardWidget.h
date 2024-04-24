@@ -12,6 +12,7 @@
  * 
  */
 
+class UCanvasPanelSlot;
 class UTextBlock;
 class UImage;
 class UDataTable;
@@ -58,20 +59,31 @@ public:
 
 	// Where the card should be
 	UPROPERTY(BlueprintReadWrite)
-	FWidgetTransform DestinationTransform;
+	FVector2D DestinationPosition;
+
+	float DestinationAngle;
 
 	UPROPERTY()
 	UCardHandWidget* CardHandWidget;
-	
+
 	UPROPERTY()
 	UCardComponent* CardComponent;
 
 	FCardDragStartDelegate CardDragStartDelegate;
 	FCardDragEndDelegate CardDragEndDelegate;
 
-	void InitCardStatus(FCard CardStatus);
+	void InitCardStatus(FCard CardStatus, bool bSetDelegate = true);
+
+	UFUNCTION()
+	void DestroyActivateCard();
+
+	UFUNCTION()
+	void CancelActivateCard();
+	
+	void DestroyWidget();
 
 	FORCEINLINE bool GetMouseHovered() const { return bMouseHovered; }
+	FORCEINLINE FCard GetCardStat() const { return CardStat; }
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
@@ -80,6 +92,9 @@ protected:
 	// Card Move Speed
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Card)
 	int32 InterpSpeed = 5;
+
+	UPROPERTY(EditAnywhere, Category = Card)
+	FVector2D CardSize = FVector2D(200.f, 280.f);
 
 	void SetPosition(float DeltaTime);
 
@@ -90,8 +105,19 @@ private:
 	bool bIsInPosition = false;
 
 	FVector2D ViewportSize;
-	
+
 	bool bMouseHovered = false;
 
 	FCard CardStat;
+
+	float CardHandYSize;
+
+	bool bTrashCard = false;
+
+	UPROPERTY()
+	UCanvasPanelSlot* CanvasPanelSlot;
+
+	FVector2D TrashCardStartPosition;
+
+	void TrashCard(float DeltaTime);
 };

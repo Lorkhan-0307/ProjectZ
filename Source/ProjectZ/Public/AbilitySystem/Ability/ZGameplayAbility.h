@@ -17,4 +17,7 @@ class PROJECTZ_API UZGameplayAbility : public UGameplayAbility
 public:
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	FGameplayTag StartupInputTag;
+
+	UPROPERTY(EditDefaultsOnly, Category = Card)
+	FGameplayTag CardSkillTag;
 };

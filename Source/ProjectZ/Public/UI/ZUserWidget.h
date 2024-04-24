@@ -28,17 +28,12 @@ public:
 	virtual void SetCardComponent(UCardComponent* CC);
 
 protected:
+	
 	//UFUNCTION(BlueprintImplementableEvent) 
 	virtual void WidgetControllerSet();
 
 	UPROPERTY()
 	UCardComponent* CardComponent;
-
-	float Health;
-	float MaxHealth;
-	float Mentality;
-	float MaxMentality;
-
 
 private:
 };

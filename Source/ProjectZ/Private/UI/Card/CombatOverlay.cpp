@@ -40,9 +40,35 @@ void UCombatOverlay::OnMaxMentalityChanged(float NewValue)
 
 void UCombatOverlay::WidgetControllerSet()
 {
+	Super::WidgetControllerSet();
+
 	UOverlayWidgetController* OverlayWidgetController = Cast<UOverlayWidgetController>(WidgetController);
 	OverlayWidgetController->OnHealthChanged.AddDynamic(this, &UCombatOverlay::OnHealthChanged);
 	OverlayWidgetController->OnMaxHealthChanged.AddDynamic(this, &UCombatOverlay::OnMaxHealthChanged);
 	OverlayWidgetController->OnMentalityChanged.AddDynamic(this, &UCombatOverlay::OnMentalityChanged);
 	OverlayWidgetController->OnMaxMentalityChanged.AddDynamic(this, &UCombatOverlay::OnMaxMentalityChanged);
+}
+
+void UCombatOverlay::OnHealthChanged(float NewValue)
+{
+	Health = NewValue;
+	if (MaxHealth != 0) HealthBar->SetPercent(Health / MaxHealth);
+}
+
+void UCombatOverlay::OnMaxHealthChanged(float NewValue)
+{
+	MaxHealth = NewValue;
+	if (MaxHealth != 0) HealthBar->SetPercent(Health / MaxHealth);
+}
+
+void UCombatOverlay::OnMentalityChanged(float NewValue)
+{
+	Mentality = NewValue;
+	if (MaxMentality != 0) MentalityBar->SetPercent(Mentality / MaxMentality);
+}
+
+void UCombatOverlay::OnMaxMentalityChanged(float NewValue)
+{
+	MaxMentality = NewValue;
+	if (MaxMentality != 0) MentalityBar->SetPercent(Mentality / MaxMentality);
 }

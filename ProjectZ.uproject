@@ -12,7 +12,9 @@
 				"Engine",
 				"UMG",
 				"GameplayAbilities",
-				"EnhancedInput"
+				"EnhancedInput",
+				"AIModule",
+				"Niagara"
 			]
 		}
 	],
@@ -26,6 +28,10 @@
 		},
 		{
 			"Name": "GameplayAbilities",
+			"Enabled": true
+		},
+		{
+			"Name": "MotionWarping",
 			"Enabled": true
 		}
 	]

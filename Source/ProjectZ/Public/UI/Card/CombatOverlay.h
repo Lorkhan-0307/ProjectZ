@@ -28,13 +28,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	UCardHandWidget* CardHandWidget;
-	
-
-	virtual void WidgetControllerSet() override;
-
-
-
-private:
 
 	UPROPERTY(meta = (BindWidget))
 	UProgressBar* HealthBar;
@@ -53,4 +46,14 @@ private:
 
 	UFUNCTION()
 	virtual void OnMaxMentalityChanged(float NewValue);
+
+	virtual void WidgetControllerSet() override;
+
+
+
+private:
+	float Health;
+	float MaxHealth;
+	float Mentality;
+	float MaxMentality;
 };

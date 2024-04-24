@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "AbilitySystem/AbilityTask/TargetDataUnderMouse.h"
 #include "Engine/DataTable.h"
 #include "UI/WidgetController/ZWidgetController.h"
 #include "OverlayWidgetController.generated.h"
@@ -37,7 +38,6 @@ class PROJECTZ_API UOverlayWidgetController : public UZWidgetController
 public:
 	virtual void BroadcastInitialValues() override;
 	virtual void BindCallbacksToDependencies() override;
-	// Not Implemented yet
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FOnAttributeChangeSignature OnHealthChanged;
@@ -51,6 +51,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FOnAttributeChangeSignature OnMaxMentalityChanged;
 
+	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
+	FOnAttributeChangeSignature OnCostChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
+	FOnAttributeChangeSignature OnMaxCostChanged;
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget Data")
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
@@ -59,4 +65,7 @@ protected:
 	void MaxHealthChanged(const FOnAttributeChangeData& Data) const;
 	void MentalityChanged(const FOnAttributeChangeData& Data) const;
 	void MaxMentalityChanged(const FOnAttributeChangeData& Data) const;
+	void CostChanged(const FOnAttributeChangeData& data) const;
+	void MaxCostChanged(const FOnAttributeChangeData& data) const;
 };
+

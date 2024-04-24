@@ -22,15 +22,17 @@ void UZAbilitySystemComponent::AddCharacterAbility(const TArray<TSubclassOf<UGam
 		if (const UZGameplayAbility* ZAbility = Cast<UZGameplayAbility>(AbilitySpec.Ability))
 		{
 			AbilitySpec.DynamicAbilityTags.AddTag(ZAbility->StartupInputTag);
+			AbilitySpec.DynamicAbilityTags.AddTag(ZAbility->CardSkillTag);
 			GiveAbility(AbilitySpec);
 		}
 	}
 }
 
-void UZAbilitySystemComponent::AbilityInputTagHeld(const FGameplayTag& InputTag)
+bool UZAbilitySystemComponent::AbilityInputTagHeld(const FGameplayTag& InputTag)
 {
-	if (!InputTag.IsValid()) return;
+	if (!InputTag.IsValid()) return false;
 
+	bool bActivateSuccessful = false;
 	for (FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
 	{
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag))
@@ -38,10 +40,11 @@ void UZAbilitySystemComponent::AbilityInputTagHeld(const FGameplayTag& InputTag)
 			AbilitySpecInputPressed(AbilitySpec);
 			if (!AbilitySpec.IsActive())
 			{
-				TryActivateAbility(AbilitySpec.Handle);
+				bActivateSuccessful |= TryActivateAbility(AbilitySpec.Handle);
 			}
 		}
 	}
+	return bActivateSuccessful;
 }
 
 void UZAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& InputTag)
