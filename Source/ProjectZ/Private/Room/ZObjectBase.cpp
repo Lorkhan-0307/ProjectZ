@@ -24,3 +24,13 @@ void AZObjectBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
+
+void AZObjectBase::OnBeginCursorOver(UPrimitiveComponent* TouchedComponent)
+{
+	
+}
+
+void AZObjectBase::OnEndCursorOver(UPrimitiveComponent* TouchedComponent)
+{
+	
+}
