@@ -48,6 +48,9 @@ struct FCard : public FTableRowBase
 	int32 CardDef;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText CardEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText CardDescription;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
+#include "UI/WidgetController/ZWidgetController.h"
 #include "ZHUDBase.generated.h"
 
+class UInventoryWidgetController;
 class UOverlayWidgetController;
 class AZNonCombatCharacter;
 class UZUserWidget;
@@ -25,9 +27,9 @@ class PROJECTZ_API AZHUDBase : public AHUD
 public:
 	void InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS, AZPlayerCharacter* Character);
 
-	virtual UOverlayWidgetController* GetOverlayWidgetController(const FWidgetControllerParams& WidgetControllerParams);
+	UOverlayWidgetController* GetOverlayWidgetController(const FWidgetControllerParams& WidgetControllerParams);
+	UInventoryWidgetController* GetInventoryWidgetController(const FWidgetControllerParams& WidgetControllerParams);
 
-protected:
 	UPROPERTY()
 	TObjectPtr<UZUserWidget> OverlayWidget;
 	
@@ -39,6 +41,20 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UZWidgetController> OverlayWidgetControllerClass;
+
+	UPROPERTY()
+	TObjectPtr<UZUserWidget> InventoryWidget;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UZUserWidget> InventoryWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<UInventoryWidgetController> InventoryWidgetController;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UZWidgetController> InventoryWidgetControllerClass;
+
+protected:
 
 private:
 	UPROPERTY()

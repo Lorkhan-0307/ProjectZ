@@ -16,9 +16,15 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Components/HorizontalBoxSlot.h"
 #include "Game/ZGameModeBase.h"
+#include "Kismet/GameplayStatics.h"
+#include "UI/ZUserWidget.h"
 #include "UI/Card/CardDragDropOperation.h"
 #include "Ui/Card/CardHandWidget.h"
+#include "UI/HUD/ZHUDBase.h"
+#include "UI/NonCombat/InventoryWidget.h"
+#include "UI/WidgetController/InventoryWidgetController.h"
 
 
 void UCardWidget::NativeConstruct()
@@ -61,6 +67,11 @@ void UCardWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 FReply UCardWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+	UHorizontalBoxSlot* HorizontalBoxSlot = UWidgetLayoutLibrary::SlotAsHorizontalBoxSlot(this);
+	if (HorizontalBoxSlot)
+	{
+		Cast<UInventoryWidget>(Cast<AZHUDBase>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD())->InventoryWidget)->DisplayCardWidget(CardStat);
+	}
 	return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
 }
 

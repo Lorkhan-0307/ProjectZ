@@ -20,6 +20,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FActivateCardDelegate);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCancelActivateCardDelegate);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUpdateCardInventoryDelegate);
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROJECTZ_API UCardComponent : public UActorComponent
 {
@@ -53,6 +55,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FCancelActivateCardDelegate CancelActivateCardDelegate;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FUpdateCardInventoryDelegate UpdateCardInventoryDelegate;
 	
 
 	void InitializeCardComponent(AZCharacterBase* Character);
@@ -101,6 +106,8 @@ public:
 	FORCEINLINE FCard GetRightHandCard() const { return RightHandCard; }
 	FORCEINLINE float GetPlayCardHeight() const { return PlayCardHeight; }
 	FORCEINLINE void SetPlayCardHeight(float Height) { PlayCardHeight = Height; }
+
+	void GetCardInventory(TArray<FCard>& Inventory);
 
 protected:
 	virtual void BeginPlay() override;
@@ -153,6 +160,8 @@ private:
 
 	TMap<FActiveGameplayEffectHandle, UAbilitySystemComponent*> ActiveEffectHandles;
 
+	void SortInventory();
+	
 	void ShuffleDeck();
 	void MakeCardDeck();
 

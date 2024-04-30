@@ -12,7 +12,9 @@ class AZCharacterBase;
 struct FGameplayEffectContextHandle;
 class UCharacterClassInfo;
 class UOverlayWidgetController;
+class UInventoryWidgetController;
 class UAbilitySystemComponent;
+class UOverlayWidgetController;
 
 // Get OverlayWidgetController in Blueprint
 UCLASS()
@@ -23,6 +25,9 @@ class PROJECTZ_API UZAbilitySystemLibrary : public UBlueprintFunctionLibrary
 public:
 	UFUNCTION(BlueprintPure, Category = "ZAbilitySystemLibrary|WidgetController")
 	static UOverlayWidgetController* GetOverlayWidgetController(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintPure, Category = "ZAbilitySystemLibrary|WidgetController")
+	static UInventoryWidgetController* GetInventoryWidgetController(const UObject* WorldContextObject);
 
 	UFUNCTION(BlueprintCallable, Category = "zAbilitySystemLibrary|CharacterClassDefaults")
 	static void InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* ASC);

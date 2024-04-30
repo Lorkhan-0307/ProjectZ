@@ -38,6 +38,11 @@ void UCardComponent::UseCard(FCard Card)
 	CardHand.RemoveSingle(Card);
 }
 
+void UCardComponent::GetCardInventory(TArray<FCard>& Inventory)
+{
+	Inventory = CardInventory;
+}
+
 // Called when the game starts
 void UCardComponent::BeginPlay()
 {
@@ -51,6 +56,7 @@ void UCardComponent::AddCardToInventory(FName NewCardName)
 {
 	const FCard NewCard = ConvertCardNameToFCard(NewCardName);
 	CardInventory.Push(NewCard);
+	UpdateCardInventoryDelegate.Broadcast();
 }
 
 // Add Card to Deck
@@ -127,6 +133,21 @@ void UCardComponent::InitializeCardComponent(AZCharacterBase* Character)
 	SetRightHandCard(ConvertCardNameToFCard(FName("Sword")));
 	UpdateRightHandCardDelegate.Broadcast(GetRightHandCard());
 	*/
+	
+
+	// For Test
+	AddCardToInventory(FName("KitchenKnife"));
+	AddCardToInventory(FName("HealthPotion"));
+	AddCardToInventory(FName("Stab"));
+	AddCardToInventory(FName("Stab"));
+	AddCardToInventory(FName("Wound"));
+	AddCardToInventory(FName("Wound"));
+	AddCardToInventory(FName("Salt"));
+	AddCardToInventory(FName("Salt"));
+	AddCardToInventory(FName("Hack"));
+	AddCardToInventory(FName("Hack"));
+
+	UpdateCardInventoryDelegate.Broadcast();
 }
 
 // Get name and return FCard
@@ -146,6 +167,15 @@ void UCardComponent::InitializeCardInventory(UCharacterClassInfo* CharacterClass
 	}
 }
 
+void UCardComponent::SortInventory()
+{
+	CardInventory.Sort([](const FCard& a, const FCard& b)
+	{
+		if (a.CardType == b.CardType) return a.CardName.ToString() < b.CardName.ToString();
+		return a.CardType < b.CardType;
+	});
+}
+
 // Shuffle Deck
 void UCardComponent::ShuffleDeck()
 {
@@ -155,18 +185,7 @@ void UCardComponent::ShuffleDeck()
 // Begin combat, make deck at inventory without passive cards
 void UCardComponent::MakeCardDeck()
 {
-	// For Test
-	AddCardToInventory(FName("KitchenKnife"));
-	AddCardToInventory(FName("HealthPotion"));
-	AddCardToInventory(FName("Stab"));
-	AddCardToInventory(FName("Stab"));
-	AddCardToInventory(FName("Wound"));
-	AddCardToInventory(FName("Wound"));
-	AddCardToInventory(FName("Salt"));
-	AddCardToInventory(FName("Salt"));
-	AddCardToInventory(FName("Hack"));
-	AddCardToInventory(FName("Hack"));
-
+	
 
 	// ...
 

@@ -25,6 +25,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCardDragStartDelegate, UCardWidget*
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCardDragEndDelegate, UCardWidget*, DragCard, bool, bIsUsed);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FClickCardWidgetDelegate, FCard, ClickCard);
+
 UCLASS()
 class PROJECTZ_API UCardWidget : public UUserWidget
 {
@@ -71,6 +73,8 @@ public:
 
 	FCardDragStartDelegate CardDragStartDelegate;
 	FCardDragEndDelegate CardDragEndDelegate;
+
+	FClickCardWidgetDelegate* ClickCardWidgetDelegate;
 
 	void InitCardStatus(FCard CardStatus, bool bSetDelegate = true);
 

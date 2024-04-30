@@ -22,7 +22,9 @@
 #include "Input/ZInputComponent.h"
 #include "Interaction/EnemyInterface.h"
 #include "Player/ZPlayerState.h"
+#include "UI/ZUserWidget.h"
 #include "UI/Combat/DamageTextComponent.h"
+#include "Ui/HUD/ZHUDBase.h"
 
 AZPlayerControllerBase::AZPlayerControllerBase()
 {
@@ -41,6 +43,7 @@ void AZPlayerControllerBase::SetupInputComponent()
 	ZInputComponent->BindAction(CameraResetAction, ETriggerEvent::Triggered, this, &AZPlayerControllerBase::CameraReset);
 	ZInputComponent->BindAction(CameraZoomAction, ETriggerEvent::Triggered, this, &AZPlayerControllerBase::CameraZoom);
 	ZInputComponent->BindAction(ESCAction, ETriggerEvent::Triggered, this, &AZPlayerControllerBase::ESC);
+	ZInputComponent->BindAction(InventoryAction, ETriggerEvent::Triggered, this, &AZPlayerControllerBase::Inventory);
 }
 
 void AZPlayerControllerBase::ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter)
@@ -117,6 +120,13 @@ void AZPlayerControllerBase::ESC()
 	{
 		CardComponent->CancelActivateCard();
 	}
+}
+
+void AZPlayerControllerBase::Inventory()
+{
+	AZHUDBase* HUD = Cast<AZHUDBase>(GetHUD());
+	if (HUD->InventoryWidget->GetVisibility() == ESlateVisibility::Hidden) HUD->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
+	else HUD->InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void AZPlayerControllerBase::SetCameraLocation()

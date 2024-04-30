@@ -34,6 +34,22 @@ UOverlayWidgetController* UZAbilitySystemLibrary::GetOverlayWidgetController(con
 	return nullptr;
 }
 
+UInventoryWidgetController* UZAbilitySystemLibrary::GetInventoryWidgetController(const UObject* WorldContextObject)
+{
+	if (APlayerController* PC = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
+	{
+		if (AZHUDBase* ZHUD = Cast<AZHUDBase>(PC->GetHUD()))
+		{
+			AZPlayerState* PS = PC->GetPlayerState<AZPlayerState>();
+			UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
+			UAttributeSet* AS = PS->GetAttributeSet();
+			const FWidgetControllerParams WidgetControllerParams(PC, PS, ASC, AS);
+			return ZHUD->GetInventoryWidgetController(WidgetControllerParams);
+		}
+	}
+	return nullptr;
+}
+
 void UZAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* ASC)
 {
 	AZGameModeBase* ZGameMode = Cast<AZGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));

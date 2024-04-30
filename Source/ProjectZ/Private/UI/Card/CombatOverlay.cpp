@@ -14,30 +14,6 @@ void UCombatOverlay::NativeConstruct()
 	CardHandWidget->SetCardComponent(CardComponent);
 }
 
-void UCombatOverlay::OnHealthChanged(float NewValue)
-{
-	Health = NewValue;
-	if (MaxHealth != 0) HealthBar->SetPercent(Health / MaxHealth);
-}
-
-void UCombatOverlay::OnMaxHealthChanged(float NewValue)
-{
-	MaxHealth = NewValue;
-	if (MaxHealth != 0) HealthBar->SetPercent(Health / MaxHealth);
-}
-
-void UCombatOverlay::OnMentalityChanged(float NewValue)
-{
-	Mentality = NewValue;
-	if (MaxMentality != 0) MentalityBar->SetPercent(Mentality / MaxMentality);
-}
-
-void UCombatOverlay::OnMaxMentalityChanged(float NewValue)
-{
-	MaxMentality = NewValue;
-	if (MaxMentality != 0) MentalityBar->SetPercent(Mentality / MaxMentality);
-}
-
 void UCombatOverlay::WidgetControllerSet()
 {
 	Super::WidgetControllerSet();
