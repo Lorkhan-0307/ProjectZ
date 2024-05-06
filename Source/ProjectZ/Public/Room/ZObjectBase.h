@@ -19,19 +19,11 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UFUNCTION() void OnBeginCursorOver(UPrimitiveComponent* TouchedComponent);
-	UFUNCTION() void OnEndCursorOver(UPrimitiveComponent* TouchedComponent);
-
-	void ApplyOutlineMaterial();
-	void RemoveOutlineMaterial();
-
-	UPROPERTY(VisibleAnywhere) UStaticMeshComponent* MeshComponent;
-
-	UMaterialInterface* DefaultMaterial;
-	UMaterialInterface* OutlineMaterial;
+	virtual void NotifyActorBeginCursorOver() override;
+	virtual void NotifyActorEndCursorOver() override;
+	TArray<UStaticMeshComponent*> MeshComponents;
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
 };
