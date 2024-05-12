@@ -25,6 +25,7 @@
 #include "UI/ZUserWidget.h"
 #include "UI/Combat/DamageTextComponent.h"
 #include "Ui/HUD/ZHUDBase.h"
+#include "UI/NonCombat/InventoryWidget.h"
 
 AZPlayerControllerBase::AZPlayerControllerBase()
 {
@@ -125,8 +126,14 @@ void AZPlayerControllerBase::ESC()
 void AZPlayerControllerBase::Inventory()
 {
 	AZHUDBase* HUD = Cast<AZHUDBase>(GetHUD());
-	if (HUD->InventoryWidget->GetVisibility() == ESlateVisibility::Hidden) HUD->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
-	else HUD->InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
+	if (HUD->InventoryWidget->GetVisibility() == ESlateVisibility::Hidden)
+	{
+		HUD->InventoryWidget->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		HUD->InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
+	}
 }
 
 void AZPlayerControllerBase::SetCameraLocation()

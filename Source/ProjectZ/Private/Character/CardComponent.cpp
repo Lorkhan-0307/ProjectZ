@@ -43,6 +43,35 @@ void UCardComponent::GetCardInventory(TArray<FCard>& Inventory)
 	Inventory = CardInventory;
 }
 
+FCard UCardComponent::GetCardCraftResult(FCard FirstCard, FCard SecondCard, bool& bIsValid)
+{
+	// Repair
+	if (FirstCard == FText::FromString("DuctTape") && (SecondCard.CardType == ECardType::ECT_OneHandWeapon || SecondCard.CardType == ECardType::ECT_TwoHandWeapon))
+	{
+		SecondCard.CardDef = SecondCard.CardMaxDef;
+		bIsValid = true;
+		return SecondCard;
+	}
+	if (SecondCard == FText::FromString("DuctTape") && (FirstCard.CardType == ECardType::ECT_OneHandWeapon || FirstCard.CardType == ECardType::ECT_TwoHandWeapon))
+	{
+		FirstCard.CardDef = FirstCard.CardMaxDef;
+		bIsValid = true;
+		return FirstCard;
+	}
+
+	for (FCardCombination Comb : CardCombination)
+	{
+		if ((FirstCard == Comb.FirstCard && SecondCard == Comb.SecondCard) || (FirstCard == Comb.SecondCard && SecondCard == Comb.FirstCard))
+		{
+			FName ResultCardName = FName(*Comb.ResultCard.ToString());
+			bIsValid = true;
+			return ConvertCardNameToFCard(ResultCardName);
+		}
+	}
+	bIsValid = false;
+	return FCard();
+}
+
 // Called when the game starts
 void UCardComponent::BeginPlay()
 {
@@ -52,11 +81,16 @@ void UCardComponent::BeginPlay()
 	GameMode->TurnChangedDelegate.AddDynamic(this, &UCardComponent::TurnChanged);
 }
 
-void UCardComponent::AddCardToInventory(FName NewCardName)
+void UCardComponent::AddCardToInventory(FCard NewCardName)
 {
-	const FCard NewCard = ConvertCardNameToFCard(NewCardName);
+	const FCard NewCard = NewCardName;
 	CardInventory.Push(NewCard);
-	UpdateCardInventoryDelegate.Broadcast();
+	//UpdateCardInventoryDelegate.Broadcast();
+}
+
+void UCardComponent::RemoveCardFromInventory(FCard& DeleteCard)
+{
+	CardInventory.RemoveSingle(DeleteCard);
 }
 
 // Add Card to Deck
@@ -108,44 +142,26 @@ void UCardComponent::InitializeCardComponent(AZCharacterBase* Character)
 		Abilities.Add(Card.CardAbility);
 	}
 
-
-	/*
-		for (const TSubclassOf<UGameplayAbility> Ability : CardAbilities)
-		{
-			FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Ability, 1);
-			if (const UZGameplayAbility* ZAbility = Cast<UZGameplayAbility>(AbilitySpec.Ability))
-			{
-				AbilitySpec.DynamicAbilityTags.AddTag(ZAbility->CardSkillTag);
-				ZCharacter->GetAbilitySystemComponent()->GiveAbility(AbilitySpec);
-			}
-		}
-		*/
-
-	// For Test
-	//if (ZCharacter && ZCharacter->GetPlayerState()) Cast<AZPlayerState>(ZCharacter->GetPlayerState())->SetCharacterName(FName("JohnDoe"));
 	UCharacterClassInfo* CharacterClassInfo = UZAbilitySystemLibrary::GetCharacterClassInfo(Character);
 	InitializeCardInventory(CharacterClassInfo);
 
-	// For Test
-	/*
-	SetLeftHandCard(ConvertCardNameToFCard(FName("Axe")));
-	UpdateLeftHandCardDelegate.Broadcast(GetLeftHandCard());
-	SetRightHandCard(ConvertCardNameToFCard(FName("Sword")));
-	UpdateRightHandCardDelegate.Broadcast(GetRightHandCard());
-	*/
-	
+	TArray<FCardCombination*> Arr;
+	CardCombinationDataTable->GetAllRows<FCardCombination>(TEXT("GetAllRows"), Arr);
+
+	for (FCardCombination* Comb : Arr)
+	{
+		CardCombination.Add(*Comb);
+	}
 
 	// For Test
-	AddCardToInventory(FName("KitchenKnife"));
-	AddCardToInventory(FName("HealthPotion"));
-	AddCardToInventory(FName("Stab"));
-	AddCardToInventory(FName("Stab"));
-	AddCardToInventory(FName("Wound"));
-	AddCardToInventory(FName("Wound"));
-	AddCardToInventory(FName("Salt"));
-	AddCardToInventory(FName("Salt"));
-	AddCardToInventory(FName("Hack"));
-	AddCardToInventory(FName("Hack"));
+	AddCardToInventory(ConvertCardNameToFCard(FName("KitchenKnife")));
+	AddCardToInventory(ConvertCardNameToFCard(FName("Stab")));
+	AddCardToInventory(ConvertCardNameToFCard(FName("Wound")));
+	AddCardToInventory(ConvertCardNameToFCard(FName("Salt")));
+	AddCardToInventory(ConvertCardNameToFCard(FName("Hack")));
+	AddCardToInventory(ConvertCardNameToFCard(FName("DuctTape")));
+	AddCardToInventory(ConvertCardNameToFCard(FName("DuctTape")));
+	AddCardToInventory(ConvertCardNameToFCard(FName("DuctTape")));
 
 	UpdateCardInventoryDelegate.Broadcast();
 }
@@ -185,8 +201,6 @@ void UCardComponent::ShuffleDeck()
 // Begin combat, make deck at inventory without passive cards
 void UCardComponent::MakeCardDeck()
 {
-	
-
 	// ...
 
 	CardDeck.Empty();

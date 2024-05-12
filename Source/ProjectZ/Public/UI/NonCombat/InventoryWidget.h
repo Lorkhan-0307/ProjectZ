@@ -22,7 +22,19 @@ class PROJECTZ_API UInventoryWidget : public UZUserWidget
 public:
 	virtual void WidgetControllerSet() override;
 
+	UPROPERTY()
+	UBackpackWidget* BackpackWidget;
+
+	UPROPERTY()
+	UCraftWidget* CraftWidget;
+
 	void DisplayCardWidget(FCard DisplayCard);
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateCardInventory();
+
+	UFUNCTION()
+	void VisibilityChanged(ESlateVisibility InVisibility);
 
 protected:
 	UPROPERTY(EditAnywhere)
@@ -31,16 +43,8 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UCraftWidget> CraftWidgetClass;
 
-	UPROPERTY()
-	UBackpackWidget* BackpackWidget;
-
-	UPROPERTY()
-	UCraftWidget* CraftWidget;
-
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	UWidgetSwitcher* InventorySwitcher;
 
 private:
-	UFUNCTION()
-	void UpdateCardInventory();
 };

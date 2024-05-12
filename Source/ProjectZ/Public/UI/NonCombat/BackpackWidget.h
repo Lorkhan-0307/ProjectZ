@@ -23,15 +23,15 @@ class PROJECTZ_API UBackpackWidget : public UUserWidget
 
 public:
 	virtual void NativeConstruct() override;
-	
+
 	UPROPERTY()
 	UCardComponent* CardComponent;
-	
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UCardWidget> CardWidgetClass;
-	
-	UPROPERTY(meta = (BindWidget))
-	USizeBox* BackpackSizeBox;
+
+	//UPROPERTY(meta = (BindWidget))
+	//USizeBox* BackpackSizeBox;
 
 	UPROPERTY(meta = (BindWidget))
 	UScrollBox* CardScrollBox;
@@ -44,15 +44,19 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UCardDisplayWidget> CardDisplayWidgetClass;
-	
+
 	void MakeBackpack();
 
 	UFUNCTION()
 	void DisplayCardWidget(FCard ClickCard);
 
+	void DestroyDisplayCardWidget();
+
+	UPROPERTY(EditAnywhere)
+	FVector2D WidgetSize = FVector2D(0.f, 0.f);
+
 protected:
 
 private:
 	int32 CardRowAmount;
-	
 };

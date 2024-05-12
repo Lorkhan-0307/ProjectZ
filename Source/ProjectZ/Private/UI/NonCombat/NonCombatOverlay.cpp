@@ -22,6 +22,7 @@
 #include "Components/TextBlock.h"
 #include "Game/ZGameModeBase.h"
 #include "UI/Combat/CharacterPortraitWidget.h"
+#include "UI/Combat/CombatCardWidget.h"
 #include "UI/Combat/TurnChangeWidget.h"
 #include "Widgets/SViewport.h"
 
@@ -163,7 +164,7 @@ void UNonCombatOverlay::UpdateRightHandCard(FCard RightCard)
 // Get Card, Create card widget
 void UNonCombatOverlay::AddCardToHand(FCard NewCard)
 {
-	UCardWidget* CardWidget = CreateCardWidget(NewCard);
+	UCombatCardWidget* CardWidget = CreateCardWidget(NewCard);
 	HandCard.Add(CardWidget);
 }
 
@@ -178,16 +179,16 @@ void UNonCombatOverlay::UpdateCardPosition()
 }
 
 // Create Card Widget by FCard
-UCardWidget* UNonCombatOverlay::CreateCardWidget(FCard CardStatus)
+UCombatCardWidget* UNonCombatOverlay::CreateCardWidget(FCard CardStatus)
 {
-	UCardWidget* CardWidget = CreateWidget<UCardWidget>(GetOwningPlayer(), CardWidgetClass);
+	UCombatCardWidget* CardWidget = CreateWidget<UCombatCardWidget>(GetOwningPlayer(), CardWidgetClass);
 	CardWidget->CardComponent = CardComponent;
 	CardWidget->InitCardStatus(CardStatus);
 
 	CardWidget->RemoveFromParent();
 	CardHandCanvas->AddChild(CardWidget);
 	UCanvasPanelSlot* CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(CardWidget);
-	CanvasPanelSlot->SetSize(FVector2D(200.f, 280.f));
+	CanvasPanelSlot->SetSize(CardSize);
 	CanvasPanelSlot->SetPosition(CardSpawnPosition);
 
 	CardWidget->CardDragStartDelegate.AddDynamic(this, &UNonCombatOverlay::DragStarted);
@@ -215,12 +216,12 @@ float UNonCombatOverlay::GetCardAngle(int32 Index)
 	return GetIndexPositionFromCenter(Index, HandCard.Num()) * CardAngle;
 }
 
-void UNonCombatOverlay::DragStarted(UCardWidget* CardDragged)
+void UNonCombatOverlay::DragStarted(UCombatCardWidget* CardDragged)
 {
 	NowDragCard = CardDragged;
 }
 
-void UNonCombatOverlay::DragEnded(UCardWidget* CardDragged, bool bIsUsed)
+void UNonCombatOverlay::DragEnded(UCombatCardWidget* CardDragged, bool bIsUsed)
 {
 	NowDragCard = nullptr;
 	if (bIsUsed)

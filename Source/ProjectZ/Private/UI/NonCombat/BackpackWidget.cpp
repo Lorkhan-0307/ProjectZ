@@ -22,10 +22,11 @@ void UBackpackWidget::MakeBackpack()
 	if (CardComponent == nullptr) return;
 
 	TArray<FCard> CardInventory;
+	CardComponent->SortInventory();
 	CardComponent->GetCardInventory(CardInventory);
 	if (CardInventory.Num() == 0) return;
 
-	CardRowAmount = BackpackSizeBox->GetWidthOverride() / CardSize.X;
+	CardRowAmount = WidgetSize.X / CardSize.X;
 
 	if (CardRowAmount <= 0) return;
 
@@ -39,7 +40,6 @@ void UBackpackWidget::MakeBackpack()
 			UCardWidget* CardWidget = CreateWidget<UCardWidget>(GetWorld(), CardWidgetClass);
 			FCard Card = CardInventory[CardNum];
 			Card.IsValid = false;
-			UE_LOG(LogTemp, Warning, TEXT("name : %s"), *Card.CardName.ToString());
 			CardWidget->InitCardStatus(Card, false);
 			//CardWidget->ClickCardWidgetDelegate->AddDynamic(this,&UBackpackWidget::DisplayCardWidget);
 			HorizontalBox->AddChild(CardWidget);
@@ -53,7 +53,12 @@ void UBackpackWidget::MakeBackpack()
 
 void UBackpackWidget::DisplayCardWidget(FCard ClickCard)
 {
-	CardDisplayWidget = CreateWidget<UCardDisplayWidget>(GetWorld(),CardDisplayWidgetClass);
+	CardDisplayWidget = CreateWidget<UCardDisplayWidget>(GetWorld(), CardDisplayWidgetClass);
 	CardDisplayWidget->AddToViewport();
 	CardDisplayWidget->SetDisplayCard(ClickCard);
+}
+
+void UBackpackWidget::DestroyDisplayCardWidget()
+{
+	if (CardDisplayWidget) CardDisplayWidget->DestroyDisplayCard();
 }
