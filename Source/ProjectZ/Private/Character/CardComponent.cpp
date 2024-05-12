@@ -161,7 +161,7 @@ void UCardComponent::InitializeCardComponent(AZCharacterBase* Character)
 	AddCardToInventory(ConvertCardNameToFCard(FName("Hack")));
 	AddCardToInventory(ConvertCardNameToFCard(FName("DuctTape")));
 	AddCardToInventory(ConvertCardNameToFCard(FName("DuctTape")));
-	AddCardToInventory(ConvertCardNameToFCard(FName("DuctTape")));
+	AddCardToInventory(ConvertCardNameToFCard(FName("Clock")));
 
 	UpdateCardInventoryDelegate.Broadcast();
 }
@@ -287,14 +287,17 @@ void UCardComponent::ActiveCard(FCard Card, bool bIsLeftHand, bool bActiveEquipC
 		for (const auto& InstantEffect : Card.InstantGameplayEffects)
 		{
 			ApplyEffectToTarget(InstantEffect, Card.CardLevel, ZCharacter);
+			ZCharacter->Execute_AddBuff(ZCharacter, Card.CardTag, Card.CardAtk);
 		}
 		for (const auto& DurationEffect : Card.DurationGameplayEffects)
 		{
 			ApplyEffectToTarget(DurationEffect, Card.CardLevel, ZCharacter);
+			ZCharacter->Execute_AddBuff(ZCharacter, Card.CardTag, Card.CardAtk);
 		}
 		for (const auto& InfiniteEffect : Card.InfiniteGameplayEffects)
 		{
 			ApplyEffectToTarget(InfiniteEffect, Card.CardLevel, ZCharacter);
+			ZCharacter->Execute_AddBuff(ZCharacter, Card.CardTag, Card.CardAtk);
 		}
 		UZAbilitySystemLibrary::PayCost(ZCharacter, Card.CardCost);
 		UseCard(Card);

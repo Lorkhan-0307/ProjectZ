@@ -21,9 +21,7 @@ void UInventoryWidget::WidgetControllerSet()
 	BackpackWidget = CreateWidget<UBackpackWidget>(GetWorld(), BackpackWidgetClass);
 	BackpackWidget->CardComponent = CardComponent;
 	InventorySwitcher->AddChild(BackpackWidget);
-	UWidgetSwitcherSlot* WidgetSwitcherSlot = UWidgetLayoutLibrary::SlotAsWidgetSwitcherSlot(BackpackWidget);
-	WidgetSwitcherSlot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Fill);
-	WidgetSwitcherSlot->SetVerticalAlignment(EVerticalAlignment::VAlign_Fill);
+	
 	CraftWidget = CreateWidget<UCraftWidget>(GetWorld(), CraftWidgetClass);
 	CraftWidget->CardComponent = CardComponent;
 	InventorySwitcher->AddChild(CraftWidget);

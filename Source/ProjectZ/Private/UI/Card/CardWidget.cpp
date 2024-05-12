@@ -33,8 +33,9 @@ void UCardWidget::InitCardStatus(FCard CardStatus, bool bSetDelegate)
 
 	CardName->SetText(CardStatus.CardDisplayName);
 	//CardImage->SetBrushFromTexture(CardStatus.CardImage);
+	AtkText->SetText(FText::FromString(FString::FromInt(CardStatus.CardCost)));
 	AtkText->SetText(FText::FromString(FString::FromInt(CardStatus.CardAtk)));
-	DefText->SetText(FText::FromString(FString::FromInt(CardStatus.CardCost)));
+	DefText->SetText(FText::FromString(FString::FromInt(CardStatus.CardDef)));
 }
 
 void UCardWidget::DestroyWidget()
