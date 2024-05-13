@@ -29,8 +29,13 @@ struct FCard : public FTableRowBase
 {
 	GENERATED_BODY()
 
+	// English
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText CardName;
+
+	// Localization
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText CardDisplayName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UTexture2D* CardBackGroundImage;
@@ -46,6 +51,12 @@ struct FCard : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 CardDef;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 CardMaxDef;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText CardEffect;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText CardDescription;
@@ -89,4 +100,24 @@ struct FCard : public FTableRowBase
 	{
 		return CardName.EqualTo(a.CardName);
 	}
+
+	bool operator==(const FText& a) const
+	{
+		return CardName.EqualTo(a);
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FCardCombination : public FTableRowBase
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText FirstCard;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText SecondCard;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText ResultCard;
 };

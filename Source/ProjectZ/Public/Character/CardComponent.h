@@ -20,6 +20,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FActivateCardDelegate);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCancelActivateCardDelegate);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUpdateCardInventoryDelegate);
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROJECTZ_API UCardComponent : public UActorComponent
 {
@@ -53,7 +55,10 @@ public:
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FCancelActivateCardDelegate CancelActivateCardDelegate;
-	
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FUpdateCardInventoryDelegate UpdateCardInventoryDelegate;
+
 
 	void InitializeCardComponent(AZCharacterBase* Character);
 
@@ -72,7 +77,7 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	FCard ActivatingCard;
-	
+
 	bool bActivatingCard = false;
 
 	FVector2D LeftEquipPosMin;
@@ -90,6 +95,11 @@ public:
 	FVector2D CardGraveyardLocation;
 
 	void UseCard(FCard Card);
+	
+	void AddCardToInventory(FCard NewCardName);
+	void RemoveCardFromInventory(FCard& DeleteCard);
+
+	void SortInventory();
 
 	//Getter, Setter
 	UFUNCTION(BlueprintCallable)
@@ -102,18 +112,22 @@ public:
 	FORCEINLINE float GetPlayCardHeight() const { return PlayCardHeight; }
 	FORCEINLINE void SetPlayCardHeight(float Height) { PlayCardHeight = Height; }
 
+	void GetCardInventory(TArray<FCard>& Inventory);
+
+	FCard GetCardCraftResult(FCard FirstCard, FCard SecondCard, bool& bIsValid);
+
 protected:
 	virtual void BeginPlay() override;
-
-	// Change function name AddCard -> AddCardToDeck
-	void AddCardToInventory(FName NewCardName);
+	
 	void AddCardToDeck(FName NewCard);
-	void DeleteCard(FName DeleteCard);
 
 private:
 	// Card data
 	UPROPERTY(EditAnywhere, Category = Card)
 	UDataTable* CardDataTable;
+
+	UPROPERTY(EditAnywhere, Category = Card)
+	UDataTable* CardCombinationDataTable;
 
 	UPROPERTY(EditAnywhere, Category = Card)
 	TArray<TSubclassOf<UGameplayAbility>> CardAbilities;
@@ -147,6 +161,8 @@ private:
 
 	int32 DeckSize;
 	int32 HandSize = 0;
+
+	TArray<FCardCombination> CardCombination;
 
 	UPROPERTY()
 	AZCharacterBase* ZCharacter;

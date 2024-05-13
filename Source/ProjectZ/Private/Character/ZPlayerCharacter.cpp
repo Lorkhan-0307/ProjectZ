@@ -22,9 +22,9 @@
 #include "Game/ZGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "UI/HUD/ZNonCombatHUD.h"
 #include "Player/ZNonCombatPlayerController.h"
 #include "Player/ZPlayerState.h"
+#include "UI/HUD/ZHUDBase.h"
 
 
 AZPlayerCharacter::AZPlayerCharacter()

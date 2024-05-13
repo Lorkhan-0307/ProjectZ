@@ -19,6 +19,7 @@ class PROJECTZ_API UCardHandWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+	/*
 public:
 	void SetCardComponent(UCardComponent* CC);
 	FORCEINLINE void SetViewportSize(const FVector2D& Size) { ViewportSize = Size; }
@@ -96,4 +97,5 @@ private:
 
 	UFUNCTION()
 	void DragEnded(UCardWidget* CardDragged, bool bIsUsed);
+	*/
 };

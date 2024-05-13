@@ -10,7 +10,6 @@
 #include "Character/CardComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "UI/HUD/ZNonCombatHUD.h"
 #include "Player/ZNonCombatPlayerController.h"
 #include "Player/ZPlayerState.h"
 

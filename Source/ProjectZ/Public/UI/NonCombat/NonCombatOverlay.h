@@ -20,6 +20,7 @@ class UProgressBar;
 class UCardWidget;
 class UCardComponent;
 class UImage;
+class UCombatCardWidget;
 
 UCLASS()
 class PROJECTZ_API UNonCombatOverlay : public UZUserWidget
@@ -127,7 +128,7 @@ private:
 	float ProgressBarInterpSpeed = 1.f;
 
 	UPROPERTY(VisibleAnywhere, Category = Card)
-	TArray<UCardWidget*> HandCard;
+	TArray<UCombatCardWidget*> HandCard;
 
 	// Card Horizontal Distance
 	UPROPERTY(EditAnywhere, Category = Card)
@@ -150,7 +151,7 @@ private:
 	float PlayCardHeight = 300.f;
 
 	UPROPERTY(EditAnywhere, Category = Card)
-	FVector2D CardSize = FVector2D(200, 300);
+	FVector2D CardSize = FVector2D(210, 340);
 
 	UPROPERTY(EditAnywhere, Category = Card)
 	FVector2D ShowSKillCardLocation = FVector2D(1500.f, 300.f);
@@ -201,17 +202,17 @@ private:
 	UPROPERTY()
 	UCardWidget* NowDragCard;
 
-	UCardWidget* CreateCardWidget(FCard CardStatus);
+	UCombatCardWidget* CreateCardWidget(FCard CardStatus);
 
 	float GetCardXPosition(int32 Index);
 	float GetCardYPosition(int32 Index);
 	float GetCardAngle(int32 Index);
 
 	UFUNCTION()
-	void DragStarted(UCardWidget* CardDragged);
+	void DragStarted(UCombatCardWidget* CardDragged);
 
 	UFUNCTION()
-	void DragEnded(UCardWidget* CardDragged, bool bIsUsed);
+	void DragEnded(UCombatCardWidget* CardDragged, bool bIsUsed);
 
 	UFUNCTION()
 	void TurnChanged(ETurn Turn);

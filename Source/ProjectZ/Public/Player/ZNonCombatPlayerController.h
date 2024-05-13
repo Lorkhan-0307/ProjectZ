@@ -30,9 +30,6 @@ private:
 	TObjectPtr<UInputAction> LookAction;
 
 	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> InventoryAction;
-
-	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputAction> TestAction;
 	
 	void Move(const FInputActionValue& InputActionValue);
