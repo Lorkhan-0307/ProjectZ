@@ -173,14 +173,58 @@ void AFloorGenerate::BasicRoom()
 		else XWall->AddInstance(FTransform(FVector(dw[2], dw[3], 0)));
 	}
 
-	//Place Furniture
+	// Guarantee at least one way through every doors
+	for(Room rm : floor.rooms)
+	{
+		int xp = 1 + rm.x + rand() % (rm.width - 2);
+		int yp = 1 + rm.y + rand() % (rm.height - 2);
+		furniturePlan[yp][xp] = -3;
+		std::vector<std::vector<int>> DoorsInRoom;
+		for(int i=rm.y;i<rm.y + rm.height;i++)
+		{
+			for(int j=rm.x;j<rm.x + rm.width;j++)
+			{
+				if(furniturePlan[i][j] == -2) DoorsInRoom.push_back({j, i});
+			}
+		}
+		if(GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::FromInt(DoorsInRoom.size()));
+		for(std::vector<int> doorTile : DoorsInRoom)
+		{
+			int txp = xp;
+			int typ = yp;
+			int dx = abs(doorTile[0] - txp);
+			int dy = abs(doorTile[1] - typ);
+			int sx = txp < doorTile[0] ? 1 : -1;
+			int sy = typ < doorTile[1] ? 1 : -1;
+			int err = (dx > dy ? dx : -dy) / 2;
+			int e2;
+			while(typ != doorTile[1] || txp != doorTile[0])
+			{
+				if(GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::FromInt(txp));
+				if(furniturePlan[typ][txp] != -3) furniturePlan[typ][txp] = -4;
+				e2 = err;
+				if(e2 > -dx)
+				{
+					err -= dy;
+					txp += sx;
+				}
+				if(e2 < dy)
+				{
+					err += dx;
+					typ += sy;
+				}
+			}
+		}
+	}
+
+	// Place Furniture
 	for(FFurnitureData fd : FurnitureList)
 	{
 		for(int i=0;i<floorHeight-fd.Height;i++)
 		{
 			for(int j=0;j<floorWidth-fd.Width;j++)
 			{
-				if(furniturePlan[i][j] == -1) continue;
+				if(furniturePlan[i][j] <= -1) continue;
 				bool fits = true;
 				for(int k=0;k<fd.Height;k++)
 				{
@@ -232,7 +276,7 @@ void AFloorGenerate::BasicRoom()
 		{
 			for(int j=0;j<floorWidth-fd.Height;j++)
 			{
-				if(furniturePlan[i][j] == -1) continue;
+				if(furniturePlan[i][j] <= -1) continue;
 				bool fits = true;
 				for(int k=0;k<fd.Width;k++)
 				{
@@ -314,14 +358,14 @@ void AFloorGenerate::CreateDoor(float x, float y, bool isVertical)
 	if(isVertical)
 	{
 		CurrentDoor = GetWorld()->SpawnActor<AActor>(AttachedDoor, FTransform(FRotator(0, 90, 0), FVector(x, y, 10)+GetActorLocation()));
-		furniturePlan[(x-60)/120-1][(y-60)/120] = -1;
+		furniturePlan[(x-60)/120-1][(y-60)/120] = -2;
 	}
 	else
 	{
 		CurrentDoor = GetWorld()->SpawnActor<AActor>(AttachedDoor, FTransform(FVector(x, y, 10)+GetActorLocation()));
-		furniturePlan[(x-60)/120][(y-60)/120-1] = -1;
+		furniturePlan[(x-60)/120][(y-60)/120-1] = -2;
 	}
-	furniturePlan[(x-60)/120][(y-60)/120] = -1;
+	furniturePlan[(x-60)/120][(y-60)/120] = -2;
 	DoorArray.Add(CurrentDoor);
 }
 

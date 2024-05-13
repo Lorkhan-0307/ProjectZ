@@ -64,9 +64,9 @@ struct Room {
 class Floor {
 private:
     int width, height;
-    std::vector<Room> rooms;
 
 public:
+    std::vector<Room> rooms;
     Floor(int width, int height) : width(width), height(height) {}
 
     bool isOverlapping(const Room& newRoom) const {
