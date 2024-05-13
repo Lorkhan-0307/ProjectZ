@@ -187,7 +187,6 @@ void AFloorGenerate::BasicRoom()
 				if(furniturePlan[i][j] == -2) DoorsInRoom.push_back({j, i});
 			}
 		}
-		if(GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::FromInt(DoorsInRoom.size()));
 		for(std::vector<int> doorTile : DoorsInRoom)
 		{
 			int txp = xp;
@@ -200,7 +199,6 @@ void AFloorGenerate::BasicRoom()
 			int e2;
 			while(typ != doorTile[1] || txp != doorTile[0])
 			{
-				if(GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::FromInt(txp));
 				if(furniturePlan[typ][txp] != -3) furniturePlan[typ][txp] = -4;
 				e2 = err;
 				if(e2 > -dx)
