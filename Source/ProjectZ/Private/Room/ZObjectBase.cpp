@@ -27,6 +27,7 @@ void AZObjectBase::Tick(float DeltaTime)
 void AZObjectBase::NotifyActorBeginCursorOver()
 {
 	Super::NotifyActorBeginCursorOver();
+	if(!Interactable) return;
 	for(auto Mesh : MeshComponents)
 	{
 		Mesh->SetRenderCustomDepth(true);
@@ -37,6 +38,7 @@ void AZObjectBase::NotifyActorBeginCursorOver()
 void AZObjectBase::NotifyActorEndCursorOver()
 {
 	Super::NotifyActorEndCursorOver();
+	if(!Interactable) return;
 	for(auto Mesh : MeshComponents)
 	{
 		Mesh->SetRenderCustomDepth(false);

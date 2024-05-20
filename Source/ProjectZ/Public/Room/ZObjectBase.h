@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Data/Card.h"
 #include "ZObjectBase.generated.h"
 
 UCLASS()
@@ -26,4 +27,9 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+private:
+	// Object Inventory : Contains Cards
+	UPROPERTY(EditAnywhere) TArray<FCard> ObjectInventory;
+	UPROPERTY(EditAnywhere) bool Interactable;
 };
