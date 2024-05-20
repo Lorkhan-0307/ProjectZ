@@ -1,6 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Room/ZObjectBase.h"
+
+#include <string>
+
 #include "ProjectZ/ProjectZ.h"
 
 // Sets default values
@@ -16,6 +19,7 @@ void AZObjectBase::BeginPlay()
 {
 	Super::BeginPlay();
 	GetComponents<UStaticMeshComponent>(MeshComponents);
+	ZCharacter = Cast<AZCharacterBase>(GetWorld()->GetFirstPlayerController()->GetCharacter());
 }
 
 // Called every frame
@@ -28,6 +32,11 @@ void AZObjectBase::NotifyActorBeginCursorOver()
 {
 	Super::NotifyActorBeginCursorOver();
 	if(!Interactable) return;
+
+	// Latter code only applies when Interactable is True
+	if(FVector::Dist(ZCharacter->GetActorLocation(), GetActorLocation()) > 200) return;
+	
+	// Latter code only applies when Player is close to the Object
 	for(auto Mesh : MeshComponents)
 	{
 		Mesh->SetRenderCustomDepth(true);
@@ -39,6 +48,11 @@ void AZObjectBase::NotifyActorEndCursorOver()
 {
 	Super::NotifyActorEndCursorOver();
 	if(!Interactable) return;
+
+	// Latter code only applies when Interactable is True
+	if(FVector::Dist(ZCharacter->GetActorLocation(), GetActorLocation()) > 200) return;
+	
+	// Latter code only applies when Player is close to the Object
 	for(auto Mesh : MeshComponents)
 	{
 		Mesh->SetRenderCustomDepth(false);

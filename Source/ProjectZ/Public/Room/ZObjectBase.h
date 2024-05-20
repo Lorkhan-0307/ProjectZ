@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Character/ZCharacterBase.h"
 #include "GameFramework/Actor.h"
 #include "Data/Card.h"
 #include "ZObjectBase.generated.h"
@@ -29,7 +30,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 private:
+	AZCharacterBase* ZCharacter;
 	// Object Inventory : Contains Cards
-	UPROPERTY(EditAnywhere) TArray<FCard> ObjectInventory;
+	UPROPERTY(EditAnywhere) TArray<FName> ObjectInventory;
 	UPROPERTY(EditAnywhere) bool Interactable;
 };
