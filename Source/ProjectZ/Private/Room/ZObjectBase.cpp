@@ -40,7 +40,7 @@ void AZObjectBase::NotifyActorBeginCursorOver()
 	for(auto Mesh : MeshComponents)
 	{
 		Mesh->SetRenderCustomDepth(true);
-		Mesh->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
+		Mesh->SetCustomDepthStencilValue(CUSTOM_DEPTH_BLUE);
 	}
 }
 
