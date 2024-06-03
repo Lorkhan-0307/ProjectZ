@@ -64,6 +64,6 @@ void AZObjectBase::NotifyActorOnClicked(FKey ButtonPressed)
 {
 	if(InRange)
 	{
-		if(GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString("sus"));
+		if(GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString(GetName()));
 	}
 }
