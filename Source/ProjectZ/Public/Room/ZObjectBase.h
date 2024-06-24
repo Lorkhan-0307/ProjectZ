@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Character/ZCharacterBase.h"
 #include "GameFramework/Actor.h"
+#include "GameplayTagContainer.h"
 #include "Data/Card.h"
 #include "ZObjectBase.generated.h"
 
@@ -23,6 +24,7 @@ protected:
 
 	virtual void NotifyActorBeginCursorOver() override;
 	virtual void NotifyActorEndCursorOver() override;
+	virtual void NotifyActorOnClicked(FKey ButtonPressed) override;
 	TArray<UStaticMeshComponent*> MeshComponents;
 
 public:	
@@ -34,4 +36,5 @@ private:
 	// Object Inventory : Contains Cards
 	UPROPERTY(EditAnywhere) TArray<FName> ObjectInventory;
 	UPROPERTY(EditAnywhere) bool Interactable;
+	UPROPERTY(EditAnywhere) bool InRange = false;
 };

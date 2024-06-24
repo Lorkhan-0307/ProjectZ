@@ -2,6 +2,8 @@
 
 #include "Room/ZObjectBase.h"
 #include <string>
+
+#include "ZGameplayTag.h"
 #include "ProjectZ/ProjectZ.h"
 
 // Sets default values
@@ -39,6 +41,7 @@ void AZObjectBase::NotifyActorBeginCursorOver()
 		Mesh->SetRenderCustomDepth(true);
 		Mesh->SetCustomDepthStencilValue(CUSTOM_DEPTH_BLUE);
 	}
+	InRange = true;
 }
 
 void AZObjectBase::NotifyActorEndCursorOver()
@@ -53,5 +56,14 @@ void AZObjectBase::NotifyActorEndCursorOver()
 	for(auto Mesh:MeshComponents)
 	{
 		Mesh->SetRenderCustomDepth(false);
+	}
+	InRange = false;
+}
+
+void AZObjectBase::NotifyActorOnClicked(FKey ButtonPressed)
+{
+	if(InRange)
+	{
+		if(GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString(GetName()));
 	}
 }
