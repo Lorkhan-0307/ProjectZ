@@ -159,6 +159,15 @@ void AZCharacterBase::AddBuff_Implementation(FGameplayTag BuffType, int32 BuffDu
 	}
 }
 
+float AZCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	PlayAnimMontage(HitReactMontage, 1.0f);
+
+	return Damage;
+}
+
+
 FOnASCRegistered AZCharacterBase::GetOnASCRegisterdDelegate()
 {
 	return OnASCRegisteredDelegate;

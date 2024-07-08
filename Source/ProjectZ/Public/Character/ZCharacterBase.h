@@ -43,6 +43,7 @@ public:
 	virtual FOnASCRegistered GetOnASCRegisterdDelegate() override;
 	virtual FOnDeath GetOnDeathDelegate() override;
 	virtual void AddBuff_Implementation(FGameplayTag BuffType, int32 BuffDuration) override;
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	FOnASCRegistered OnASCRegisteredDelegate;
 	FOnDeath OnDeathDelegate;
@@ -107,5 +108,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = Ability)
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbility;
 
+	UPROPERTY(EditAnywhere, Category = Combat)
 	TObjectPtr<UAnimMontage> HitReactMontage;
 };
