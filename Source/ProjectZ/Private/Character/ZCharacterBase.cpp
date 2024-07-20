@@ -178,6 +178,11 @@ FOnDeath AZCharacterBase::GetOnDeathDelegate()
 	return OnDeathDelegate;
 }
 
+void AZCharacterBase::SetCharacterClass(ECharacterClass CClass)
+{
+	CharacterClass = CClass;
+}
+
 // Called when the game starts or when spawned
 void AZCharacterBase::BeginPlay()
 {

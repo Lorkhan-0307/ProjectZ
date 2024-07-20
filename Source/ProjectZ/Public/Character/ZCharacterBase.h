@@ -59,6 +59,8 @@ public:
 	FORCEINLINE ECharacterClass GetCharacterClass() const { return CharacterClass; }
 	FORCEINLINE int32 GetCombatPriority() const { return CombatPriority; }
 
+	void SetCharacterClass(ECharacterClass CClass);
+
 protected:
 	virtual void BeginPlay() override;
 	virtual int32 GetLevel();

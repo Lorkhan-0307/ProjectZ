@@ -54,6 +54,7 @@ public:
 	virtual AActor* GetCombatTarget_Implementation() const override;
 
 	FORCEINLINE AZAIController* GetAIController() const { return ZAIController; }
+	void SetRoomNo(int room);
 
 protected:
 	virtual void BeginPlay() override;
@@ -74,4 +75,7 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	bool bRangeAttacker = false;
+
+	UPROPERTY(EditAnywhere)
+	int RoomNo = -1;
 };

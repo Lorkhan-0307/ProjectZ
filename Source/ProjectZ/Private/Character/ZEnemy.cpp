@@ -108,6 +108,11 @@ AActor* AZEnemy::GetCombatTarget_Implementation() const
 	return CombatTarget;
 }
 
+void AZEnemy::SetRoomNo(int room)
+{
+	RoomNo = room;
+}
+
 void AZEnemy::BeginPlay()
 {
 	Super::BeginPlay();
