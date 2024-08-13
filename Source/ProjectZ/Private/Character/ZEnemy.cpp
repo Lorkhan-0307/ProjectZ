@@ -156,6 +156,7 @@ void AZEnemy::TurnChanged(ETurn Turn)
 {
 	if (Turn != ETurn::ET_EnemyTurn)
 	{
+		//Problem Maker
 		ZAIController->GetBlackboardComponent()->SetValueAsBool(FName("MyTurn"), false);
 		return;
 	}

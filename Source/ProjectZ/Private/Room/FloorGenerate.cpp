@@ -333,7 +333,7 @@ void AFloorGenerate::BasicRoom()
 	}
 
 	// Place Enemy
-	/*
+	
 	for(TSubclassOf<AZEnemy> e : EnemyList)
 	{
 		for(int i=0;i<floorHeight-1;i++)
@@ -352,7 +352,7 @@ void AFloorGenerate::BasicRoom()
 			}
 		}
 	}
-	*/
+	
 }
 
 // Sets default values
