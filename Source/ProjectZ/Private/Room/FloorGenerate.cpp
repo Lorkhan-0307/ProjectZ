@@ -344,7 +344,7 @@ void AFloorGenerate::BasicRoom()
 				if(rand()%20 == 0)
 				{
 					AZEnemy* curEnemy = GetWorld()->SpawnActor<AZEnemy>(e, FTransform(FRotator(0, (rand() % 4) * 90, 0), FVector(i * 120, j * 120, 100) + GetActorLocation()));
-					//curEnemy->SetRoomNo(floorPlan[i][j]);
+					curEnemy->SetRoomNo(floorPlan[i][j]);
 					//curEnemy->SetCharacterClass(ECharacterClass::MeleeZombie);
 					EnemyPlaced.Add(curEnemy);
 					furniturePlan[i][j] = -1;
