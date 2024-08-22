@@ -113,6 +113,12 @@ void AZEnemy::SetRoomNo(int room)
 	RoomNo = room;
 }
 
+int AZEnemy::GetRoomNo()
+{
+	return RoomNo;
+}
+
+
 void AZEnemy::BeginPlay()
 {
 	Super::BeginPlay();

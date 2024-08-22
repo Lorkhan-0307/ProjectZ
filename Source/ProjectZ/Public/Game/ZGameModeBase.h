@@ -36,7 +36,7 @@ public:
 	UPROPERTY()
 	TArray<AActor*> CombatActor;
 
-	void CombatStart();
+	void CombatStart(int roomNo);
 	void TurnEnd();
 	void CharacterDie(AActor* DieActor);
 

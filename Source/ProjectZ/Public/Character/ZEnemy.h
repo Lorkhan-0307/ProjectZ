@@ -55,6 +55,7 @@ public:
 
 	FORCEINLINE AZAIController* GetAIController() const { return ZAIController; }
 	void SetRoomNo(int room);
+	int GetRoomNo();
 
 protected:
 	virtual void BeginPlay() override;

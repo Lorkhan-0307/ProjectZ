@@ -19,7 +19,7 @@ void AZGameModeBase::BeginPlay()
 	Super::BeginPlay();
 }
 
-void AZGameModeBase::CombatStart()
+void AZGameModeBase::CombatStart(int roomNo)
 {
 	if (CurrentTurn != ETurn::ET_NonCombat) return;
 
@@ -29,7 +29,10 @@ void AZGameModeBase::CombatStart()
 
 	for (AActor* Actor : CombatEnemy)
 	{
-		CombatActor.Add(Actor);
+		if(Cast<AZEnemy>(Actor)->GetRoomNo() == roomNo)
+		{
+			CombatActor.Add(Actor);
+		}
 	}
 
 	SortCombatActor();
