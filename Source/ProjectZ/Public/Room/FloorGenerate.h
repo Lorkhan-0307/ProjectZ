@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <ctime>
 #include "CoreMinimal.h"
+#include "Character/ZEnemy.h"
 #include "GameFramework/Actor.h"
 #include "FloorGenerate.generated.h"
 
@@ -34,8 +35,10 @@ public:
     UFUNCTION(BlueprintCallable) void BasicRoom();
     UPROPERTY(EditAnywhere, BlueprintReadOnly) TSubclassOf<class UObject> AttachedDoor;
     UPROPERTY(EditAnywhere, BlueprintReadOnly) TArray<FFurnitureData> FurnitureList;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly) TArray<TSubclassOf<class AZEnemy>> EnemyList;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<AActor*> DoorArray;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<AActor*> FurniturePlaced;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<AActor*> EnemyPlaced;
     void CreateDoor(float x, float y, bool isVertical);
     
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Floor Settings") int floorWidth=40;

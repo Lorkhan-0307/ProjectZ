@@ -89,7 +89,7 @@ void UNonCombatOverlay::SetCardComponent(UCardComponent* CC)
 		LeftHandCardWidget->CardComponent = CardComponent;
 		RightHandCardWidget->CardComponent = CardComponent;
 
-		FVector2D ScreenSize = GameMode->ScreenSize;
+		//FVector2D ScreenSize = GameMode->ScreenSize;
 		CanvasPanelSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(DiscardCardSizeBox);
 		CardComponent->DiscardedCardLocation = CanvasPanelSlot->GetPosition() - CanvasPanelSlot->GetSize() / 2.f;
 		//CardComponent->DiscardedCardLocation.X = ScreenSize.X + (CanvasPanelSlot->GetPosition().X + CanvasPanelSlot->GetSize().X / 2.f);

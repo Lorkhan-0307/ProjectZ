@@ -108,6 +108,17 @@ AActor* AZEnemy::GetCombatTarget_Implementation() const
 	return CombatTarget;
 }
 
+void AZEnemy::SetRoomNo(int room)
+{
+	RoomNo = room;
+}
+
+int AZEnemy::GetRoomNo()
+{
+	return RoomNo;
+}
+
+
 void AZEnemy::BeginPlay()
 {
 	Super::BeginPlay();
@@ -151,6 +162,7 @@ void AZEnemy::TurnChanged(ETurn Turn)
 {
 	if (Turn != ETurn::ET_EnemyTurn)
 	{
+		//Problem Maker
 		ZAIController->GetBlackboardComponent()->SetValueAsBool(FName("MyTurn"), false);
 		return;
 	}

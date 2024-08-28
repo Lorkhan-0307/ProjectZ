@@ -7,6 +7,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Character/ZCharacterBase.h"
+#include "Character/ZEnemy.h"
 #include "Character/ZPlayerCharacter.h"
 #include "Game/ZGameModeBase.h"
 #include "GameFramework/Character.h"
@@ -36,6 +37,6 @@ void AZAIController::FindTarget(AActor* Actor, FAIStimulus AIStimulus)
 	AZGameModeBase* GameMode = Cast<AZGameModeBase>(GetWorld()->GetAuthGameMode());
 	if (GameMode && GameMode->GetCurrentTurn() == ETurn::ET_NonCombat)
 	{
-		GameMode->CombatStart();
+		GameMode->CombatStart(Cast<AZEnemy>(GetPawn())->GetRoomNo());
 	}
 }

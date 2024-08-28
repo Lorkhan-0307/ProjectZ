@@ -43,6 +43,7 @@ public:
 	virtual FOnASCRegistered GetOnASCRegisterdDelegate() override;
 	virtual FOnDeath GetOnDeathDelegate() override;
 	virtual void AddBuff_Implementation(FGameplayTag BuffType, int32 BuffDuration) override;
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	FOnASCRegistered OnASCRegisteredDelegate;
 	FOnDeath OnDeathDelegate;
@@ -57,6 +58,8 @@ public:
 	FORCEINLINE UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 	FORCEINLINE ECharacterClass GetCharacterClass() const { return CharacterClass; }
 	FORCEINLINE int32 GetCombatPriority() const { return CombatPriority; }
+
+	void SetCharacterClass(ECharacterClass CClass);
 
 protected:
 	virtual void BeginPlay() override;
@@ -107,5 +110,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = Ability)
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbility;
 
+	UPROPERTY(EditAnywhere, Category = Combat)
 	TObjectPtr<UAnimMontage> HitReactMontage;
 };

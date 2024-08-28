@@ -32,6 +32,14 @@ void AFloorGenerate::BasicRoom()
 		}
 	}
 	FurniturePlaced.Empty();
+	for(AActor* Actor : EnemyPlaced)
+	{
+		if(Actor)
+		{
+			Actor->Destroy();
+		}
+	}
+	EnemyPlaced.Empty();
 
 	// Random Generate Floor Plans
 	Floor floor(floorWidth, floorHeight);
@@ -323,6 +331,28 @@ void AFloorGenerate::BasicRoom()
 			}
 		}
 	}
+
+	// Place Enemy
+	
+	for(TSubclassOf<AZEnemy> e : EnemyList)
+	{
+		for(int i=0;i<floorHeight-1;i++)
+		{
+			for(int j=0;j<floorWidth-1;j++)
+			{
+				if(furniturePlan[i][j] <= -1) continue;
+				if(rand()%20 == 0)
+				{
+					AZEnemy* curEnemy = GetWorld()->SpawnActor<AZEnemy>(e, FTransform(FRotator(0, (rand() % 4) * 90, 0), FVector(i * 120, j * 120, 100) + GetActorLocation()));
+					curEnemy->SetRoomNo(floorPlan[i][j]);
+					//curEnemy->SetCharacterClass(ECharacterClass::MeleeZombie);
+					EnemyPlaced.Add(curEnemy);
+					furniturePlan[i][j] = -1;
+				}
+			}
+		}
+	}
+	
 }
 
 // Sets default values

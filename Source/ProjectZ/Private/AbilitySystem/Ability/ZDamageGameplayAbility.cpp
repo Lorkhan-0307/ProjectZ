@@ -8,6 +8,7 @@
 #include "AbilitySystem/ZAbilitySystemLibrary.h"
 #include "AbilitySystem/ZAttributeSet.h"
 #include "Character/CardComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 void UZDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 {
@@ -40,6 +41,8 @@ FDamageEffectParams UZDamageGameplayAbility::MakeDamageEffectParamsFromClassDefa
 	{
 		const FVector KnockbackForce = (TargetActor->GetActorLocation() - GetAvatarActorFromActorInfo()->GetActorLocation()).GetSafeNormal() * KnockbackForceMagnitude;
 		Params.KnockbackForce = KnockbackForce;
+		
+		UGameplayStatics::ApplyDamage(TargetActor, Damage, nullptr, nullptr, NULL);
 	}
 	return Params;
 }
