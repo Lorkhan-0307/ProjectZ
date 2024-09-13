@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Game/ZGameModeBase.h"
 #include "Character/ZCharacterBase.h"
+#include "Components/WidgetComponent.h"
 #include "Interaction/EnemyInterface.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "ZEnemy.generated.h"
@@ -56,6 +57,9 @@ public:
 	FORCEINLINE AZAIController* GetAIController() const { return ZAIController; }
 	void SetRoomNo(int room);
 	int GetRoomNo();
+
+	UPROPERTY(BlueprintReadWrite)
+	UWidgetComponent* HPBar;
 
 protected:
 	virtual void BeginPlay() override;

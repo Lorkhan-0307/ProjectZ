@@ -69,7 +69,7 @@ public:
 	TMap<FGameplayTag, TStaticFunPtr<FGameplayAttribute()>> TagToAttribute;
 
 	// Vital Attributes
-	UPROPERTY(BlueprintReadWrite, Category = "Vital Attributes")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vital Attributes")
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UZAttributeSet, Health) // Make Getter, Setter
 

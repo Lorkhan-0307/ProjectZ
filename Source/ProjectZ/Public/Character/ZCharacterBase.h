@@ -70,7 +70,7 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
 	TObjectPtr<UAttributeSet> AttributeSet;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Default")

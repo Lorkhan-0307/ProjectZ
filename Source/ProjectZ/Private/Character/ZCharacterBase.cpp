@@ -212,9 +212,9 @@ void AZCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEff
 void AZCharacterBase::InitializeDefaultAttributes() const
 {
 	/*
-	ApplyEffectToSelf(DefaultPrimaryAttributes, 1.f);
-	ApplyEffectToSelf(DefaultSecondaryAttributes, 1.f);
-	ApplyEffectToSelf(DefaultVitalAttributes, 1.f);
+	ApplyEffectToSelf(DefaultPrimaryAttributes);
+	ApplyEffectToSelf(DefaultSecondaryAttributes);
+	ApplyEffectToSelf(DefaultVitalAttributes);
 	*/
 
 	UZAbilitySystemLibrary::InitializeDefaultAttributes(this, CharacterClass, Level, AbilitySystemComponent);
