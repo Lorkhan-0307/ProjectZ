@@ -124,7 +124,7 @@ void AZEnemy::BeginPlay()
 	Super::BeginPlay();
 	InitAbilityActorInfo();
 	UZAbilitySystemLibrary::GiveStartupAbility(this, AbilitySystemComponent, CharacterClass);
-
+	
 	if (const UZAttributeSet* ZAS = Cast<UZAttributeSet>(AttributeSet))
 	{
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(ZAS->GetHealthAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)

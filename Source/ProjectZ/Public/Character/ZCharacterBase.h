@@ -67,7 +67,7 @@ protected:
 
 	bool bIsDead = false;
 	
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
