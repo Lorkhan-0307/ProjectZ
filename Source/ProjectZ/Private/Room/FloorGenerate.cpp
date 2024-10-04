@@ -14,6 +14,7 @@ void AFloorGenerate::BasicRoom()
 	
 	// Reset all tiles, walls, doors, furniture
 	Tile->ClearInstances();
+	Ceiling->ClearInstances();
 	XWall->ClearInstances();
 	YWall->ClearInstances();
 	for(AActor* Actor : DoorArray)
@@ -60,6 +61,10 @@ void AFloorGenerate::BasicRoom()
 				if(i==floorHeight-1) YWall->AddInstance(FTransform(FVector(floorHeight*100, 1500+j*1000, 0)));
 				if(j==0) XWall->AddInstance(FTransform(FVector(i*100, 0, 0)));
 				if(j==floorWidth-1) XWall->AddInstance(FTransform(FVector(1500+i*1000, floorWidth*100,0)));
+			}
+			else
+			{
+				Ceiling->AddInstance(FTransform(FVector(i*100, j*100, 2000)));
 			}
 			if(i && floorPlan[i][j] != floorPlan[i-1][j])
 			{
@@ -181,7 +186,7 @@ void AFloorGenerate::BasicRoom()
 		else XWall->AddInstance(FTransform(FVector(dw[2], dw[3], 0)));
 	}
 
-	// Guarantee at least one way through every doors
+	// Guarantee at least one way through every door
 	for(Room rm : floor.rooms)
 	{
 		int xp = 1 + rm.x + rand() % (rm.width - 2);
@@ -362,16 +367,21 @@ AFloorGenerate::AFloorGenerate()
 	PrimaryActorTick.bCanEverTick = true;
     DefaultRoot = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DefaultRoot"));
     Tile = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("Tile"));
+	Ceiling = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("Ceiling"));
     XWall = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("XWall"));
 	YWall = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("YWall"));
     CubeMesh3 = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("StaticMesh'/Engine/BasicShapes/Cube.Cube'")).Object;
     SetRootComponent(DefaultRoot);
     Tile->SetupAttachment(GetRootComponent());
+	Ceiling->SetupAttachment(GetRootComponent());
     XWall->SetupAttachment(GetRootComponent());
 	YWall->SetupAttachment(GetRootComponent());
     Tile->SetStaticMesh(CubeMesh3);
     Tile->SetWorldScale3D(FVector(1.2, 1.2, 0.1));
     Tile->SetRelativeLocation(FVector(120, 120, 0));
+	Ceiling->SetStaticMesh(CubeMesh3);
+	Ceiling->SetWorldScale3D(FVector(1.2, 1.2, 0.1));
+	Ceiling->SetRelativeLocation(FVector(120, 120, 0));
     XWall->SetStaticMesh(CubeMesh3);
     XWall->SetWorldScale3D(FVector(1.2, 0.1, 2.0));
     XWall->SetRelativeLocation(FVector(0, 0, 100));

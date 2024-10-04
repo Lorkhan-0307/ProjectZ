@@ -49,7 +49,6 @@ void AZPlayerControllerBase::SetupInputComponent()
 
 void AZPlayerControllerBase::ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter)
 {
-	UE_LOG(LogTemp, Log, TEXT("%s"), *TargetCharacter->GetName());
 	if (IsValid(TargetCharacter) && DamageTextComponentClass)
 	{
 		UDamageTextComponent* DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass);

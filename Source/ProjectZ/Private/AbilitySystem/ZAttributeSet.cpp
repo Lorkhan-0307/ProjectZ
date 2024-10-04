@@ -226,7 +226,10 @@ void UZAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Dama
 {
 	if (AZPlayerControllerBase* PC = Cast<AZPlayerControllerBase>(UGameplayStatics::GetPlayerController(Props.SourceCharacter, 0)))
 	{
-		if (Cast<AZCharacterBase>(PC->GetCharacter())->GetCardComponent()->ActivatingCard.bShowDamage) PC->ShowDamageNumber(Damage, Props.TargetCharacter);
+		if (Cast<AZCharacterBase>(PC->GetCharacter())->GetCardComponent()->ActivatingCard.bShowDamage)
+		{
+			PC->ShowDamageNumber(Damage, Props.TargetCharacter);
+		}
 	}
 }
 
