@@ -382,12 +382,15 @@ AFloorGenerate::AFloorGenerate()
 	Ceiling->SetStaticMesh(CubeMesh3);
 	Ceiling->SetWorldScale3D(FVector(1.2, 1.2, 0.1));
 	Ceiling->SetRelativeLocation(FVector(120, 120, 0));
+	Ceiling->ComponentTags.Add(FName("NonClickable"));
     XWall->SetStaticMesh(CubeMesh3);
     XWall->SetWorldScale3D(FVector(1.2, 0.1, 2.0));
     XWall->SetRelativeLocation(FVector(0, 0, 100));
+	XWall->ComponentTags.Add(FName("NonClickable"));
 	YWall->SetStaticMesh(CubeMesh3);
 	YWall->SetWorldScale3D(FVector(0.1, 1.2, 2.0));
 	YWall->SetRelativeLocation(FVector(0, 0, 100));
+	YWall->ComponentTags.Add(FName("NonClickable"));
 	AttachedDoor = nullptr;
 }
 

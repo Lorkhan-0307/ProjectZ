@@ -118,6 +118,7 @@ void AZPlayerCharacter::UpdateSplinePath()
 	const APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, Hit))
 	{
+		if (Hit.GetComponent() && Hit.GetComponent()->ComponentHasTag(FName("NonClickable"))) return;
 		EndPos = Hit.ImpactPoint;
 	}
 
