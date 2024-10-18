@@ -55,6 +55,17 @@ void UNonCombatOverlay::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 	}
 	SetCardHandPosition(InDeltaTime);
 	SetCostPathLengthWidgetPosition();
+	
+	FHitResult Hit;
+	const APlayerController* PlayerController = Cast<APlayerController>(GetOwningPlayer());
+	if (PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, Hit) && Hit.GetComponent() && Hit.GetComponent()->ComponentHasTag(FName("NonClickable")))
+	{
+		IsClickable = true;
+	}
+	else
+	{
+		IsClickable = false;
+	}
 }
 
 void UNonCombatOverlay::SetCardComponent(UCardComponent* CC)
@@ -318,7 +329,7 @@ void UNonCombatOverlay::SetCostPathLengthWidgetPosition()
 	if (PathLengthCostWidget == nullptr || CardComponent == nullptr) return;
 
 	const FVector2D MousePosition = UWidgetLayoutLibrary::GetMousePositionOnViewport(this);
-	if (CurrentTurn != ETurn::ET_MoveTurn || MousePosition.Y * UWidgetLayoutLibrary::GetViewportScale(this) > CardComponent->GetPlayCardHeight())
+	if (CurrentTurn != ETurn::ET_MoveTurn || MousePosition.Y * UWidgetLayoutLibrary::GetViewportScale(this) > CardComponent->GetPlayCardHeight() || IsClickable)
 	{
 		PathLengthCostWidget->SetVisibility(ESlateVisibility::Hidden);
 	}

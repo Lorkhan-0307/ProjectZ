@@ -254,4 +254,6 @@ private:
 
 	UFUNCTION()
 	void TurnEnd();
+
+	bool IsClickable;
 };

@@ -160,7 +160,7 @@ void AZPlayerControllerBase::CursorTrace()
 	FHitResult CursorHit;
 	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, CursorHit);
 	if (!CursorHit.bBlockingHit) return;
-
+	
 	LastActor = ThisActor;
 	ThisActor = Cast<IEnemyInterface>(CursorHit.GetActor());
 
@@ -311,13 +311,13 @@ void AZPlayerControllerBase::AbilityInputTagHeld(FGameplayTag InputTag)
 		}
 		return;
 	}
-
 	// Hold mouse button
 	FollowTime += GetWorld()->GetDeltaSeconds();
 
 	FHitResult Hit;
 	if (GetHitResultUnderCursor(ECC_Visibility, false, Hit))
 	{
+		if (Hit.GetComponent() && Hit.GetComponent()->ComponentHasTag(FName("NonClickable"))) return;
 		CachedDestination = Hit.ImpactPoint;
 	}
 
