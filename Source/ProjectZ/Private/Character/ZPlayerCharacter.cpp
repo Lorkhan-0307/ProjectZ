@@ -26,7 +26,6 @@
 #include "Player/ZPlayerState.h"
 #include "UI/HUD/ZHUDBase.h"
 
-
 AZPlayerCharacter::AZPlayerCharacter()
 {
 	Spline = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));

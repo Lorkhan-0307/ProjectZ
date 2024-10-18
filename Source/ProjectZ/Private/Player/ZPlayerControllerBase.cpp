@@ -311,13 +311,13 @@ void AZPlayerControllerBase::AbilityInputTagHeld(FGameplayTag InputTag)
 		}
 		return;
 	}
-
 	// Hold mouse button
 	FollowTime += GetWorld()->GetDeltaSeconds();
 
 	FHitResult Hit;
 	if (GetHitResultUnderCursor(ECC_Visibility, false, Hit))
 	{
+		if (Hit.GetComponent() && Hit.GetComponent()->ComponentHasTag(FName("NonClickable"))) return;
 		CachedDestination = Hit.ImpactPoint;
 	}
 
