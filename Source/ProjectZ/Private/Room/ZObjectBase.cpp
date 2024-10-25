@@ -67,3 +67,8 @@ void AZObjectBase::NotifyActorOnClicked(FKey ButtonPressed)
 		if(GEngine) GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString(GetName()));
 	}
 }
+
+void AZObjectBase::Interact_Implementation(AActor* Player)
+{
+	
+}

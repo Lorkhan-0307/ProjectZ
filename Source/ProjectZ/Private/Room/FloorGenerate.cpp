@@ -398,12 +398,12 @@ void AFloorGenerate::CreateDoor(float x, float y, bool isVertical)
 {
 	if(isVertical)
 	{
-		CurrentDoor = GetWorld()->SpawnActor<AActor>(AttachedDoor, FTransform(FRotator(0, 90, 0), FVector(x, y, 10)+GetActorLocation()));
+		CurrentDoor = GetWorld()->SpawnActor<AActor>(AttachedDoor, FTransform(FRotator(0, 90, 0), FVector(x, y, 0)+GetActorLocation()));
 		furniturePlan[(x-60)/120-1][(y-60)/120] = -2;
 	}
 	else
 	{
-		CurrentDoor = GetWorld()->SpawnActor<AActor>(AttachedDoor, FTransform(FVector(x, y, 10)+GetActorLocation()));
+		CurrentDoor = GetWorld()->SpawnActor<AActor>(AttachedDoor, FTransform(FVector(x, y, 0)+GetActorLocation()));
 		furniturePlan[(x-60)/120][(y-60)/120-1] = -2;
 	}
 	furniturePlan[(x-60)/120][(y-60)/120] = -2;
