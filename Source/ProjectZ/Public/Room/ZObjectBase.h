@@ -17,6 +17,9 @@ class PROJECTZ_API AZObjectBase : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AZObjectBase();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool Interactable;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool InRange = false;
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void Interact(AActor* Player);
 
 protected:
 	// Called when the game starts or when spawned
@@ -35,6 +38,4 @@ private:
 	AZCharacterBase* ZCharacter;
 	// Object Inventory : Contains Cards
 	UPROPERTY(EditAnywhere) TArray<FName> ObjectInventory;
-	UPROPERTY(EditAnywhere) bool Interactable;
-	UPROPERTY(EditAnywhere) bool InRange = false;
 };
