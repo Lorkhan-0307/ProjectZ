@@ -46,6 +46,7 @@ void AZGameModeBase::CombatStart(int roomNo)
 
 void AZGameModeBase::CombatEnd()
 {
+	if(CurrentTurn == ETurn::ET_NonCombat) return;
 	SetTurn(ETurn::ET_NonCombat);
 	Cast<ICombatInterface>(CombatActor[0])->bIsMyTurn = true;
 	for(AActor* Actor : CombatActor)
