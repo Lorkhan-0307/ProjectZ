@@ -44,6 +44,19 @@ void AZGameModeBase::CombatStart(int roomNo)
 	TurnEnd();
 }
 
+void AZGameModeBase::CombatEnd()
+{
+	if(CurrentTurn == ETurn::ET_NonCombat) return;
+	SetTurn(ETurn::ET_NonCombat);
+	Cast<ICombatInterface>(CombatActor[0])->bIsMyTurn = true;
+	for(AActor* Actor : CombatActor)
+	{
+		CombatActorChangedDelegate.Broadcast(Actor);
+	}
+	CombatActor.Empty();
+}
+
+
 void AZGameModeBase::TurnEnd()
 {
 	if (CurrentTurn == ETurn::ET_EnemyTurn)

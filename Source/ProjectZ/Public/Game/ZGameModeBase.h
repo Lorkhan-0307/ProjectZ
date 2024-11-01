@@ -37,6 +37,8 @@ public:
 	TArray<AActor*> CombatActor;
 
 	void CombatStart(int roomNo);
+	UFUNCTION(BlueprintCallable)
+	void CombatEnd();
 	void TurnEnd();
 	void CharacterDie(AActor* DieActor);
 
