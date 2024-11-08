@@ -202,7 +202,7 @@ void UCardComponent::ShuffleDeck()
 void UCardComponent::MakeCardDeck()
 {
 	// ...
-
+	
 	CardDeck.Empty();
 	for (const FCard& Card : CardInventory)
 	{
@@ -244,9 +244,14 @@ void UCardComponent::TurnChanged(ETurn Turn)
 	CurrentTurn = Turn;
 	if (GameMode->GetLastTurn() == ETurn::ET_NonCombat && Turn != ETurn::ET_NonCombat)
 	{
+		for (FCard Card : CardHand)
+		{
+			DiscardCard.Add(Card);
+		}
+		CardHand.Empty();
 		MakeCardDeck();
 	}
-
+	
 	if (CurrentTurn == ETurn::ET_MoveTurn)
 	{
 		for (int i = 0; i < 5; i++)
