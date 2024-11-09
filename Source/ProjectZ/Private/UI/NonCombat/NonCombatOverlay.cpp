@@ -283,6 +283,7 @@ void UNonCombatOverlay::TurnChanged(ETurn Turn)
 	if (Turn == ETurn::ET_NonCombat)
 	{
 		HideCharacterPortrait();
+		HandCard.Empty();
 	}
 	/*
 	else if (CharacterPortraitSizeBox->GetVisibility() == ESlateVisibility::Hidden)
